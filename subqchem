@@ -1,0 +1,174 @@
+#!/bin/csh
+
+# Q-Chem Interactive PBS Pro Job Submission
+# on Taiwania cluster, NCHC, Taiwan
+#
+# Support only OpenMP parallel method
+#
+# Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
+##############################################################
+set QC         = /pkg/qchem/qc42.mpich
+set QCAUX      = $QC/qcaux
+set QCRSH      = ssh
+set QCPLATFORM = LINUX_Ix86_64
+##############################################################
+
+set NODES = 1
+set GPU = 0
+
+onintr inter
+
+if ($#argv == 0) then
+
+echo ""
+echo "   Q-Chem Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
+echo "   ---------------------------------------------------------------\n"
+echo "   Usage: subqchem inputfile"
+echo "          where input file is Q-Chem input with or without .in extension.\n"
+echo "   Parallelizability of Q-Chem that run in parallel with shared-memory (MPI)"
+echo "   is better than that of non-shared memory (OpenMP).\n"
+echo "   This script supports the Q-Chem PBS job submission only with OpenMP method."
+echo "   If you want to use MPI instead, talk to TAIWANIA staff.\n"
+
+exit 0
+
+else if ($#argv == 1) then
+  echo "Erro: Please enter number of OMP Threads."
+  exit 1
+
+else
+  set CPUS = "$1"
+  set INPUTFILE = "$2"
+
+endif
+
+
+if (! -e $QC) then
+  echo 'Error: Unable to locate Q-Chem top directory, please set $QC environment variable'
+  exit 1
+endif
+
+if (! -e $QCAUX) then
+  echo 'Error: Unable to locate Q-Chem Auxiliary files, please set $QCAUX environment variable'
+  exit 1
+endif
+
+if ( $CPUS !~ ^[0-9]+$ ) then
+  echo "Error: the number of OMP Threads must be positive integer. Max value is 40 threads."
+  exit 1
+endif
+
+if ($CPUS > 40 ) then
+  echo "Warning: OMP Threads is over 40. So it was set to 40."
+  set CPUS = 40
+else if ($CPUS < 1 ) then
+  echo "Error: the number of OMP Threads must be positive integer. Max value is 40 threads."
+  exit 1
+endif
+
+if ("null$CPUS" == "null") then
+  set CPUS = 40
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+else if ($CPUS == 1) then
+  set CPUS = 1
+  set JOBQUEUE = serial
+  set WALLTIME = "96:00:00"
+else if ($CPUS >= 2 && $CPUS <= 40) then
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+else
+  echo "Error: Available job queues for Q-Chem are 'serial cf40'."
+  exit 1
+endif
+
+if ("null$INPUTFILE" == "null") then
+  echo "Error: Please enter input file."
+  exit 1
+endif
+
+set INPUTNAME = `basename $INPUTFILE .in`
+set REALNAME = "$INPUTNAME".in
+set REALPATH = `realpath $REALNAME`
+set FULLPATH = `dirname $REALPATH`
+set INPUTFILE = "$FULLPATH/$INPUTNAME".in
+if (! -f $INPUTFILE) then
+  echo "Error: Unable to locate $INPUTFILE"
+  exit 1
+endif
+
+if ("null$3" == "null") then
+  set OUTPUTFILE = "$FULLPATH/$INPUTNAME".out
+else
+  set OUTPUTNAME = `basename $3 .out`
+  set OUTPUTFILE = "$FULLPATH/$OUTPUTNAME".out
+endif
+
+set THREADS = "$CPUS"
+
+set JOBNAME = "$INPUTNAME"
+
+#####################################################
+# Show all info before submitting job
+#####################################################
+
+echo "\n     ----- Job Info -----\n"
+echo "   Input file  :  $INPUTFILE"
+echo "  Output file  :  $OUTPUTFILE"
+echo " Compute node  :  $NODES"
+echo "    CPU cores  :  $CPUS"
+echo "  OMP Threads  :  $THREADS"
+echo "     Job Name  :  $JOBNAME"
+echo "    Job Queue  :  $JOBQUEUE"   
+echo "    Wall-Time  :  $WALLTIME\n"
+
+echo -n "Submit your job now ? [yes]: "
+set SUBMIT = "$<"
+if ("null$SUBMIT" == "null" || "null$SUBMIT" == "nully" || "null$SUBMIT" == "nullyes") then
+  goto submit
+else
+  echo "...Quit..."
+  exit 0
+endif
+
+submit:
+set PBS_SCRIPT = "$FULLPATH/submit.QC.$INPUTNAME.sh"
+
+cat <<EOF > $PBS_SCRIPT
+#!/bin/bash 
+
+#PBS -l select=$NODES\:ncpus=$CPUS\:ompthreads=$THREADS
+#PBS -l walltime=$WALLTIME
+#PBS -q $JOBQUEUE
+#PBS -N $JOBNAME
+#PBS -P \$PROJ_ID
+
+module load intel/2018_u1
+
+cd \$PBS_O_WORKDIR
+
+export SCRATCH_DIR=/work1/$USER/SCRATCH/qchem/qchem.pbs\${PBS_JOBID/\.srvc1/}
+if [ ! -d \$SCRATCH_DIR ]; then mkdir -p \$SCRATCH_DIR; fi
+
+export QC=$QC
+export QCAUX=$QCAUX
+export QCSCRATCH=\$SCRATCH_DIR
+export QCRSH=$QCRSH
+export QCPLATFORM=$QCPLATFORM
+export QCHEMRUN=\$QC/bin/qchem
+export QCTHREADS=$THREADS
+export OMP_NUM_THREADS=$THREADS
+
+\$QCHEMRUN -nt $THREADS $INPUTFILE $OUTPUTFILE
+
+EOF
+
+qsub $PBS_SCRIPT
+echo "Your job has been submitted."
+exit 0
+
+inter: 
+  echo "\nError: you pressed Ctrl+C ...Quit...\n"
+  exit 1
+
+
