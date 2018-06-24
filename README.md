@@ -68,13 +68,17 @@ where input file is Q-Chem input with or without .in extension.
 
 ---
 
-### How to download
+### How to download and activate
 1. Open Githup source code of script.
 2. Click on "Raw"
 3. Copy URL address
 4. Open your Linux terminal then use the following command for downloading the script.
 ```
-wget url
+wget the/url/address/of/raw/source/code
+```
+5. Activate script using the following command
+```
+chmod +x script.file
 ```
 
 Rangsiman Ketkaew
