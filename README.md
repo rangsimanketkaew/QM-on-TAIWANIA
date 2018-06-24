@@ -21,7 +21,7 @@ where input is your g16 input file with or without .com extension. For instance,
 
 
 ### Q-Chem
-* subqchem
+* [subqchem](subqchem)
 * Usage: `subqchem inputfile` <br />
 where input file is Q-Chem input with or without .in extension.
 * Details: Parallelizability of Q-Chem that run in parallel with shared-memory (MPI) is better than that of non-shared memory (OpenMP).
@@ -53,16 +53,13 @@ where input file is Q-Chem input with or without .in extension.
 | MPI process | 40 (per node) |
 | Threads | 40 (per node & per MPI process) |
 
-* CONTACT
-Rangsiman Ketkaew  rangsiman1993@gmail.com
-
 * MORE DETAILS
 
    NWChem Official Website  [http://www.nwchem-sw.org](http://www.nwchem-sw.org)  <br />
    NWChem Official manual   [https://github.com/nwchemgit/nwchem/wiki](https://github.com/nwchemgit/nwchem/wiki)
                          
 ### Multiple NWChem jobs
-* subnwmult
+* [subnwmult](subnwmult)
 * Usage: `subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ]` <br />
 * READ BEFORE USE: 
 1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
@@ -84,6 +81,6 @@ wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/na
 chmod +x name.of.script
 ```
 
-Rangsiman Ketkaew
-rangsiman1993@gmail.com
+* CONTACT
+Rangsiman Ketkaew  E-MAIL: rangsiman1993@gmail.com
 
