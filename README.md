@@ -81,6 +81,6 @@ wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/na
 chmod +x name.of.script
 ```
 
-* CONTACT
+### CONTACT
 Rangsiman Ketkaew  E-MAIL: rangsiman1993@gmail.com
 
