@@ -15,10 +15,26 @@ where input is your g16 input file with or without .com extension. For instance,
   This program recognizes the OMP threads from the value of %nproc line in input.  <br />
   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
 
-* Warning: If %nproc is set to 1, G16 job will be submitted in serial queue.  <br />
-           If %nproc is 2 through 40, G16 job will be submitted in cf40 queue instead.
-* For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.
+* Example of route section of Gaussian input.
+```
+%chk=vomilenine-freq-g16-4.chk
+%mem=8GB
+%nprocshared=4          <<----  This value is assigned as OMP_NUM_THREADS value.
+#p freq B3LYP/6-31G(d)
 
+Title Card Required
+
+0 1
+ C                  2.77247700   -1.55726100   -0.24944000
+ C                  2.57516800   -0.21391100    0.22236700
+ C                  3.66258100    0.58993400    0.49571100
+ C                  4.95487500    0.05924200    0.30006200
+...
+```
+
+* Warning: If %nproc is set to 1, G16 job will be submitted in serial queue.  <br />
+  If %nproc is 2 through 40, G16 job will be submitted in cf40 queue instead.
+* For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.
 
 ### Q-Chem
 * [subqchem](subqchem)
@@ -70,7 +86,7 @@ where input file is Q-Chem input with or without .in extension.
 
 ### How to download and activate
 1. Open Githup source code of script.
-2. Click on "Raw"
+2. Click at "Raw" button
 3. Copy URL address
 4. Open your Linux terminal then use the following command for downloading the script.
 ```
