@@ -80,6 +80,13 @@ wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/na
 ```
 chmod +x name.of.script
 ```
+Optional: you can make the alias of script by appending the following command to your `.bashrc` file. <br />
+Suppose that script is at `$HOME` directory.
+```
+alias subnwchem="$HOME/subnwchem"
+```
+
+---
 
 ### CONTACT
 Rangsiman Ketkaew  E-MAIL: rangsiman1993@gmail.com
