@@ -107,7 +107,7 @@ where input file is Q-Chem input with or without .in extension.
 
 ### ORCA 
 
-**Sorry: Under construction.**
+**Sorry: I am still writing the code script for ORCA.**
 
 ---
 
