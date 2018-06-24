@@ -5,8 +5,6 @@ Source code customization is required for other job scheduler and other cluster.
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
 <p/>
 
----
-
 ### Gaussian 16
 * [subg16](subg16) 
 
