@@ -57,8 +57,9 @@ where input file is Q-Chem input with or without .in extension.
 Rangsiman Ketkaew  rangsiman1993@gmail.com
 
 * MORE DETAILS
-⋅⋅⋅NWChem Official Website  [http://www.nwchem-sw.org](http://www.nwchem-sw.org)  <br />
-⋅⋅⋅NWChem Official manual   [https://github.com/nwchemgit/nwchem/wiki](https://github.com/nwchemgit/nwchem/wiki)
+
+   NWChem Official Website  [http://www.nwchem-sw.org](http://www.nwchem-sw.org)  <br />
+   NWChem Official manual   [https://github.com/nwchemgit/nwchem/wiki](https://github.com/nwchemgit/nwchem/wiki)
                          
 ### Multiple NWChem jobs
 * subnwmult
