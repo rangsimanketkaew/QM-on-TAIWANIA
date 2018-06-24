@@ -1,8 +1,6 @@
 # PBS-submission
-Automated script for interactive PBS job submission.
-
-These scripts can be only used for PBS Professional on TAIWANIA cluster.
-
+Automated script for interactive PBS job submission. <br />
+These scripts can be only used for PBS Professional on TAIWANIA cluster. <br />
 Source code customization is required for other Job Scheduler and other cluster.
 
 ### Gaussian 16
@@ -40,17 +38,20 @@ where input file is Q-Chem input with or without .in extension.
 * COMMANDS
 
 | argument | Task |
-| --- | --- |
+| :---: | --- |
 | gpu      | Requests GPU accelerator | 
 | casper   | Requests Casper method (against MPI-PR) |
 | mpipr    | Requests MPI-PR method (against Casper) | 
 | help     | Open this help |
 
-* LIMITATION  <br />
-   Maximum node          600  <br />
-   Maximum CPU cores     40 (per node)  <br />
-   Maximum MPI process   40 (per node)  <br />
-   Maximum Threads       40 (per node & per MPI process) <br />
+* LIMITATION
+
+| Quantity | Maximum value |
+| --- | --- |
+| Compute node | 600 |
+| CPU cores | 40 (per node) |
+| MPI process | 40 (per node) |
+| Threads | 40 (per node & per MPI process) |
 
 * CONTACT                 Rangsiman Ketkaew  rangsiman1993@gmail.com
 
