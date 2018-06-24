@@ -1,7 +1,7 @@
 # PBS-submission
-Automated script for interactive PBS job submission. <br />
-These scripts can be only used for PBS Professional on TAIWANIA cluster. <br />
-Source code customization is required for other Job Scheduler and other cluster.
+Automated script for interactive PBS Professional job submission. <br />
+These scripts were written for and tested on TAIWANIA cluster, NCHC. <br />
+Source code customization is required for other job scheduler and other cluster.
 
 ---
 
