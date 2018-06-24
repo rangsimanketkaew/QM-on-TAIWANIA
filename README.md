@@ -1,5 +1,5 @@
 # PBS-submission
-Automated script for interactive PBS Professional job submission. These scripts were written for and tested on TAIWANIA cluster, NCHC. <br />
+Automated script for interactive PBS Professional job submission. These scripts were written for and tested on TAIWANIA cluster, NCHC.
 Source code customization is required for other job scheduler and other cluster.
 <p align="center">
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
