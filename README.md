@@ -9,11 +9,19 @@ Source code customization is required for other job scheduler and other cluster.
 
 ### Gaussian 16
 * [subg16](subg16) 
+
 * Usage: `subg16 inputfile` <br />
 where input is your g16 input file with or without .com extension. For instance,  <br />
 `subg16 water_hf` <br />
 `subg16 water_hf water_hf_4cores.`
+
 * If no output specified, basename of input will be used to name output file automatically.
+
+* Capability
+  - [x] OpenMP
+  - [ ] OpenMPI
+  - [ ] MPICH or MVAPICH
+  - [x] GP-GPU (CUDA)
 
 * This G16 runtime supports only OpenMP (shared-memory) parallel method.  <br />
   This program recognizes the OMP threads from the value of %nproc line in input.  <br />
@@ -43,34 +51,54 @@ Title Card Required
 
 * Warning: If %nproc is set to 1, G16 job will be submitted in serial queue.  <br />
   If %nproc is 2 through 40, G16 job will be submitted in cf40 queue instead.
+  
 * For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.
+
 * Gaussian official website: [http://gaussian.com/](http://gaussian.com/)
 
 ---
 
 ### Q-Chem
 * [subqchem](subqchem)
+
 * Usage: `subqchem inputfile` <br />
 where input file is Q-Chem input with or without .in extension.
+
+* Capability
+  - [x] OpenMP
+  - [ ] OpenMPI
+  - [ ] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
+  
 * Details: Parallelizability of Q-Chem that run in parallel with shared-memory (MPI) is better than that of non-shared memory (OpenMP).
+
 * This script supports the Q-Chem PBS job submission only with OpenMP method. If you want to use MPI instead, talk to TAIWANIA staff.
+
 * Q-Chem official website: [http://www.q-chem.com/](http://www.q-chem.com/)
 
 ---
 
 ### NWChem (single job submission)
 * [subnwchem](subnwchem)
+
 * Usage: `subnwchem [gpu||casper||mpipr] [help]` <br />
-* EXAMPLE: subnwchem gpu                submit NWChem using CUDA  <br />
+
+* Eample: subnwchem gpu                submit NWChem using CUDA  <br />
            subnwchem gpu casper      submit NWChem using CUDA and Casper
 
-* IT can be used to submit NWChem job with and without using ARMCI methods, Casper and MPI-PR, and with and without GPU/CUDA. Note that GPU/MPI-PR is not available.
+* Capability
+  - [ ] OpenMP
+  - [x] OpenMPI
+  - [x] MPICH or MVAPICH
+  - [x] GP-GPU (CUDA)
+
+* It can be used to submit NWChem job with and without using ARMCI methods, Casper and MPI-PR, and with and without GPU/CUDA. Note that GPU/MPI-PR is not available.
 
 * COMMANDS
 
 <center>
   
-| argument | Task |
+| Command | Task |
 | :---: | --- |
 | gpu      | Requests GPU accelerator | 
 | casper   | Requests Casper method (against MPI-PR) |
@@ -99,11 +127,19 @@ where input file is Q-Chem input with or without .in extension.
 
 ### NWChem (multiple jobs submission)
 * [subnwmult](subnwmult)
+
 * Usage: `subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ]` <br />
+
+* Capability
+  - [ ] OpenMP
+  - [x] OpenMPI
+  - [x] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
+
 * READ BEFORE USE: 
-1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
-2. Existing files whose basename is similar to name of submitting input will be replaced.
-3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now.
+  1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
+  2. Existing files whose basename is similar to name of submitting input will be replaced.
+  3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now.
 
 ---
 
@@ -114,6 +150,7 @@ where input file is Q-Chem input with or without .in extension.
 ---
 
 ### How to download and activate
+
 1. Open Githup source code of script.
 2. Click at "Raw" button
 3. Copy URL address
