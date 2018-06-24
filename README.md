@@ -15,7 +15,9 @@ where input is your g16 input file with or without .com extension. For instance,
   This program recognizes the OMP threads from the value of %nproc line in input.  <br />
   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
 
-* Example of route section of Gaussian input.
+<details>
+<summary> Click here to see example of Gaussian input for 4 thread request.</summary>
+  
 ```
 %chk=vomilenine-freq-g16-4.chk
 %mem=8GB
@@ -31,6 +33,9 @@ Title Card Required
  C                  4.95487500    0.05924200    0.30006200
 ...
 ```
+
+</details>
+<br />
 
 * Warning: If %nproc is set to 1, G16 job will be submitted in serial queue.  <br />
   If %nproc is 2 through 40, G16 job will be submitted in cf40 queue instead.
@@ -53,14 +58,20 @@ where input file is Q-Chem input with or without .in extension.
 
 * COMMANDS
 
+<center>
+  
 | argument | Task |
 | :---: | --- |
 | gpu      | Requests GPU accelerator | 
 | casper   | Requests Casper method (against MPI-PR) |
 | mpipr    | Requests MPI-PR method (against Casper) | 
 | help     | Open this help |
+  
+</center>
 
 * LIMITATION
+
+<center>
 
 | Quantity | Maximum value |
 | --- | --- |
@@ -68,6 +79,8 @@ where input file is Q-Chem input with or without .in extension.
 | CPU cores | 40 (per node) |
 | MPI process | 40 (per node) |
 | Threads | 40 (per node & per MPI process) |
+
+</center>
 
 * MORE DETAILS
 
