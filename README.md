@@ -38,10 +38,12 @@ where input file is Q-Chem input with or without .in extension.
 * IT can be used to submit NWChem job with and without using ARMCI methods, Casper and MPI-PR, and with and without GPU/CUDA. Note that GPU/MPI-PR is not available.
 
 * COMMANDS  <br />
-   gpu                   Requests GPU accelerator.  <br />
-   casper                Requests Casper method (against MPI-PR).  <br />
-   mpipr                 Requests MPI-PR method (against Casper).  <br />
-   help                  Open this help.
+   |argument|              Task|
+   |---|              ---|
+   |gpu|                   Requests GPU accelerator.| 
+   |casper|                Requests Casper method (against MPI-PR).|
+   |mpipr|                 Requests MPI-PR method (against Casper).| 
+   |help|                  Open this help.|
 
 * LIMITATION  <br />
    Maximum node          600  <br />
@@ -56,8 +58,12 @@ where input file is Q-Chem input with or without .in extension.
                          
 ### Multiple NWChem jobs
 * subnwmult
-* Usage: 
-  
+* Usage: subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ]
+* READ BEFORE USE: 
+1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
+2. Existing files whose basename is similar to name of submitting input will be replaced.
+3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now.
+
 ---
 
 ### How to download
