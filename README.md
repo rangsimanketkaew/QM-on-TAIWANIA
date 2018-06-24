@@ -37,13 +37,14 @@ where input file is Q-Chem input with or without .in extension.
 
 * IT can be used to submit NWChem job with and without using ARMCI methods, Casper and MPI-PR, and with and without GPU/CUDA. Note that GPU/MPI-PR is not available.
 
-* COMMANDS  <br />
-   |argument|              Task|
-   |---|              ---|
-   |gpu|                   Requests GPU accelerator.| 
-   |casper|                Requests Casper method (against MPI-PR).|
-   |mpipr|                 Requests MPI-PR method (against Casper).| 
-   |help|                  Open this help.|
+* COMMANDS
+
+   | argument | Task |
+   | -------- | ---- |
+   | gpu      | Requests GPU accelerator | 
+   | casper   | Requests Casper method (against MPI-PR) |
+   | mpipr    | Requests MPI-PR method (against Casper) | 
+   | help     | Open this help |
 
 * LIMITATION  <br />
    Maximum node          600  <br />
@@ -77,3 +78,4 @@ wget url
 
 Rangsiman Ketkaew
 rangsiman1993@gmail.com
+
