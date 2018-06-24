@@ -149,7 +149,7 @@ where input file is Q-Chem input with or without .in extension.
 
 ### How to download and activate
 
-1. Open Githup source code of script.
+1. Open Github of code script.
 2. Click at "Raw" button
 3. Copy URL address
 4. Open your Linux terminal then use the following command for downloading the script.
