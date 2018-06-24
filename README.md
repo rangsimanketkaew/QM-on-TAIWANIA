@@ -3,6 +3,8 @@ Automated script for interactive PBS job submission. <br />
 These scripts can be only used for PBS Professional on TAIWANIA cluster. <br />
 Source code customization is required for other Job Scheduler and other cluster.
 
+---
+
 ### Gaussian 16
 * [subg16](subg16) 
 * Usage: `subg16 inputfile` <br />
@@ -40,6 +42,9 @@ Title Card Required
 * Warning: If %nproc is set to 1, G16 job will be submitted in serial queue.  <br />
   If %nproc is 2 through 40, G16 job will be submitted in cf40 queue instead.
 * For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.
+* Gaussian official website: [http://gaussian.com/](http://gaussian.com/)
+
+---
 
 ### Q-Chem
 * [subqchem](subqchem)
@@ -47,8 +52,11 @@ Title Card Required
 where input file is Q-Chem input with or without .in extension.
 * Details: Parallelizability of Q-Chem that run in parallel with shared-memory (MPI) is better than that of non-shared memory (OpenMP).
 * This script supports the Q-Chem PBS job submission only with OpenMP method. If you want to use MPI instead, talk to TAIWANIA staff.
+* Q-Chem official website: [http://www.q-chem.com/](http://www.q-chem.com/)
 
-### NWChem 
+---
+
+### NWChem (single job submission)
 * [subnwchem](subnwchem)
 * Usage: `subnwchem [gpu||casper||mpipr] [help]` <br />
 * EXAMPLE: subnwchem gpu                submit NWChem using CUDA  <br />
@@ -82,18 +90,24 @@ where input file is Q-Chem input with or without .in extension.
 
 </center>
 
-* MORE DETAILS
+* NWChem official website:  [http://www.nwchem-sw.org](http://www.nwchem-sw.org)  <br />
+* NWChem official manual: [https://github.com/nwchemgit/nwchem/wiki](https://github.com/nwchemgit/nwchem/wiki)
 
-   NWChem Official Website  [http://www.nwchem-sw.org](http://www.nwchem-sw.org)  <br />
-   NWChem Official manual   [https://github.com/nwchemgit/nwchem/wiki](https://github.com/nwchemgit/nwchem/wiki)
-                         
-### Multiple NWChem jobs
+---
+
+### NWChem (multiple jobs submission)
 * [subnwmult](subnwmult)
 * Usage: `subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ]` <br />
 * READ BEFORE USE: 
 1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
 2. Existing files whose basename is similar to name of submitting input will be replaced.
 3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now.
+
+---
+
+### ORCA 
+
+**Sorry: Under construction.**
 
 ---
 
