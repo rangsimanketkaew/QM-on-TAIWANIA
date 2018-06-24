@@ -16,7 +16,7 @@ echo "   1. Basename of input file will be used for naming output file. E.g. nwc
 echo "   2. Existing files whose basename is similar to name of submitting input will be replaced."
 echo "   3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now."
 echo ""
-echo "  Normal usage: subnwchem.mult input.1.nw [ input.2.nw | input.3.nw | ... ] "
+echo "  Normal usage: subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ] "
 echo ""
 
 exit 0
