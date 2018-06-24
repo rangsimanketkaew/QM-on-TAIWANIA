@@ -29,7 +29,7 @@ where input file is Q-Chem input with or without .in extension.
 
 ### NWChem 
 * [subnwchem](subnwchem)
-* Usage: `subnwchem [gpu||casper||mpipr] [help]`
+* Usage: `subnwchem [gpu||casper||mpipr] [help]` <br />
 * EXAMPLE: subnwchem gpu                submit NWChem using CUDA  <br />
            subnwchem gpu casper      submit NWChem using CUDA and Casper
 
@@ -60,7 +60,7 @@ where input file is Q-Chem input with or without .in extension.
                          
 ### Multiple NWChem jobs
 * subnwmult
-* Usage: subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ]
+* Usage: `subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ]` <br />
 * READ BEFORE USE: 
 1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
 2. Existing files whose basename is similar to name of submitting input will be replaced.
