@@ -6,10 +6,10 @@ These scripts can be only used for PBS Professional on TAIWANIA cluster.
 Source code customization is required for other Job Scheduler and other cluster.
 
 ### Gaussian 16
-* [subg16](subg16)
-* Usage: `subg16 inputfile`
+* [subg16](subg16) 
+* Usage: `subg16 inputfile` <br />
 where input is your g16 input file with or without .com extension. For instance,  <br />
-`subg16 water_hf`  <br />
+`subg16 water_hf` <br />
 `subg16 water_hf water_hf_4cores.`
 * If no output specified, basename of input will be used to name output file automatically.
 
@@ -24,14 +24,14 @@ where input is your g16 input file with or without .com extension. For instance,
 
 ### Q-Chem
 * subqchem
-* Usage: subqchem inputfile <br />
+* Usage: `subqchem inputfile` <br />
 where input file is Q-Chem input with or without .in extension.
 * Details: Parallelizability of Q-Chem that run in parallel with shared-memory (MPI) is better than that of non-shared memory (OpenMP).
 * This script supports the Q-Chem PBS job submission only with OpenMP method. If you want to use MPI instead, talk to TAIWANIA staff.
 
 ### NWChem 
 * [subnwchem](subnwchem)
-* Usage: subnwchem [gpu||casper||mpipr] [help]
+* Usage: `subnwchem [gpu||casper||mpipr] [help]`
 * EXAMPLE: subnwchem gpu                submit NWChem using CUDA  <br />
            subnwchem gpu casper      submit NWChem using CUDA and Casper
 
@@ -39,12 +39,12 @@ where input file is Q-Chem input with or without .in extension.
 
 * COMMANDS
 
-   | argument | Task |
-   | -------- | ---- |
-   | gpu      | Requests GPU accelerator | 
-   | casper   | Requests Casper method (against MPI-PR) |
-   | mpipr    | Requests MPI-PR method (against Casper) | 
-   | help     | Open this help |
+| argument | Task |
+| --- | --- |
+| gpu      | Requests GPU accelerator | 
+| casper   | Requests Casper method (against MPI-PR) |
+| mpipr    | Requests MPI-PR method (against Casper) | 
+| help     | Open this help |
 
 * LIMITATION  <br />
    Maximum node          600  <br />
