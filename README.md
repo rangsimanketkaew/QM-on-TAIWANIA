@@ -53,10 +53,12 @@ where input file is Q-Chem input with or without .in extension.
 | MPI process | 40 (per node) |
 | Threads | 40 (per node & per MPI process) |
 
-* CONTACT                 Rangsiman Ketkaew  rangsiman1993@gmail.com
+* CONTACT
+Rangsiman Ketkaew  rangsiman1993@gmail.com
 
-* MORE DETAILS            NWChem Official Website  [http://www.nwchem-sw.org](http://www.nwchem-sw.org)  <br />
-                         NWChem Official manual   [https://github.com/nwchemgit/nwchem/wiki](https://github.com/nwchemgit/nwchem/wiki)
+* MORE DETAILS
+⋅⋅⋅NWChem Official Website  [http://www.nwchem-sw.org](http://www.nwchem-sw.org)  <br />
+⋅⋅⋅NWChem Official manual   [https://github.com/nwchemgit/nwchem/wiki](https://github.com/nwchemgit/nwchem/wiki)
                          
 ### Multiple NWChem jobs
 * subnwmult
@@ -74,11 +76,11 @@ where input file is Q-Chem input with or without .in extension.
 3. Copy URL address
 4. Open your Linux terminal then use the following command for downloading the script.
 ```
-wget the/url/address/of/raw/source/code
+wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/name.of.script
 ```
 5. Activate script using the following command
 ```
-chmod +x script.file
+chmod +x name.of.script
 ```
 
 Rangsiman Ketkaew
