@@ -7,7 +7,7 @@ Source code customization is required for other Job Scheduler and other cluster.
 
 ### Gaussian 16
 * [subg16](subg16)
-* Usage: subg16 inputfile <br />
+* Usage: `subg16 inputfile`
 where input is your g16 input file with or without .com extension. For instance,  <br />
 `subg16 water_hf`  <br />
 `subg16 water_hf water_hf_4cores.`
