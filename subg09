@@ -1,6 +1,6 @@
 #!/bin/csh
 
-# Gaussian 16 Interactive PBS Pro Job Submission
+# Gaussian 09 Interactive PBS Pro Job Submission
 # on Taiwania cluster, NCHC, Taiwan
 #
 # Support only OpenMP parallel method
