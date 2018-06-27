@@ -1,0 +1,128 @@
+#!/bin/csh
+
+# Gaussian 16 Interactive PBS Pro Job Submission
+# on Taiwania cluster, NCHC, Taiwan
+#
+# Support only OpenMP parallel method
+#
+# Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
+##############################################################
+
+onintr inter
+
+set NODES = 1
+
+if ( $#argv == 0) then
+  echo ""
+  echo "   Gaussian 09 Revision B01 Interactive PBS Job Submission"
+  echo "              on Taiwania cluster, NCHC, Taiwan"
+  echo "   --------------------------------------------------------\n"
+  echo "   Usage: subg09 input [output]\n"
+  echo "   where input is your g09 input file with or without .com extension."
+  echo "   For instance, subg09 water_hf"
+  echo "                 subg09 water_hf water_hf_4cores.\n"
+  echo "   If no output specified, basename of input will be used to name output file automatically.\n"
+  echo "   This G09 runtime supports only OpenMP (shared-memory) parallel method."
+  echo "   This program recognizes the OMP threads from the value of %nproc line in input."
+  echo "   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.\n"
+  echo "   Warning: If %nproc is set to 1, G09 job will be submitted in serial queue."
+  echo "            If %nproc is 2 through 40, G09 job will be submitted in cf40 queue instead.\n"
+  echo "   For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.\n"
+  exit 0
+else
+  set INPUTFILE = "$1"
+endif
+
+set INPUTNAME = `basename $INPUTFILE .com`
+set REALNAME = "$INPUTNAME".com
+set REALPATH = `realpath $REALNAME`
+set FULLPATH = `dirname $REALPATH`
+set INPUTFILE = "$FULLPATH/$INPUTNAME".com
+if (! -f $INPUTFILE) then
+  echo "Error: Unable to locate $INPUTFILE"
+  exit 1
+endif
+
+if ("null$2" == "null") then
+  set OUTPUTFILE = "$FULLPATH/$INPUTNAME".out 
+else
+  set OUTPUTNAME = `basename $2 .out`
+  set OUTPUTFILE = "$FULLPATH/$OUTPUTNAME".out
+endif 
+
+set NPROCS = `grep '%nproc' $INPUTFILE | cut -d= -f2`
+
+if ( $NPROCS !~ ^[0-9]+$ ) then
+  echo "Error: Number of %nproc specified in input must be positive integer from 1 to 40."
+  exit 1
+endif
+
+if ( $NPROCS >= 41 ) then
+   echo ""
+   echo "Warning: Value of %nproc is over 40. So %nproc will be set to 40."
+   set NPROCS = 40
+endif
+
+if ("null$NPROCS" == "null1") then
+  set JOBQUEUE = serial
+  set WALLTIME = "96:00:00"
+else if ($NPROCS >= 2) then
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+endif
+
+set THREADS = "$NPROCS"
+
+#####################################################
+# Show all info before submitting job
+#####################################################
+
+echo "\n      ----- Job Info -----\n"
+echo "   Input file  :  $INPUTFILE"
+echo "  Output file  :  $OUTPUTFILE"
+echo " Compute node  :  $NODES"
+echo "    CPU cores  :  $NPROCS"
+echo "  OMP Threads  :  $THREADS"
+echo "     Job Name  :  $INPUTNAME"
+echo "    Job Queue  :  $JOBQUEUE"
+echo "    Wall-Time  :  $WALLTIME\n"
+
+echo -n "Submit your job now ? [yes]: "
+set SUBMIT = "$<"
+if ("null$SUBMIT" == "null" || "null$SUBMIT" == "nully" || "null$SUBMIT" == "nullyes") then
+  goto submit
+else
+  echo "...Quit..."
+  exit 0
+endif
+
+submit:
+set PBS_SCRIPT = "$FULLPATH/submit.QC.$INPUTNAME.sh"
+
+cat <<EOF > $PBS_SCRIPT
+#!/bin/bash 
+
+#PBS -l select=$NODES\:ncpus=$NPROCS
+#PBS -l walltime=$WALLTIME
+#PBS -q $JOBQUEUE
+#PBS -N $JOBNAME
+#PBS -P \$PROJ_ID
+
+module purge
+module load gaussian/g09
+
+cd \$PBS_O_WORKDIR
+
+g09 < $INPUTFILE > $OUTPUTFILE
+
+EOF
+
+qsub $PBS_SCRIPT
+echo "Your job has been submitted."
+exit 0
+
+inter: 
+  echo "\nError: you pressed Ctrl+C ...Quit...\n"
+  exit 1
+
+
