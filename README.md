@@ -114,7 +114,7 @@ where input file is Q-Chem input with or without .in extension.
 | Compute node | 600 |
 | CPU cores | 40 (per node) |
 | MPI process | 40 (per node) |
-| Threads | 40 (per node & per MPI process) |
+| Threads | 40 (per node & per MPI rank) |
 
 </center>
 
