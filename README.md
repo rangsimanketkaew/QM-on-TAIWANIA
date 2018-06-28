@@ -85,7 +85,7 @@ Title Card Required
 * [subg09](subg09) 
 
 * Usage: `subg09 input [output]` <br />
-where input is your g09 input file with or without .com extension. For instance,  <br />
+where *thread* is number of OpenMP threads and *input* is your g09 input file with or without .com extension. For instance,  <br />
 `subg09 water_hf` <br />
 `subg09 water_hf water_hf_4cores.`
 
@@ -108,7 +108,7 @@ where input is your g09 input file with or without .com extension. For instance,
 ### Q-Chem
 * [subqchem](subqchem)
 
-* Usage: `subqchem inputfile` <br />
+* Usage: `subqchem thread input [output]` <br />
 where input file is Q-Chem input with or without .in extension.
 
 * Capability
