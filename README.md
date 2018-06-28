@@ -210,7 +210,34 @@ where **input** and **output** are ORCA input and output files with or without .
 So `suborca` will make the symbolic link of input file to scratch folder of server in order to avoid creating those
 scratch files in working directory. So ORCA will read linking standard input file and print output file to working directory.
 
-* This script supports the ORCA PBS job submission only with OpenMPI.
+* `suborca` supports the ORCA PBS job submission for parallel calculation with only OpenMPI. 
+It can detect the user-defined number of MPI rank from **PALn** keyword, where n is positive integer number e.g. PAL8, 
+in control line of input file 
+
+<details>
+<summary> Click here to see example of Gaussian input for 4 thread adn 4 GPU request on GPU queue.</summary>
+
+```
+! RHF TightSCF PModel
+!opt PAL8
+
+* xyz 0 1
+ C 0.000000 0.000000 0.000000
+ C 0.000000 0.000000 1.400000
+ C 1.212436 0.000000 2.100000
+ C 2.424871 0.000000 1.400000
+ C 2.424871 0.000000 0.000000
+ C 1.212436 0.000000 -0.700000
+ H -0.943102 0.000000 1.944500
+ H 1.212436 0.000000 3.189000
+ H 3.367973 0.000000 1.944500
+ H 3.367973 0.000000 -0.544500
+ H 1.212436 0.000000 -1.789000
+ H -0.943102 0.000000 -0.544500
+*
+```
+
+</details>
 
 * ORCA official website: https://orcaforum.cec.mpg.de/
 
