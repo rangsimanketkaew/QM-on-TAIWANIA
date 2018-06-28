@@ -334,22 +334,35 @@ in control line of input file. Following is example of single-point energy calcu
 
 ### How to download and activate script
 
-1. Open Github of code script.
-2. Click at "Raw" button
-3. Copy URL address
+1. Go to Github page of script, for example [subg16](subg16).
+2. Click at "Raw".
+3. Copy URL address.
 4. Open your Linux terminal then use the following command for downloading the script.
+
 ```
-wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/name.of.script
+wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/subg16
 ```
+
 5. Activate script using the following command
+
 ```
-chmod +x name.of.script
+chmod +x subg16
 ```
+
 Optional: you can make the alias of script by appending the following command to your `.bashrc` file. <br />
 Suppose that script is at `$HOME` directory.
+
 ```
-alias subnwchem="$HOME/subnwchem"
+alias subg16="$HOME/subg16"
 ```
+
+Then activate `bashrc` using following command
+
+```
+source $HOME/.bashrc
+```
+
+Now you should call `subg16` anywhere.
 
 ---
 
