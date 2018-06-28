@@ -4,13 +4,13 @@ Interactive PBS Professional job submission for quantum chemistry calculation on
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
 <p/>
 
-Taiwania official website: [https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778](https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778)
+Taiwania official website: https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778
 
 ### Gaussian 16
 * [subg16](subg16) 
 
 * Usage: `subg16 input [output]` <br />
-where input is your g16 input file with or without .com extension. For instance,  <br />
+where **input** is your g16 input file with or without .com extension. For instance,  <br />
 `subg16 water_hf` <br />
 `subg16 water_hf water_hf_4cores.out`
 
@@ -76,7 +76,7 @@ Title Card Required
   
 * For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.
 
-* Gaussian official website: [http://gaussian.com/](http://gaussian.com/)
+* Gaussian official website: http://gaussian.com/
 
 ---
 
@@ -85,7 +85,7 @@ Title Card Required
 * [subg09](subg09) 
 
 * Usage: `subg09 input [output]` <br />
-where *input* is your g09 input file with or without .com extension. For instance,  <br />
+where **input** is your g09 input file with or without .com extension. For instance,  <br />
 `subg09 water_hf` <br />
 `subg09 water_hf water_hf_4cores.`
 
@@ -121,7 +121,7 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
 
 * This script supports the Q-Chem PBS job submission only with OpenMP method. If you want to use MPI instead, talk to TAIWANIA staff.
 
-* Q-Chem official website: [http://www.q-chem.com/](http://www.q-chem.com/)
+* Q-Chem official website: http://www.q-chem.com/
 
 ---
 
@@ -131,7 +131,7 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
 * Usage: `subnwchem [gpu||casper||mpipr] [help]` <br />
 
 * Eample: subnwchem gpu                submit NWChem using CUDA  <br />
-           subnwchem gpu casper      submit NWChem using CUDA and Casper
+          subnwchem gpu casper         submit NWChem using CUDA and Casper
 
 * Capability
   - [ ] OpenMP
@@ -141,7 +141,7 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
 
 * It can be used to submit NWChem job with and without using ARMCI methods, Casper and MPI-PR, and with and without GPU/CUDA. Note that GPU/MPI-PR is not available.
 
-* COMMANDS
+* Commands
 
 <center>
   
@@ -154,7 +154,7 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
   
 </center>
 
-* LIMITATION
+* Limitations
 
 <center>
 
@@ -167,8 +167,8 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
 
 </center>
 
-* NWChem official website:  [http://www.nwchem-sw.org](http://www.nwchem-sw.org)  <br />
-* NWChem official manual: [https://github.com/nwchemgit/nwchem/wiki](https://github.com/nwchemgit/nwchem/wiki)
+* NWChem official website: http://www.nwchem-sw.org  <br />
+* NWChem official manual: https://github.com/nwchemgit/nwchem/wiki
 
 ---
 
@@ -218,5 +218,6 @@ alias subnwchem="$HOME/subnwchem"
 ---
 
 ### CONTACT
-Rangsiman Ketkaew  E-MAIL: rangsiman1993@gmail.com
+Rangsiman Ketkaew  <br />
+E-mail: rangsiman1993@gmail.com
 
