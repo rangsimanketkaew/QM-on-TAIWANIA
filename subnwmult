@@ -98,6 +98,8 @@ echo -n "| If job info is correct, enter to continue: "
 set CONFIRM = "$<"
 if ("null$CONFIRM" != "null") exit 1
 
+set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
+
 #---Start loop
 echo "|"
 @ i = 1
@@ -117,7 +119,7 @@ cat <<EOF > $PBS_SCRIPT
 #PBS -l walltime=$JOBTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
-#PBS -P \$PROJ_ID
+#PBS -P $PROJ_ID
 
 module load intel/2018_u1 cuda/8.0.61 gcc/6.3.0
 
