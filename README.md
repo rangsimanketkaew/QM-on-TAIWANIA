@@ -194,8 +194,20 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
 ---
 
 ### ORCA 
+* [suborca](suborca)
 
-**Sorry: I am still writing the code script for ORCA.**
+* Usage: `suborca input [output]` <br />
+where **input** and **output** are ORCA input and output files with or without .in extension.
+
+* Capability
+  - [ ] OpenMP
+  - [x] OpenMPI
+  - [ ] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
+
+* This script supports the ORCA PBS job submission only with OpenMPI.
+
+* ORCA official website: https://orcaforum.cec.mpg.de/
 
 ---
 
