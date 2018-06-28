@@ -22,10 +22,8 @@ echo "   ORCA Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
 echo "   ---------------------------------------------------------------\n"
 echo "   Usage: suborca input [output]\n"
 echo "   where input is ORCA input with or without .inp extension.\n"
-echo "   suborca reconizes the number of OpenMP threads from the value of 'PAL' e.g. PAL4"
-echo "   Parallelizability of ORCA that run in parallel with shared-memory (OpenMP)"
-echo "   is better than that of non-shared memory (MPI).\n"
-echo "   This script supports the ORCA PBS job submission only with OpenMP method.\n"
+echo "   suborca reconizes the number of MPI ranks from the value of 'PAL' e.g. PAL4"
+echo "   and supports the ORCA PBS job submission with only OpenMPI.\n"
 
 exit 0
 
