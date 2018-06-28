@@ -4,7 +4,7 @@
 # MPI parallel on Taiwania cluster, NCHC, Taiwan.
 #
 # Capabilities:
-#  [/] support serial, MPI, & OpenMP parallel methods
+#  [/] support serial and parallel using MPI method
 #  [/] submit job on GPU/CUDA request
 #  [/] automatically determine optimal PBS job queue
 #  [/] able to use ARMCI methods: Casper and MPI-PR
