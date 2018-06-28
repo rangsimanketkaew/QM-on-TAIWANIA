@@ -138,6 +138,8 @@ cat <<EOF > $PBS_SCRIPT
 #PBS -N $JOBNAME
 #PBS -P $PROJ_ID
 
+#### Created by suborca ####
+
 module load gcc/6.3.0
 
 cd \$PBS_O_WORKDIR
@@ -153,6 +155,8 @@ cd \$ORCA_SCRATCH_DIR
 ln -s \$PBS_O_WORKDIR/$INPUTFILE \$ORCA_SCRATCH_DIR/$OUTPUTFILE
 
 $ORCA_TOP/orca $INPUTFILE > \$PBS_O_WORKDIR/$OUTPUTFILE
+
+echo " ------ Done ------ "
 
 EOF
 
