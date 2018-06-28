@@ -86,8 +86,8 @@ Title Card Required
 
 * Usage: `subg09 input [output]` <br />
 where input is your g09 input file with or without .com extension. For instance,  <br />
-`subg16 water_hf` <br />
-`subg16 water_hf water_hf_4cores.`
+`subg09 water_hf` <br />
+`subg09 water_hf water_hf_4cores.`
 
 * If no output specified, basename of input will be used to name output file automatically.
 
