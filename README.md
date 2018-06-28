@@ -1,5 +1,5 @@
 # PBS-submission
-Automated interactive PBS Professional job submission for TAIWANIA (PETA) cluster, NCHC, Taiwan. Scripts were written and tested during in state open beta testing. Source code customization is required for use by other job scheduler and other cluster.
+Quantum chemistry interactive PBS Professional job submission on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. All scripts were written in tcsh and tested during in state open beta testing. Source code customization is required for use by other job scheduler and other cluster.
 <p align="center">
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
 <p/>
