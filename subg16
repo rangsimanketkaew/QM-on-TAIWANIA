@@ -21,7 +21,7 @@ if ( $#argv == 0) then
   echo "   Usage: subg16 input [output]\n"
   echo "   where input is your g16 input file with or without .com extension."
   echo "   For instance, subg16 water_hf"
-  echo "                 subg16 water_hf water_hf_4cores.\n"
+  echo "                 subg16 water_hf water_hf_4cores.out\n"
   echo "   If no output specified, basename of input will be used to name output file automatically.\n"
   echo "   This G16 runtime supports only OpenMP (shared-memory) parallel method."
   echo "   This program recognizes the OMP threads from the value of %nproc line in input."
