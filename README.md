@@ -9,10 +9,10 @@ Taiwania official website: [https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778]
 ### Gaussian 16
 * [subg16](subg16) 
 
-* Usage: `subg16 inputfile` <br />
+* Usage: `subg16 input [output]` <br />
 where input is your g16 input file with or without .com extension. For instance,  <br />
 `subg16 water_hf` <br />
-`subg16 water_hf water_hf_4cores.`
+`subg16 water_hf water_hf_4cores.out`
 
 * If no output specified, basename of input will be used to name output file automatically.
 
@@ -27,12 +27,35 @@ where input is your g16 input file with or without .com extension. For instance,
   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
 
 <details>
-<summary> Click here to see example of Gaussian input for 4 thread request.</summary>
+<summary> Click here to see example of Gaussian input for 4 thread request on CPU queue.</summary>
   
 ```
 %chk=vomilenine-freq-g16-4.chk
 %mem=8GB
-%nprocshared=4          <<----  This value is assigned as OMP_NUM_THREADS value.
+%nprocshared=4          !! <<----  This value is assigned as OMP_NUM_THREADS value.
+#p freq B3LYP/6-31G(d)
+
+Title Card Required
+
+0 1
+ C                  2.77247700   -1.55726100   -0.24944000
+ C                  2.57516800   -0.21391100    0.22236700
+ C                  3.66258100    0.58993400    0.49571100
+ C                  4.95487500    0.05924200    0.30006200
+...
+```
+
+</details>
+<br />
+
+<details>
+<summary> Click here to see example of Gaussian input for 4 thread adn 4 GPU request on GPU queue.</summary>
+  
+```
+%chk=vomilenine-freq-g16-4cpu-4gpu.chk
+%mem=8GB
+%cpu=0-7
+%gpucpu=0-3=0-3             !! <<---- 4 of 8 CPUs are used to control 4 GPU.
 #p freq B3LYP/6-31G(d)
 
 Title Card Required
@@ -54,6 +77,31 @@ Title Card Required
 * For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.
 
 * Gaussian official website: [http://gaussian.com/](http://gaussian.com/)
+
+---
+
+### Gaussian 09
+
+* [subg16](subg09) 
+
+* Usage: `subg09 input [output]` <br />
+where input is your g09 input file with or without .com extension. For instance,  <br />
+`subg16 water_hf` <br />
+`subg16 water_hf water_hf_4cores.`
+
+* If no output specified, basename of input will be used to name output file automatically.
+
+* Capability
+  - [x] OpenMP
+  - [ ] OpenMPI
+  - [ ] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
+
+* This G09 runtime supports only OpenMP (shared-memory) parallel method.  <br />
+  This program recognizes the OMP threads from the value of %nproc line in input.  <br />
+  Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
+
+* Like G16, G09 will be submitted with serial queue if value of %nproc is set to 1.
 
 ---
 
