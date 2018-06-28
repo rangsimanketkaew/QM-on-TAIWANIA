@@ -55,7 +55,7 @@ Title Card Required
 %chk=vomilenine-freq-g16-4cpu-4gpu.chk
 %mem=8GB
 %cpu=0-7
-%gpucpu=0-3=0-3             !! <<---- 4 of 8 CPUs are used to control 4 GPU.
+%gpucpu=0-3=0-3             !! <<---- 4 of 8 CPUs, 0th 1st 2nd 3rd, are used to control 4 GPU.
 #p freq B3LYP/6-31G(d)
 
 Title Card Required
@@ -82,7 +82,7 @@ Title Card Required
 
 ### Gaussian 09
 
-* [subg16](subg09) 
+* [subg09](subg09) 
 
 * Usage: `subg09 input [output]` <br />
 where input is your g09 input file with or without .com extension. For instance,  <br />
