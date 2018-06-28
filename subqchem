@@ -132,6 +132,8 @@ else
   exit 0
 endif
 
+set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
+
 submit:
 set PBS_SCRIPT = "$FULLPATH/submit.QC.$INPUTNAME.sh"
 
@@ -142,7 +144,7 @@ cat <<EOF > $PBS_SCRIPT
 #PBS -l walltime=$WALLTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
-#PBS -P \$PROJ_ID
+#PBS -P $PROJ_ID
 
 module load intel/2018_u1
 
