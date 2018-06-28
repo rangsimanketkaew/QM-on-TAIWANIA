@@ -28,7 +28,7 @@ echo "   where thread is number of OpenMP threads"
 echo "         input is Q-Chem input with or without .in extension.\n"
 echo "   Parallelizability of Q-Chem that run in parallel with shared-memory (OpenMP)"
 echo "   is better than that of non-shared memory (MPI).\n"
-echo "   This script supports the Q-Chem PBS job submission only with OpenMP method."
+echo "   This script supports the Q-Chem PBS job submission with only OpenMP."
 echo "   If you want to use MPI instead, talk to TAIWANIA staff.\n"
 
 exit 0
