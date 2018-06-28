@@ -211,7 +211,7 @@ where **input** and **output** are ORCA input and output files with or without .
 
 ---
 
-### How to download and activate
+### How to download and activate script
 
 1. Open Github of code script.
 2. Click at "Raw" button
