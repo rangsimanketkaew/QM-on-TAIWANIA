@@ -109,6 +109,8 @@ set THREADS = "$CPUS"
 
 set JOBNAME = "$INPUTNAME"
 
+set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
+
 #####################################################
 # Show all info before submitting job
 #####################################################
@@ -131,8 +133,6 @@ else
   echo "...Quit..."
   exit 0
 endif
-
-set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
 
 submit:
 set PBS_SCRIPT = "$FULLPATH/submit.QC.$INPUTNAME.sh"
