@@ -129,9 +129,9 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
 * [subnwchem](subnwchem)
 
 * Usage: `subnwchem [gpu||casper||mpipr] [help]` <br />
-
-* Eample: subnwchem gpu                submit NWChem using CUDA  <br />
-          subnwchem gpu casper         submit NWChem using CUDA and Casper
+Explaination of each optional keyword are below.<
+* Eample: `subnwchem gpu` ` ` ` ` submit NWChem using CUDA  <br />
+  ` ` ` ` ` ` `subnwchem gpu casper` submit NWChem using CUDA and Casper
 
 * Capability
   - [ ] OpenMP
