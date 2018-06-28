@@ -44,6 +44,8 @@ if (! -f $INPUTFILE) then
   exit 1
 endif
 
+set JOBNAME = "$INPUTNAME"
+
 if ("null$2" == "null") then
   set OUTPUTFILE = "$FULLPATH/$INPUTNAME".out 
 else
@@ -74,6 +76,8 @@ endif
 
 set THREADS = "$NPROCS"
 
+set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
+
 #####################################################
 # Show all info before submitting job
 #####################################################
@@ -86,7 +90,8 @@ echo "    CPU cores  :  $NPROCS"
 echo "  OMP Threads  :  $THREADS"
 echo "     Job Name  :  $INPUTNAME"
 echo "    Job Queue  :  $JOBQUEUE"
-echo "    Wall-Time  :  $WALLTIME\n"
+echo "    Wall-Time  :  $WALLTIME"
+echo "   Project ID  :  $PROJ_ID\n"
 
 echo -n "Submit your job now ? [yes]: "
 set SUBMIT = "$<"
@@ -107,7 +112,7 @@ cat <<EOF > $PBS_SCRIPT
 #PBS -l walltime=$WALLTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
-#PBS -P \$PROJ_ID
+#PBS -P $PROJ_ID
 
 module purge
 module load gaussian/g16
