@@ -1,0 +1,167 @@
+#!/bin/csh
+
+# ORCA Interactive PBS Pro Job Submission
+# on Taiwania cluster, NCHC, Taiwan
+#
+# Support only OpenMP parallel method
+#
+# Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
+##############################################################
+set ORCA_TOP = "/pkg/orca/orca.4.0.1.2"
+set ORCA_VER = "4.0.1.2"
+##############################################################
+
+set NODES = 1
+
+onintr inter
+
+if ($#argv == 0) then
+
+echo ""
+echo "   ORCA Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
+echo "   ---------------------------------------------------------------\n"
+echo "   Usage: suborca input [output]\n"
+echo "   where input is ORCA input with or without .inp extension.\n"
+echo "   suborca reconizes the number of OpenMP threads from the value of 'PAL' e.g. PAL4"
+echo "   Parallelizability of ORCA that run in parallel with shared-memory (OpenMP)"
+echo "   is better than that of non-shared memory (MPI).\n"
+echo "   This script supports the ORCA PBS job submission only with OpenMP method.\n"
+
+exit 0
+
+else if ($#argv == 1 || $#argv == 2) then
+  set INPUTFILE = "$1"
+
+else if ($#argv > 2) then
+
+  echo "Error: Too many arguments"
+  exit 1
+
+endif
+
+if (! -e $ORCA_TOP) then
+  echo 'Error: Unable to locate ORCA top directory, please set $ORCA_TOP environment variable'
+  exit 1
+endif
+
+if ("null$INPUTFILE" == "null") then
+  echo "Error: Please enter input file."
+  exit 1
+endif
+
+set INPUTNAME = `basename $INPUTFILE .inp`
+set REALNAME = "$INPUTNAME".inp
+set REALPATH = `realpath $REALNAME`
+set FULLPATH = `dirname $REALPATH`
+set INPUTFILE = "$FULLPATH/$INPUTNAME".inp
+if (! -f $INPUTFILE) then
+  echo "Error: Unable to locate $INPUTFILE"
+  exit 1
+endif
+
+if ("null$2" == "null") then
+  set OUTPUTFILE = "$FULLPATH/$INPUTNAME".out
+else
+  set OUTPUTNAME = `basename $2 .out`
+  set OUTPUTFILE = "$FULLPATH/$OUTPUTNAME".out
+endif
+
+set CPUS = `grep -io 'pal[1-9]*' $INPUTFILE | sed -e 's/pal//I'`
+
+if ( $CPUS !~ ^[0-9]+$ ) then
+  echo "Error: The number of OMP Threads must be positive integer. Max value is 40 threads."
+  exit 1
+endif
+
+if ($CPUS > 40 ) then
+  echo "Warning: OMP Threads is over 40. So it was set to 40."
+  set CPUS = 40
+else if ($CPUS < 1 ) then
+  echo "Error: The number of OMP Threads must be positive integer. Max value is 40 threads."
+  exit 1
+endif
+
+if ("null$CPUS" == "null") then
+  set CPUS = 40
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+else if ($CPUS == 1) then
+  set CPUS = 1
+  set JOBQUEUE = serial
+  set WALLTIME = "96:00:00"
+else if ($CPUS >= 2 && $CPUS <= 40) then
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+else
+  echo "Error: Available job queues for ORCA are 'serial cf40'."
+  exit 1
+endif
+
+set THREADS = "$CPUS"
+
+set JOBNAME = "$INPUTNAME"
+
+set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
+
+#####################################################
+# Show all info before submitting job
+#####################################################
+
+echo "\n     ----- Job Info -----\n"
+echo "   Input file  :  $INPUTFILE"
+echo "  Output file  :  $OUTPUTFILE"
+echo " Compute node  :  $NODES"
+echo "    CPU cores  :  $CPUS"
+echo "  OMP Threads  :  $THREADS"
+echo "     Job Name  :  $JOBNAME"
+echo "    Job Queue  :  $JOBQUEUE"   
+echo "    Wall-Time  :  $WALLTIME\n"
+
+echo -n "Submit your job now ? [yes]: "
+set SUBMIT = "$<"
+if ("null$SUBMIT" == "null" || "null$SUBMIT" == "nully" || "null$SUBMIT" == "nullyes") then
+  goto submit
+else
+  echo "...Quit..."
+  exit 0
+endif
+
+submit:
+set PBS_SCRIPT = "$FULLPATH/submit.QC.$INPUTNAME.sh"
+
+cat <<EOF > $PBS_SCRIPT
+#!/bin/bash 
+
+#PBS -l select=${NODES}:ncpus=${CPUS}:ompthreads=${THREADS}
+#PBS -l walltime=$WALLTIME
+#PBS -q $JOBQUEUE
+#PBS -N $JOBNAME
+#PBS -P $PROJ_ID
+
+module load gcc/6.3.0
+
+cd \$PBS_O_WORKDIR
+
+export ORCA_TOP=${ORCA_TOP}
+export LD_LIBRARY_PATH="/usr/lib64:\$ORCA_TOP/../lib:\$ORCA_TOP/../openmpi-3.1.0-gcc6/lib:\$ORCA_TOP:\$LD_LIBRARY_PATH"
+export ORCA_SCRATCH_DIR=/work1/$USER/scratch/orca/pbs.\${PBS_JOBID/\.srvc1/}
+export PATH="\$ORCA_TOP/../openmpi-3.1.0-gcc6/bin:\$ORCA_TOP:\$PATH"
+if [ ! -d \$ORCA_SCRATCH_DIR ] then mkdir -p \$ORCA_SCRATCH_DIR; fi
+
+cd \$ORCA_SCRATCH_DIR
+
+ln -s \$PBS_O_WORKDIR/$INPUTFILE \$ORCA_SCRATCH_DIR/$OUTPUTFILE
+
+$ORCA_TOP/orca $INPUTFILE > \$PBS_O_WORKDIR/$OUTPUTFILE
+
+EOF
+
+qsub $PBS_SCRIPT
+echo "Your job has been submitted."
+exit 0
+
+inter: 
+  echo "\nError: you pressed Ctrl+C ...Quit...\n"
+  exit 1
+
+
