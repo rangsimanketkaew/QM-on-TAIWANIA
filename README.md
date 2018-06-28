@@ -189,7 +189,7 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
   2. Existing files whose basename is similar to name of submitting input will be replaced.
   3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now.
 
-* To implement ARMCI and GPU modules in subnwmult, consult [subnwmult](subnwmult) script.
+* To implement ARMCI and GPU modules in subnwmult, consult [subnwchem](subnwchem) script.
 
 ---
 
