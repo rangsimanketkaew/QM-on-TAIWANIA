@@ -34,7 +34,7 @@ echo "   If you want to use MPI instead, talk to TAIWANIA staff.\n"
 exit 0
 
 else if ($#argv == 1) then
-  echo "Erro: Please enter number of OMP Threads."
+  echo "Error: Please enter number of OMP Threads."
   exit 1
 
 else
