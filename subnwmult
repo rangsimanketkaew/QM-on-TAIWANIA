@@ -27,6 +27,8 @@ set NWCHEM_TOP = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixmrcc"
 set NWCHEM_TARGET = LINUX64
 set NWCHEM_EXE = "$NWCHEM_TOP/bin/$NWCHEM_TARGET/nwchem"
 
+set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
+
 set INPUTSUB = ( $argv[*] )
 set NUM = "$#INPUTSUB"
 if ($NUM >= 10) then
@@ -97,8 +99,6 @@ echo "| "
 echo -n "| If job info is correct, enter to continue: "
 set CONFIRM = "$<"
 if ("null$CONFIRM" != "null") exit 1
-
-set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
 
 #---Start loop
 echo "|"
