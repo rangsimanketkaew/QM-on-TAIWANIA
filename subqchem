@@ -23,7 +23,7 @@ if ($#argv == 0) then
 echo ""
 echo "   Q-Chem Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
 echo "   ---------------------------------------------------------------\n"
-echo "   Usage: subqchem thread input\n"
+echo "   Usage: subqchem thread input [output]\n"
 echo "   where thread is number of OpenMP threads"
 echo "         input is Q-Chem input with or without .in extension.\n"
 echo "   Parallelizability of Q-Chem that run in parallel with shared-memory (OpenMP)"
