@@ -206,6 +206,10 @@ where **input** and **output** are ORCA input and output files with or without .
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
+* `suborca` will generate a lot of tempolrary and scratch files in working directory, where input file is.
+So `suborca` will make the symbolic link of input file to scratch folder of server in order to avoid creating those
+scratch files in working directory. So ORCA will read linking standard input file and print output file to working directory.
+
 * This script supports the ORCA PBS job submission only with OpenMPI.
 
 * ORCA official website: https://orcaforum.cec.mpg.de/
