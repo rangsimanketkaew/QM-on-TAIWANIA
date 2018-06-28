@@ -299,15 +299,15 @@ So `suborca` will make the symbolic link of input file to scratch folder of serv
 scratch files in working directory. So ORCA will read linking standard input file and print output file to working directory.
 
 * `suborca` supports the ORCA PBS job submission for parallel calculation with only OpenMPI. 
-It can detect the user-defined number of MPI rank from **PALn** keyword, where n is positive integer number e.g. PAL8, 
-in control line of input file 
+It can detect the user-defined number of MPI rank from **PALn** keyword, where n is positive integer number, 
+in control line of input file. Following is example of single-point energy calculation run in parallel with 8 MPI ranks.
 
 <details>
-<summary> Click here to see example of Gaussian input for 4 thread adn 4 GPU request on GPU queue.</summary>
+<summary> Click here to see example of ORCA input for 4 MPI ranks.</summary>
 
 ```
 ! RHF TightSCF PModel
-!opt PAL8
+! opt PAL8
 
 * xyz 0 1
  C 0.000000 0.000000 0.000000
