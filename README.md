@@ -117,7 +117,7 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
   
-* Details: Parallelizability of Q-Chem that run in parallel with shared-memory (MPI) is better than that of non-shared memory (OpenMP).
+* Details: Parallelizability of Q-Chem that run in parallel with shared-memory (OpenMP) is better than that of non-shared memory (MPI).
 
 * This script supports the Q-Chem PBS job submission only with OpenMP method. If you want to use MPI instead, talk to TAIWANIA staff.
 
@@ -139,18 +139,19 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
   - [x] MPICH or MVAPICH
   - [x] GP-GPU (CUDA)
 
-* It can be used to submit NWChem job with and without using ARMCI methods, Casper and MPI-PR, and with and without GPU/CUDA. Note that GPU/MPI-PR is not available.
+* `subnwchem` supports ARMCI methods: Casper and MPI-PR; and GPU/CUDA accelerator.<br />
+  Note that GPU/MPI-PR is not available.
 
 * Commands
 
 <center>
   
 | Command | Task |
-| :---: | --- |
-| gpu      | Requests GPU accelerator | 
-| casper   | Requests Casper method (against MPI-PR) |
-| mpipr    | Requests MPI-PR method (against Casper) | 
-| help     | Open this help |
+| :---:   | --- |
+| gpu     | Requests GPU accelerator | 
+| casper  | Requests Casper method (against MPI-PR) |
+| mpipr   | Requests MPI-PR method (against Casper) | 
+| help    | Open this help |
   
 </center>
 
@@ -158,12 +159,12 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
 
 <center>
 
-| Quantity | Maximum value |
-| --- | --- |
+| Quantity     | Maximum value |
+| ---          | --- |
 | Compute node | 600 |
-| CPU cores | 40 (per node) |
-| MPI process | 40 (per node) |
-| Threads | 40 (per node & per MPI rank) |
+| CPU cores    | 40 (per node) |
+| MPI process  | 40 (per node) |
+| Threads      | 40 (per node & per MPI rank) |
 
 </center>
 
@@ -183,10 +184,12 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
   - [x] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
-* READ BEFORE USE: 
+* READ BEFORE USE:
   1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
   2. Existing files whose basename is similar to name of submitting input will be replaced.
   3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now.
+
+* To implement ARMCI and GPU modules in subnwmult, consult [subnwmult](subnwmult) script.
 
 ---
 
