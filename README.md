@@ -207,6 +207,33 @@ where **thread** is number of OpenMP threads and **input** is Q-Chem input file 
   
 * Details: Parallelizability of Q-Chem that run in parallel with shared-memory (OpenMP) is better than that of non-shared memory (MPI).
 
+<details>
+<summary> Click here to see example of Q-Chem input.</summary>
+
+```
+$molecule
+0 1
+O
+H1 O OH
+H2 O OH H1 HOH
+
+OH  = 0.947
+HOH = 105.5
+$end
+
+
+$rem
+jobtype = freq
+exchange = pbe
+correlation = pbe
+basis = 6-31+g*
+ideriv = 2
+$end
+```
+
+</details>
+<br />
+
 * This script supports the Q-Chem PBS job submission with only OpenMP. If you want to use MPI instead, talk to TAIWANIA staff.
 
 * Q-Chem official website: http://www.q-chem.com/
