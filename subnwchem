@@ -7,9 +7,9 @@
 #  [/] support serial and parallel using MPI method
 #  [/] submit job on GPU/CUDA request
 #  [/] automatically determine optimal PBS job queue
-#  [/] able to use ARMCI methods: Casper and MPI-PR
+#  [/] use ARMCI methods: Casper and MPI-PR
 #
-# Updated 2018.06.20  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# Updated 2018.06.29  Rangsiman Ketkaew  rangsiman1993@gmail.com
 
 ###############################################################################
 set NWCHEM_VER            = "6.8.1"
@@ -36,20 +36,29 @@ set MPIPR_GPU    = 0
 set CLEAN_CASPER = 0
 set CLEAN_MPIPR  = 0
 
-echo ""
-echo "       #########################################"
-echo "      ##  NWChem Interactive PBS submission  ##"
-echo "     ##       on Taiwania Cluster           ##"
-echo "    #########################################"
-echo ""
-
 #############################################
 # Check each argument.
 #############################################
 
 set ARGV_ORDER = "$#argv"
-if ($ARGV_ORDER != 0) then
-  @ i = 1
+if ($ARGV_ORDER == 0) then
+  goto help
+endif
+
+echo ""
+echo "       #########################################"
+echo "      ##  NWChem Interactive PBS submission  ##"
+echo "     ##         on Taiwania Cluster         ##"
+echo "    #########################################"
+echo ""
+
+if ($ARGV_ORDER == 1) then
+  set INPUT_ARG1 = "$1"
+endif
+
+if ($ARGV_ORDER >1) then
+  set INPUT_ARG1 = "$1"
+  @ i = 2
   while ($i <= $ARGV_ORDER)
     set ARGV = $argv[$i]
 #
@@ -65,7 +74,11 @@ if ($ARGV_ORDER != 0) then
       set ARMCI = 1
       set MPIPR = 1
     else 
-      echo "Error: invalid argument $ARGV"
+      echo "Error: Invalid command $ARGV"
+      echo -n "####### Enter to start help page. #######" 
+      set HELP = "$<"
+      clear
+      goto help
       exit 1
     endif
     @ i ++
@@ -175,22 +188,25 @@ set noglob
 set FULLPATH = `pwd | sed -e "s,$PWDHOME,~,"`
 unset noglob
 
-search_input:
-set DEFAULTINPUT = "$FULLPATH/nwchem.nw"
-echo -n "Enter input file [$DEFAULTINPUT]: "
-set JOBINPUT = "$<"
-if ("null$JOBINPUT" == "null") then
-  set JOBINPUT = "$DEFAULTINPUT"
-#else
-#  set JOBINPUT_TYPE = `printf $JOBINPUT | tail -c 3`
-#  if ("null$JOBINPUT_TYPE" != "null.nw") then
-#    echo "Error: NWChem input file must be *.nw"
-#    goto search_input
-#  else
-#    set INPUTFILE = "$JOBINPUT"
-#  endif
-endif
+#search_input:
+#set DEFAULTINPUT = "$FULLPATH/nwchem.nw"
+#echo -n "Enter input file [$DEFAULTINPUT]: "
+#set JOBINPUT = "$<"
+#if ("null$JOBINPUT" == "null") then
+#  set JOBINPUT = "$DEFAULTINPUT"
+#---------------------------------------------------
+##else
+##  set JOBINPUT_TYPE = `printf $JOBINPUT | tail -c 3`
+##  if ("null$JOBINPUT_TYPE" != "null.nw") then
+##    echo "Error: NWChem input file must be *.nw"
+##    goto search_input
+##  else
+##    set INPUTFILE = "$JOBINPUT"
+##  endif
+#endif
 #
+
+set JOBINPUT = "$INPUT_ARG1"
 set INPUTFILE = "$FULLPATH/$JOBINPUT"
 if (-f $INPUTFILE) then
    set JOBINPUT = "$INPUTFILE"
@@ -199,8 +215,8 @@ if (-f $INPUTFILE) then
 endif
 #
 if (! -f $JOBINPUT) then
-  echo "Error: failed to locate input file "$JOBINPUT""
-  goto search_input
+  echo "Error: Failed to locate input file "$JOBINPUT""
+  exit 1
 endif
 
 #############################################
@@ -210,18 +226,25 @@ endif
 set noglob
 set JOBOUTPUT  = `dirname $JOBINPUT`/`basename $JOBINPUT .nw`.out
 unset noglob
+set DEFAULTOUTPUT = "$JOBOUTPUT"
 
+if (! -e $JOBOUTPUT) then
+  set OUTPUTNAME = `basename $JOBINPUT .nw`.out
+else
 @ i = 1
 while (-e $JOBOUTPUT)
-  echo " $JOBOUTPUT already exists !"
+  echo "@  $JOBOUTPUT  already exists."
   set noglob
   set JOBOUTPUT = `dirname $JOBINPUT`/`basename $JOBINPUT .nw`.$i.out
+  set OUTPUTNAME = `basename $JOBINPUT .nw`.$i.out
   unset noglob
   @ i ++
 end
 set DEFAULTOUTPUT = "$JOBOUTPUT"
+endif
+
 #
-echo -n "Enter output file [$DEFAULTOUTPUT]: "
+echo -n "Enter output file [$OUTPUTNAME]: "
 set OUTPUTFILE = "$<"
 if ("null$OUTPUTFILE" != "null") then
   set noglob
@@ -827,27 +850,49 @@ int:
  exit 1
 
 help:
- echo ""
- echo " NAME                    subnwchem\n"
- echo " SYNOPSIS                subnwchem [gpu||casper||mpipr] [help]\n"
- echo " EXAMPLE                 subnwchem gpu             submit NWChem using CUDA"
- echo "                         subnwchem gpu casper      submit NWChem using CUDA and Casper\n"
- echo " DESCRIPTION             Interactive PBS Professional Job Submission for NWChem $NWCHEM_VER."
- echo "                         It can be used to submit NWChem job with and without using ARMCI"
- echo "                         methods, Casper and MPI-PR, and with and without GPU/CUDA."
- echo "                         Note that GPU/MPI-PR is not available.\n"   
- echo " COMMANDS"
- echo "   gpu                   Requests GPU accelerator."
- echo "   casper                Requests Casper method (against MPI-PR)."
- echo "   mpipr                 Requests MPI-PR method (against Casper)."
- echo "   help                  Open this help.\n"
- echo " LIMITATION"
- echo "   Maximum node          600"
- echo "   Maximum CPU cores     40 (per node)"
- echo "   Maximum MPI process   40 (per node)"
- echo "   Maximum Threads       40 (per node & per MPI rank)\n"
- echo " CONTACT                 Rangsiman Ketkaew  rangsiman1993@gmail.com\n"
- echo " MORE DETAILS            NWChem Official Website  http://www.nwchem-sw.org"
- echo "                         NWChem Official manual   https://github.com/nwchemgit/nwchem/wiki\n"
- exit 0
+clear
+cat << EOF | less
+
+ NAME            subnwchem  -  Interactive PBS Professional Job Submission for NWChem $NWCHEM_VER
+
+ SYNOPSIS        subnwchem input [ gpu | casper | mpipr ] [ help ]
+
+ EXAMPLE         subnwchem input               Submit job on CPU node.
+
+                 subnwchem input mpipr         Submit job on CPU node using MPI-PR. Recommended for medium & large jobs.
+
+                 subnwchem input casper        Submit job on CPU node using Casper. Use Casper when MPI-PR fails.
+
+                 subnwchem input gpu           Submit job on GPU node using CUDA.
+
+                 subnwchem input gpu casper    Submit job on GPU node using CUDA and Casper.
+
+ DESCRIPTION     subnwchem can exploit ARMCI method: Casper and MPI-PR, and GPU/CUDA accelerator on GPU compute node.
+                 GPU/CUDA supports only the tensor contraction engine (TCE) module for coupled-cluster (CC) calculation. 
+                 Note that CUDA/MPI-PR is not now supported. Please do avoid requesting CUDA and MPI-PR simultaneously.
+                 Also note that command line optional argument is case sensitive. Lowercase is only supported.
+
+ COMMANDS
+                 input                 -   NWChem input file with or without .nw extension.
+                 gpu                   -   Requests GPU accelerator for CUDA utilization.
+                 casper                -   Requests Casper method (against MPI-PR).
+                 mpipr                 -   Requests MPI-PR method (against Casper).
+                 help                  -   Open this help.
+
+ LIMITATION
+                 Maximum compute node  -   600
+                 Maximum CPU cores     -   40   (per node)
+                 Maximum MPI process   -   40   (per node)
+                 Maximum Threads       -   40   (per node & per MPI rank)
+
+ MORE DETAILS    NWChem official website: http://www.nwchem-sw.org 
+                 NWChem official manual: https://github.com/nwchemgit/nwchem/wiki
+
+ AUTHOR          Rangsiman Ketkaew  rangsiman1993@gmail.com
+                 https://github.com/rangsimanketkaew/PBS-submission
+
+                 Last updated: June 29, 2018
+
+EOF
+
 
