@@ -243,11 +243,14 @@ $end
 ### NWChem (single job submission)
 * [subnwchem](subnwchem)
 
-* Usage: `subnwchem [gpu||casper||mpipr] [help]` <br />
+* Usage: `subnwchem input [ gpu | casper | mpipr ] [ help ]` <br />
 Explaination of each optional keyword are below. <br /> 
-Example of using subnwchem are <br />
-`subnwchem gpu` submit NWChem using CUDA  <br />
-`subnwchem gpu casper` submit NWChem using CUDA and Casper
+Example of using subnwchem are following <br />
+`subnwchem input`               Submit job on CPU node.<br />
+`subnwchem input mpipr`         Submit job on CPU node using MPI-PR. Recommended for medium & large jobs.<br />
+`subnwchem input casper`        Submit job on CPU node using Casper. Use Casper when MPI-PR fails.<br />
+`subnwchem input gpu`           Submit job on GPU node using CUDA.<br />
+`subnwchem input gpu casper`    Submit job on GPU node using CUDA and Casper.<br />
 
 * Capability
   - [ ] OpenMP
@@ -255,8 +258,10 @@ Example of using subnwchem are <br />
   - [x] MPICH or MVAPICH
   - [x] GP-GPU (CUDA)
 
-* `subnwchem` supports ARMCI methods: Casper and MPI-PR; and GPU/CUDA accelerator.<br />
-  Note that GPU/MPI-PR is not available.
+* `subnwchem` subnwchem can exploit ARMCI method: Casper and MPI-PR, and GPU/CUDA accelerator on GPU compute node. <br /> 
+GPU/CUDA supports only the tensor contraction engine (TCE) module for coupled-cluster (CC) calculation. <br /> 
+Note that CUDA/MPI-PR is not now supported. Please do avoid requesting CUDA and MPI-PR simultaneously. <br /> 
+Also note that command line optional argument is case sensitive. Lowercase is only supported.
 
 * Commands
 
@@ -264,6 +269,7 @@ Example of using subnwchem are <br />
   
 | Command | Task |
 | :---:   | --- |
+| input   | MWChem input file with or without .nw extension |
 | gpu     | Requests GPU accelerator | 
 | casper  | Requests Casper method (against MPI-PR) |
 | mpipr   | Requests MPI-PR method (against Casper) | 
