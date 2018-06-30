@@ -126,7 +126,7 @@ g16 < $INPUTFILE > $OUTPUTFILE
 EOF
 
 qsub $PBS_SCRIPT
-echo "Your job has been submitted."
+#echo "Your job has been submitted."
 exit 0
 
 inter: 
