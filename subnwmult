@@ -152,7 +152,4 @@ EOF
 end
 
 echo "| "
-echo "| Your jobs has been submitted."
-echo "| Use 'qstat -u $USER' to tract your jobs."
-echo "| "
 
