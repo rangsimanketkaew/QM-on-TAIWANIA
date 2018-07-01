@@ -43,6 +43,8 @@ set CLEAN_MPIPR  = 0
 set ARGV_ORDER = "$#argv"
 if ($ARGV_ORDER == 0) then
   goto help
+else if ("null$1" == "null-h" || "null$1" == "null-help" || "null$1" == "nullhelp") then
+  goto help
 endif
 
 echo ""
@@ -63,7 +65,6 @@ if ($ARGV_ORDER >1) then
     set ARGV = $argv[$i]
 #
     if ("null$ARGV" == "nullhelp") then
-      clear
       goto help
     else if ("null$ARGV" == "nullgpu") then
       set USEGPU = 1
