@@ -14,7 +14,7 @@ set NODES = 1
 
 if ( $#argv == 0) then
   echo ""
-  echo "   Gaussian 09 Revision B01 Interactive PBS Job Submission"
+  echo "   Gaussian 09 Revision E01 Interactive PBS Job Submission"
   echo "              on Taiwania cluster, NCHC, Taiwan"
   echo "   --------------------------------------------------------\n"
   echo "   Usage: subg09 input [output]\n"
