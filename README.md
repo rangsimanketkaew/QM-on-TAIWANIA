@@ -275,7 +275,7 @@ Also note that command line optional argument is case sensitive. Lowercase is on
 
 <center>
   
-| Command | Task |
+| Command | Function |
 | :---:   | --- |
 | input   | MWChem input file with or without .nw extension |
 | gpu     | Requests GPU accelerator | 
