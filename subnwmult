@@ -5,18 +5,20 @@
 # 
 # Updated 20180623  Rangsiman Ketkaew  rangsiman1993@gmail.com
 
+if ("null$1" == "null-h" || "null$1" == "null-help") goto help
+
 if ($#argv == 0) then
 
 echo ""
-echo "  Multiple NWChem Interactive PBS Jobs Submission"
-echo "  ==============================================="
+echo "  Multiple NWChem Interactive PBS Jobs Submission on TAIWANIA, NCHC, Taiwan"
+echo "  -------------------------------------------------------------------------"
 echo ""
-echo "  READ BEFORE USE: "
-echo "   1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out"
-echo "   2. Existing files whose basename is similar to name of submitting input will be replaced."
-echo "   3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now."
+echo "  Normal usage: subnwmult 1st_input.nw [ 2nd_input.nw | 3rd_input.nw | ... | 10th_input.nw ] "
 echo ""
-echo "  Normal usage: subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ] "
+echo "  Basename of input file will be used for naming output file, e.g. nwchem.nw => nwchem.out"
+echo "  Existing files whose basename is similar to name of submitting input will be replaced."
+echo ""
+echo "  Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are now supported for subnwmult."
 echo ""
 
 exit 0
@@ -153,3 +155,11 @@ end
 
 echo "| "
 
+help:
+
+echo " Multiple NWChem job submission on TAIWANIA, NCHC, Taiwan."
+echo ""
+echo " Rangsiman Ketkaew, MSc student, Thammasat University, Thailand"
+echo " rangsiman1993@gmail.com"
+echo " https://github.com/rangsimanketkaew/PBS-submission"
+echo ""
