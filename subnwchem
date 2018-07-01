@@ -225,7 +225,7 @@ endif
 #############################################
 
 set noglob
-set JOBOUTPUT  = `dirname $JOBINPUT`/`basename $JOBINPUT .nw`.out
+set JOBOUTPUT  = `basename $JOBINPUT .nw`.out
 unset noglob
 set DEFAULTOUTPUT = "$JOBOUTPUT"
 
@@ -236,7 +236,7 @@ else
 while (-e $JOBOUTPUT)
   echo "@  $JOBOUTPUT  already exists."
   set noglob
-  set JOBOUTPUT = `dirname $JOBINPUT`/`basename $JOBINPUT .nw`.$i.out
+  set JOBOUTPUT = `basename $JOBINPUT .nw`.$i.out
   set OUTPUTNAME = `basename $JOBINPUT .nw`.$i.out
   unset noglob
   @ i ++
@@ -250,15 +250,15 @@ set OUTPUTFILE = "$<"
 if ("null$OUTPUTFILE" != "null") then
   set noglob
   set JOBOUTPUT = "$FULLPATH/$OUTPUTFILE"
-# If user-defined output name is not in .out
-# Set foo to foo.out
+# If user-defined output name is not in .out,
+# set foo to foo.out
   set JOBOUTPUT_TYPE = `printf $JOBOUTPUT | tail -c 4`
   if ("null$JOBOUTPUT_TYPE" != "null.out") then
     set JOBOUTPUT = "$FULLPATH/$OUTPUTFILE".out
   endif
   unset noglob
 else
-  set JOBOUTPUT = "$DEFAULTOUTPUT"
+  set JOBOUTPUT = "$FULLPATH/$DEFAULTOUTPUT"
 endif
 
 #############################################
