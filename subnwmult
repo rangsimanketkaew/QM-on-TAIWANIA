@@ -33,7 +33,7 @@ set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
 
 set INPUTSUB = ( $argv[*] )
 set NUM = "$#INPUTSUB"
-if ($NUM >= 10) then
+if ($NUM > 10) then
   echo "Error: The upper limit of input file is 10."
   exit 1
 endif
