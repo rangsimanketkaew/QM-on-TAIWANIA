@@ -194,7 +194,7 @@ set PBS_SCRIPT = "$FULLPATH/submit.QC.$INPUTNAME.sh"
 cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 
 
-#PBS -l select=$NODES\:ncpus=$CPUS\:ompthreads=$THREADS
+#PBS -l select=${NODES}:ncpus=${CPUS}:ompthreads=${THREADS}
 #PBS -l walltime=$WALLTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
