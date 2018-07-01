@@ -245,12 +245,17 @@ $end
 
 * Usage: `subnwchem input [ gpu | casper | mpipr ] [ help ]` <br />
 Explaination of each optional keyword are below. <br /> 
-Example of using subnwchem are following <br />
-`subnwchem input`               Submit job on CPU node.<br />
-`subnwchem input mpipr`         Submit job on CPU node using MPI-PR. Recommended for medium & large jobs.<br />
-`subnwchem input casper`        Submit job on CPU node using Casper. Use Casper when MPI-PR fails.<br />
-`subnwchem input gpu`           Submit job on GPU node using CUDA.<br />
-`subnwchem input gpu casper`    Submit job on GPU node using CUDA and Casper.<br />
+Example of using subnwchem are following
+  - `subnwchem input`           
+  Submit job on CPU node.
+  - `subnwchem input mpipr`         
+  Submit job on CPU node using MPI-PR. Recommended for medium & large jobs.
+  - `subnwchem input casper`        
+  Submit job on CPU node using Casper. Use Casper when MPI-PR fails.
+  - `subnwchem input gpu`           
+  Submit job on GPU node using CUDA.
+  - `subnwchem input gpu casper`    
+  Submit job on GPU node using CUDA and Casper.
 
 * Capability
   - [ ] OpenMP
@@ -273,7 +278,7 @@ Also note that command line optional argument is case sensitive. Lowercase is on
 | gpu     | Requests GPU accelerator | 
 | casper  | Requests Casper method (against MPI-PR) |
 | mpipr   | Requests MPI-PR method (against Casper) | 
-| help    | Open this help |
+| help   <br/> -h <br/> -help | Open this help |
   
 </center>
 
