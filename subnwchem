@@ -724,12 +724,6 @@ endif
   echo " Project ID             = $PROJ_ID"
   echo " ==========================================================================\n"
 
-  set SETNODE    = "select=$JOBNODE"
-  set SETNCPUS   = ":ncpus=$JOBCPU"
-  set SETMPIPROCS = ":mpiprocs=$JOBMPI"
-  set SETTHREADS = ":ompthreads=$JOBOMP"
-# SETGPU env was already set above.
-
 echo -n "Submit your job now ? [yes]: "
 set CONFIRM = "$<"
 if ("null$CONFIRM" == "null" || "null$CONFIRM" == "nully" || "null$CONFIRM" == "nullyes") then
@@ -757,7 +751,7 @@ set JOB_SCRIPT = `dirname $JOBOUTPUT`/submit.`basename $JOBOUTPUT .out`.sh
 
 cat <<EOF > $JOB_SCRIPT
 #!/bin/bash
-#PBS -l $SETNODE$SETNCPUS$SETMPIPROCS$SETTHREADS$SETGPU
+#PBS -l select=${JOBNODE}:ncpus=${JOBCPU}:mpiprocs=${JOBMPI}:ompthreads=${JOBOMP}$SETGPU
 #PBS -l walltime=$JOBTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
