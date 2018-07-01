@@ -10,7 +10,7 @@ Taiwania official website: https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778
 * [subg16](subg16) 
 
 * Usage: `subg16 input [output]` <br />
-where **input** is your g16 input file with or without .com extension. For instance,  <br />
+where **input** is your g16 input file with or without .com extension. For example,  <br />
 `subg16 water_hf` <br />
 `subg16 water_hf water_hf_4cores.out`
 
@@ -20,11 +20,13 @@ where **input** is your g16 input file with or without .com extension. For insta
   - [x] OpenMP
   - [ ] OpenMPI
   - [ ] MPICH or MVAPICH
-  - [x] GP-GPU (CUDA)
+  - [x] GP-GPU (CUDA) - only in modified version.
 
 * This G16 runtime supports only OpenMP (shared-memory) parallel method.  <br />
   This program recognizes the OMP threads from the value of %nproc line in input.  <br />
   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
+  
+* GP-GPU is not now supported in current version of subg16, talk to me if you want a demo of modified `subg16gpu`.
 
 <details>
 <summary> Click here to see example of Gaussian input for 4 thread request on CPU queue.</summary>
@@ -173,7 +175,7 @@ Title Card Required
 * [subg09](subg09) 
 
 * Usage: `subg09 input [output]` <br />
-where **input** is your g09 input file with or without .com extension. For instance,  <br />
+where **input** is your g09 input file with or without .com extension. For example,  <br />
 `subg09 water_hf` <br />
 `subg09 water_hf water_hf_4cores.`
 
@@ -196,8 +198,9 @@ where **input** is your g09 input file with or without .com extension. For insta
 ### Q-Chem
 * [subqchem](subqchem)
 
-* Usage: `subqchem thread input [output]` <br />
-where **thread** is number of OpenMP threads and **input** is Q-Chem input file with or without .in extension.
+* Usage: `subqchem [thread] input [output]` <br />
+where **thread** is number of OpenMP threads and **input** is Q-Chem input file with or without .in extension.<br/>
+Default value of thread is 1.
 
 * Capability
   - [x] OpenMP
