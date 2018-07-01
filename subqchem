@@ -58,13 +58,13 @@ endif
 
 if ($#argv == 2) then
 # subqchem input output
-  if ( $1 !~ ^[0-9]+$ ) then
+  if ( `echo $1 | grep -c '[a-zA-Z]'` == 1 ) then
     set CPUS = 1
     set INPUTFILE = "$1"
     set OUTPUTFILE = "$2"
     goto check_argv
 # subqchem thread input
-  else if ( $1 =~ ^[0-9]+$ ) then
+  else
     set CPUS = "$1"
     set INPUTFILE = "$2"
     set OUTPUTFILE = 0
@@ -74,7 +74,7 @@ endif
 
 # subqchem thread input output
 if ($#argv == 3) then
-  if ( $1 !~ ^[0-9]+$ ) then
+  if ( `echo $1 | grep -c '[a-zA-Z]'` == 1 ) then
     echo "Error: the number of OMP Threads must be positive integer. Max value is 40 threads."
     exit 1
   else
@@ -92,11 +92,6 @@ endif
 
 check_argv:
 #check cpu cores
-if ($CPUS !~ ^[0-9]+$ ) then
-  echo "Error: the number of OMP Threads must be positive integer."
-  exit 1
-endif
-
 if ($CPUS > 40 ) then
   echo "\nWarning: Value of threads you assigned is over 40. Thus, threads will be set to 40 automatically."
   set CPUS = 40
