@@ -3,8 +3,6 @@
 # ORCA Interactive PBS Pro Job Submission
 # on Taiwania cluster, NCHC, Taiwan
 #
-# Support only OpenMP parallel method
-#
 # Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
 # https://github.com/rangsimanketkaew/PBS-submission/
 
