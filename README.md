@@ -22,10 +22,15 @@ wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/DL
 
 ```
 chmod +x DL-subscript.csh
+```
+
+3. Finally, run script using following command. 
+
+```
 ./DL-subscript.csh
 ```
 
-3. Finally, select the submission script that you want to download and wait for moment. After that, the submission script is ready-to-use.
+4. Select the submission script that you want to download and wait for moment until download is complete.
 
 ---
 
