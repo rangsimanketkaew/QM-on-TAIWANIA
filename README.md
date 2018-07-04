@@ -8,11 +8,11 @@ Taiwania official website: https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778
 
 ---
 
-### How-to download and activate script
+### How-to download and activate submission script
 
 [DL-subscript.csh](DL-subscript.csh) is used to sequentially download submission scripts from this github repository to Linux machine.
 
-1. First, download [DL-subscript.csh](DL-subscript.csh) to your Linux machine using following command
+1. First, download DL-subscript.csh to your Linux machine using following command
 
 ```
 wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/DL-subscript.csh
