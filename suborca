@@ -1,6 +1,6 @@
 #!/bin/csh
 
-# ORCA Interactive PBS Pro Job Submission
+# ORCA 4.0.1.2 Interactive PBS Pro Job Submission
 # on Taiwania cluster, NCHC, Taiwan
 #
 # Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
@@ -18,8 +18,8 @@ onintr inter
 if ($#argv == 0) then
 
 echo ""
-echo "   ORCA Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
-echo "   ---------------------------------------------------------------\n"
+echo "   ORCA 4.0.1.2 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
+echo "   ---------------------------------------------------------------------\n"
 echo "   Usage: suborca input [output]\n"
 echo "   where input is ORCA input with or without .inp extension.\n"
 echo "   suborca reconizes the number of MPI ranks from the value of 'PAL' e.g. PAL4"
