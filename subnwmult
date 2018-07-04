@@ -4,6 +4,9 @@
 # on Taiwania cluster, NCHC, Taiwan
 # 
 # Updated 20180623  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# https://github.com/rangsimanketkaew/PBS-submission/
+
+################################################################
 
 if ("null$1" == "null-h" || "null$1" == "null-help") goto help
 
@@ -159,6 +162,7 @@ help:
 
 echo ""
 echo " Multiple NWChem job submission on TAIWANIA, NCHC, Taiwan."
+echo " ---------------------------------------------------------"
 echo ""
 echo " Rangsiman Ketkaew (MSc student)"
 echo " Thammasat University, Thailand.  E-mail: rangsiman1993@gmail.com"
