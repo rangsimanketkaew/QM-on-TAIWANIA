@@ -1,5 +1,5 @@
 # PBS-submission
-Interactive PBS Professional job submission for quantum chemistry calculation on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. All scripts were written in tcsh and tested during in stage open beta testing. Source code customization is required for use by other job scheduler and other cluster.
+Interactive PBS Professional job submission for running quantum chemistry program package on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. All scripts were written in tcsh and tested during in stage open beta testing. Source code customization is required for use by other job scheduler and other cluster.
 <p align="center">
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
 <p/>
@@ -30,7 +30,7 @@ where **input** is your g16 input file with or without .com extension. For examp
 
 <details>
 <summary> Click here to see example of Gaussian input for 4 thread request on CPU queue.</summary>
-  
+
 ```
 %chk=vomilenine-freq-g16-4.chk
 %mem=8GB
@@ -95,8 +95,8 @@ Title Card Required
 <br />
 
 <details>
-<summary> Click here to see example of Gaussian input for 4 thread adn 4 GPU request on GPU queue.</summary>
-  
+<summary> Click here to see example of Gaussian input for 4 thread and 4 GPU request on GPU queue.</summary>
+
 ```
 %chk=vomilenine-freq-g16-4cpu-4gpu.chk
 %mem=8GB
