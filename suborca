@@ -6,6 +6,8 @@
 # Support only OpenMP parallel method
 #
 # Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# https://github.com/rangsimanketkaew/PBS-submission/
+
 ##############################################################
 set ORCA_TOP = "/pkg/orca/orca.4.0.1.2"
 set ORCA_VER = "4.0.1.2"
