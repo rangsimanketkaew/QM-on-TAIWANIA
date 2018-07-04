@@ -10,6 +10,7 @@
 #  [/] use ARMCI methods: Casper and MPI-PR
 #
 # Updated 2018.06.29  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# https://github.com/rangsimanketkaew/PBS-submission/
 
 ###############################################################################
 set NWCHEM_VER            = "6.8.1"
