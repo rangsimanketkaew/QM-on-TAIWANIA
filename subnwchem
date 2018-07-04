@@ -37,22 +37,23 @@ set MPIPR_GPU    = 0
 set CLEAN_CASPER = 0
 set CLEAN_MPIPR  = 0
 
+echo ""
+echo "     #######################################################################"
+echo "    ##  NWChem 6.8.1 Interactive PBS Pro Submission on Taiwania Cluster  ##"
+echo "   #######################################################################"
+echo ""
+
 #############################################
 # Check each argument.
 #############################################
 
 set ARGV_ORDER = "$#argv"
 if ($ARGV_ORDER == 0) then
-  goto help
+  echo "   Normal usage:  subnwchem input [ gpu | casper | mpipr ] [ help ]\n"
+  exit 0
 else if ("null$1" == "null-h" || "null$1" == "null-help" || "null$1" == "nullhelp") then
   goto help
 endif
-
-echo ""
-echo "     #######################################################################"
-echo "    ##  NWChem 6.8.1 Interactive PBS Pro Submission on Taiwania Cluster  ##"
-echo "   #######################################################################"
-echo ""
 
 if ($ARGV_ORDER == 1) then
   set INPUT_ARG1 = "$1"
@@ -860,13 +861,28 @@ cat << EOF | less
 
                  subnwchem input gpu           Submit job on GPU node using CUDA.
 
+                 subnwchem input gpu mpipr     [x] Not yet supported.
+
                  subnwchem input gpu casper    Submit job on GPU node using CUDA and Casper.
 
- DESCRIPTION     subnwchem can exploit ARMCI method: Casper and MPI-PR, and GPU/CUDA accelerator on GPU compute node.
-                 GPU/CUDA supports only the tensor contraction engine (TCE) module for coupled-cluster (CC) calculation. 
-                 Note that CUDA/MPI-PR is not now supported. Please do avoid requesting CUDA and MPI-PR simultaneously.
-                 Also note that command line optional argument is case sensitive. Lowercase is only supported.
+ DESCRIPTION     subnwchem is c-shell program script designed to interactively submit NWChem job using PBS Pro scheduler.
+                 Note that command line optional argument is case sensitive. Lowercase is only supported.
 
+                 NWChem program package includes several quantum mechanical and quantum molecular dynamics simulations,
+                 such as HF, DFT, TD-DFT, PW-DFT, MP2, CI, CC, TCE, MC-SCF, QM/MM, etc.
+                 This NWChem can exploit ARMCI method: MPI-PR and Casper, and GPU/CUDA accelerator on GPU compute node.
+
+                 Yet another NWChem runtimes were compiled with ARMCI methods comprise of Casper and MPI-PR models.
+                 When ARMCI is enabled, one rank of all MPI ranks on each compute node will be used as ghost processes
+                 dedicated to help asynchronous progress for high efficient scalable MPI calculation.
+                 For example, request of 40 processes on 20 compute node each, the total MPI processes is 800.
+                 If either Casper or MPI-PR is requested, 20 MPI processes are used as ghost (a.k.a. dummy) processes.
+                 Hence the total actual MPI processes is 40*20 - 20 = 780.
+
+                 NWChem $NWCHEM_VER also supports General-Purpose Graphical Processing Unit (GP-GPU) and the CUDA platform.
+                 GP-GPU/CUDA supports only the tensor contraction engine (TCE) module for coupled-cluster (CC) calculation.
+                 Note that CUDA/MPI-PR is not now supported. Please do avoid requesting CUDA and MPI-PR simultaneously.
+                 
  COMMANDS
                  input                 -   NWChem input file with or without .nw extension.
                  gpu                   -   Requests GPU accelerator for CUDA utilization.
