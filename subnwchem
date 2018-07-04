@@ -1,7 +1,7 @@
 #!/bin/csh
 
-# Interactive PBS submission for running NWChem job with 
-# MPI parallel on Taiwania cluster, NCHC, Taiwan.
+# Interactive PBS Pro submission program for submitting NWChem 6.8.1 job 
+# with MPI parallel on Taiwania cluster, NCHC, Taiwan.
 #
 # Capabilities:
 #  [/] support serial and parallel using MPI method
@@ -49,10 +49,9 @@ else if ("null$1" == "null-h" || "null$1" == "null-help" || "null$1" == "nullhel
 endif
 
 echo ""
-echo "       #########################################"
-echo "      ##  NWChem Interactive PBS submission  ##"
-echo "     ##         on Taiwania Cluster         ##"
-echo "    #########################################"
+echo "     #######################################################################"
+echo "    ##  NWChem 6.8.1 Interactive PBS Pro Submission on Taiwania Cluster  ##"
+echo "   #######################################################################"
 echo ""
 
 if ($ARGV_ORDER == 1) then
