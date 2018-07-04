@@ -6,6 +6,8 @@
 # Support only OpenMP parallel method
 #
 # Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# https://github.com/rangsimanketkaew/PBS-submission/
+
 ##############################################################
 
 onintr inter
