@@ -161,8 +161,9 @@ echo "| "
 help:
 
 echo ""
-echo " Multiple NWChem job submission on TAIWANIA, NCHC, Taiwan."
-echo " ---------------------------------------------------------"
+echo " Multiple NWChem 6.8.1 Jobs Submission on TAIWANIA, NCHC, Taiwan."
+echo " Interactive Job PBS Professional supported."
+echo " ----------------------------------------------------------------"
 echo ""
 echo " Rangsiman Ketkaew (MSc student)"
 echo " Thammasat University, Thailand.  E-mail: rangsiman1993@gmail.com"
