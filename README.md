@@ -294,10 +294,9 @@ Example of using subnwchem are following
   - [x] MPICH or MVAPICH
   - [x] GP-GPU (CUDA)
 
-* `subnwchem` subnwchem can exploit ARMCI method: Casper and MPI-PR, and GPU/CUDA accelerator on GPU compute node. <br /> 
-GPU/CUDA supports only the tensor contraction engine (TCE) module for coupled-cluster (CC) calculation. <br /> 
-Note that CUDA/MPI-PR is not now supported. Please do avoid requesting CUDA and MPI-PR simultaneously. <br /> 
-Also note that command line optional argument is case sensitive. Lowercase is only supported.
+* subnwchem supports NWChem to run the requested ARMCI method: Casper and MPI-PR, and GPU/CUDA accelerator on GPU compute node. 
+
+* GPU/CUDA technology supports only the tensor contraction engine (TCE) module for coupled-cluster (CC) calculation. Note that CUDA/MPI-PR is not now supported. Please do avoid requesting CUDA and MPI-PR simultaneously. Command line optional argument is case sensitive. Lowercase is only supported.
 
 * Commands
 
@@ -363,13 +362,9 @@ where **input** and **output** are ORCA input and output files with or without .
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
-* ORCA will generate a lot of tempolrary and scratch files in working directory, where input file is.
-So `suborca` will make the symbolic link of input file to scratch folder of server in order to avoid creating those
-scratch files in working directory. So ORCA will read linking standard input file and print output file to working directory.
+* ORCA generates a lot of tempolrary and scratch files in working directory, where input file is. suborca will make the symbolic link of input file to scratch folder of server in order to avoid writing scratch files in working directory. Hence, ORCA will read linking standard input file and write output file in working directory.
 
-* `suborca` supports the ORCA PBS job submission for parallel calculation with only OpenMPI. 
-It can detect the user-defined number of MPI rank from **PALn** keyword, where n is positive integer number, 
-in control line of input file. Following is example of single-point energy calculation run in parallel with 8 MPI ranks.
+* suborca supports the PBS job submission with only OpenMPI parallel method. suborca detects the user-defined number of MPI rank from **PALn** keyword, where n is positive integer number, in keyword line of input file. Following is an example of single-point energy calculation run in parallel with 8 MPI ranks.
 
 <details>
 <summary> Click here to see example of ORCA input for 4 MPI ranks.</summary>
