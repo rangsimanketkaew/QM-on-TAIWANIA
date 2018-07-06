@@ -23,9 +23,9 @@ echo "   ---------------------------------------------------------------------\n
 echo "   Usage: suborca input [output]\n"
 echo "                    |"
 echo "                    |--> ORCA input file with or without .inp extension.\n"
-echo "   suborca detects the number of MPI processes from the value of 'PAL'"
-echo "   in program control line, which starts with '!', in ORCA input file."
-echo "   For example, \! B3LYP def2-SVP Opt PAL4  is requesting 4 MPI processes"
+echo "   suborca detects number of MPI processes from value of 'PALn' keyword,"
+echo "   where n is sensible positive integer, in keyword line of input file."
+echo "   For example, \!B3LYP def2-SVP Opt PAL4 is requesting 4 MPI processes"
 echo "   for geometry optimization calculation using B3LYP/def2-SVP method.\n"
 
 exit 0
