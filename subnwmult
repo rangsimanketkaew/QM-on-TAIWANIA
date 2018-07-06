@@ -29,7 +29,7 @@ echo "  User is not allowed to specify output file. Basename of input file will 
 echo "  used to name the output file. E.g. nwchem.nw => nwchem.out"
 echo ""
 echo "  Existing output file whose basename is similar to name of submitting input"
-echo "  will be replaced."
+echo "  will be overwritten."
 echo ""
 echo "  subnwmult does not support ARMCI Casper, MPIPR, and GPU/CUDA at this time."
 echo ""
