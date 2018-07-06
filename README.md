@@ -6,6 +6,10 @@ PBS Professional script generator for interactive job submission of quantum chem
 
 Taiwania official website: https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778
 
+**Terms of use:**
+1. I am not staff and not related to National Center for High-Performance Computing, Taiwan.
+2. I do not take any responsibility if any damage or failure cuased through use of all script or program taken through this Github repository.
+
 ---
 
 ### How-to download and activate submission script
