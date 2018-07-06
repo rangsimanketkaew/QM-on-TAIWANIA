@@ -1,5 +1,5 @@
 # PBS-submission
-Interactive PBS Professional job submission for running quantum chemistry program package on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. All scripts were written in tcsh and tested during in stage open beta testing. Source code customization is required for use by other job scheduler and other cluster.
+PBS Professional script generator for interactive job submission of quantum chemistry program package on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. All scripts were written in tcsh and tested during in stage open beta testing. Source code customization is required for use by other job scheduler and other cluster.
 <p align="center">
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
 <p/>
@@ -364,10 +364,10 @@ where **input** and **output** are ORCA input and output files with or without .
 
 * ORCA generates a lot of tempolrary and scratch files in working directory, where input file is. suborca will make the symbolic link of input file to scratch folder of server in order to avoid writing scratch files in working directory. Hence, ORCA will read linking standard input file and write output file in working directory.
 
-* suborca supports the PBS job submission with only OpenMPI parallel method. suborca detects the user-defined number of MPI rank from **PALn** keyword, where n is positive integer number, in keyword line of input file. Following is an example of single-point energy calculation run in parallel with 8 MPI ranks.
+* suborca supports the PBS job submission with only OpenMPI parallel method. suborca detects the user-defined number of MPI processes from value of **PALn** keyword, where n is sensible positive integer, in keyword line of input file. Following is an example of single-point energy calculation run in parallel with 8 MPI ranks.
 
 <details>
-<summary> Click here to see example of ORCA input for 4 MPI ranks.</summary>
+<summary> Click here to see example of ORCA input for 8 MPI ranks.</summary>
 
 ```
 ! RHF TightSCF PModel
