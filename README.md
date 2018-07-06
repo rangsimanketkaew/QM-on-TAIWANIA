@@ -301,15 +301,15 @@ Example of using subnwchem are following
 * Commands
 
 <center>
-  
+
 | Command | Function |
 | :---:   | --- |
 | input   | MWChem input file with or without .nw extension |
-| gpu     | Requests GPU accelerator | 
+| gpu     | Requests GPU accelerator |
 | casper  | Requests Casper method (against MPI-PR) |
-| mpipr   | Requests MPI-PR method (against Casper) | 
+| mpipr   | Requests MPI-PR method (against Casper) |
 | help   <br/> -h <br/> -help | Open this help |
-  
+
 </center>
 
 * Limitations
@@ -333,7 +333,8 @@ Example of using subnwchem are following
 ### NWChem (multiple jobs submission)
 * [subnwmult](subnwmult)
 
-* Usage: `subnwmult input.1.nw [ input.2.nw | input.3.nw | ... ]` <br />
+* Usage: `subnwmult 1st_inp.nw [ 2nd_inp.nw | 3rd_inp.nw | ... | 10th_inp.nw ]` <br />
+Note that first NWChem input is at least required.
 
 * Capability
   - [ ] OpenMP
@@ -342,9 +343,9 @@ Example of using subnwchem are following
   - [ ] GP-GPU (CUDA)
 
 * READ BEFORE USE:
-  1. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
-  2. Existing files whose basename is similar to name of submitting input will be replaced.
-  3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported now.
+  1. User is not allowed to specify output file. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
+  2. Existing output file whose basename is similar to name of submitting input will be overwritten.
+  3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported at this time.
 
 * To implement ARMCI and GPU modules in subnwmult, consult [subnwchem](subnwchem) script.
 
@@ -354,7 +355,7 @@ Example of using subnwchem are following
 * [suborca](suborca)
 
 * Usage: `suborca input [output]` <br />
-where **input** and **output** are ORCA input and output files with or without .in extension.
+where **input** is ORCA input file with or without .in extension.
 
 * Capability
   - [ ] OpenMP
