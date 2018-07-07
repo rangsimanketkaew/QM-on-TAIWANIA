@@ -7,6 +7,8 @@
 # https://github.com/rangsimanketkaew/PBS-submission/
 
 ################################################################
+set PROJ_ID_FILE = "$HOME/.proj_id"
+################################################################
 
 if ("null$1" == "null-h" || "null$1" == "null-help") goto help
 
@@ -41,8 +43,6 @@ endif
 set NWCHEM_TOP = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixmrcc"
 set NWCHEM_TARGET = LINUX64
 set NWCHEM_EXE = "$NWCHEM_TOP/bin/$NWCHEM_TARGET/nwchem"
-
-set PROJ_ID = `get_su_balance | awk -F, '{print $2'}`
 
 set INPUTSUB = ( $argv[*] )
 set NUM = "$#INPUTSUB"
@@ -100,6 +100,61 @@ endif
   echo -n "| Enter job time (E.g. 00:30:00 for 30 minutes): "
   set JOBTIME = "$<"
 
+set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
+
+if ( "$LISTID" == "" ) then
+  echo "| Error: No available Project ID."
+  exit 1
+else if ( $#LISTID == 1 ) then
+  set PROJ_ID = "$LISTID[1]"
+  goto jobinfo
+endif
+
+if ( -f $PROJ_ID_FILE ) then
+  set PROJID_1 = `head -1 $PROJ_ID_FILE`
+  if ( `get_su_balance | grep -wc "$PROJID_1"` == 0 ) then
+    echo "| Error: Project ID specified in first line of $PROJ_ID_FILE is not correct."
+    exit 1
+  endif
+  set PROJ_ID = "$PROJID_1"
+  goto jobinfo
+endif
+
+set BALANCE = ( `get_su_balance | awk -F, '{print $1}' | xargs` )
+echo "|"
+echo "| Your available Project ID & SU Balance:"
+@ i = 1
+while ( $i <= $#LISTID )
+echo "| [$i]  $LISTID[$i]  $BALANCE[$i]"
+set PROJ_ID = "$LISTID[1]"
+@ i++
+end
+echo "|"
+
+ask_id_choice:
+echo -n "| Enter Project ID choice [1]: "
+set PROJINP = "$<"
+set PROJINP_C = `echo $PROJINP | grep -c '[a-z][A-Z]*'`
+
+if ( $PROJINP_C == 1 ) then
+  echo "| Error: Please assign choice as positive integer."
+  goto ask_id_choice
+endif
+
+if ( $PROJINP > $#LISTID || $PROJINP <= 0 ) then
+  echo "| Error: Choice you selected is out of range."
+  goto ask_id_choice
+endif
+
+if ( "null$PROJINP" == "null" ) then
+  set PROJINP = 1
+  set PROJ_ID = "$LISTID[1]"
+else
+  set PROJ_ID = "$LISTID[$PROJINP]"
+endif
+
+jobinfo:
+
 echo "| "
 echo "| Job Information"
 echo "| Compute node     = $JOBNODE"
@@ -108,6 +163,7 @@ echo "| MPI process      = $JOBMPI (per node)"
 echo "| OMP THREADS      = $JOBTHREAD (per MPI process)"
 echo "| Job Queue        = $JOBQUEUE"
 echo "| Wall-time        = $JOBTIME"
+echo "| Project ID       = $PROJ_ID"
 echo "| "
 
 @ TOTALMPI = ($JOBNODE * $JOBMPI)
@@ -130,7 +186,7 @@ input:
 
 cat <<EOF > $PBS_SCRIPT
 #!/bin/bash
-#PBS -l select=$JOBNODE\:ncpus=$JOBCPU\:mpiprocs=$JOBMPI\:ompthreads=$JOBTHREAD
+#PBS -l select=${JOBNODE}:ncpus=${JOBCPU}:mpiprocs=${JOBMPI}:ompthreads=${JOBTHREAD}
 #PBS -l walltime=$JOBTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME

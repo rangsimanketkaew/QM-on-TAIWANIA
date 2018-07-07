@@ -1,0 +1,43 @@
+
+QM on Taiwania 1.1
+------------------
+
+   The 2nd release of PBS Pro script generator for running quantum chemistry calculation on 
+Taiwania (PETA) cluster, National Center for High-Performance Computing, Taiwan.
+
+PBS Professional script generator for interactive job submission of quantum chemistry program 
+package on Taiwania (PETA) cluster, National Center for High-Performance Computing, Taiwan. 
+
+The source code of scripts were written in tcsh and tested during in stage open beta testing. 
+Source code customization is required for use by other job scheduler and other cluster.
+
+
+Taiwania official website
+-------------------------
+https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778
+
+
+New Update
+----------
+1. Automatic detection of Project ID from either 'get_su_balance' or $HOME/.proj_id file.
+
+
+Bug fixed
+---------
+1. Fixed generating PBS script.
+
+
+Terms of use
+------------
+1. I am not staff and not related to National Center for High-Performance Computing, Taiwan.
+2. I do not take any responsibility if any damage or failure cuased through use of all script 
+   or program taken through this Github repository.
+
+
+Author
+------
+Rangsiman Ketkaew                 rangsiman1993@gmail.com
+Department of Chemistry           https://github.com/rangsimanketkaew/PBS-submission
+Thammasat University, Thailand
+
+
