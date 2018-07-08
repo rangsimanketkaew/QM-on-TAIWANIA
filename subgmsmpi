@@ -1,0 +1,364 @@
+#!/bin/csh
+
+# GAMESS 20180214 R1 Interactive PBS Pro Job Submission on 
+# Taiwania cluster, NCHC, Taiwan
+#
+# GAMESS suited for this script should be built with MPI.
+# GAMESS on Taiwania was built by Intel Parallel Studio XE 
+# 2018 update1 on Intel Xeon cluster equiped with Infiniband
+#
+# This version of subgms supports only MPI run for Intel Xeon
+# with Infiniband network.
+#
+# Updated 20180706  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# https://github.com/rangsimanketkaew/PBS-submission/
+
+########################### BOX A ############################
+set GAMESS_TOP = "$HOME/gamess-Intel-IB"
+set GAMESS_VER = "00"
+##############################################################
+
+######### DO NOT MODIFY ANY COMMANDS BELOW THIS LINE #########
+set GAMESS_EXE = "gamess.${GAMESS_VER}.x"
+set GAMESS_RUN = "rungms"
+set RUNGMS_IB = "rungms.Infiniband"
+set PROJ_ID_FILE = "$HOME/.proj_id"
+##############################################################
+
+# Check if help is requested.
+if ( "$1" == "help" || "$1" == "-help" || "$1" == "-h" ) goto rungms_IB
+
+echo ""
+
+# Check GAMESS top dir.
+if ( ! -e $GAMESS_TOP ) then
+  echo "Error: unable to locate GAMESS top directory. Please check" '$GAMESS_TOP' "again.\n"
+  exit 1
+endif
+
+# Check GAMESS_* env vir.
+if ( ! -f $GAMESS_TOP/$GAMESS_EXE ) then
+  echo "Error: $GAMESS_EXE executable not found in $GAMESS_TOP\n"
+  exit 1
+endif
+
+if ( -f $HOME/$RUNGMS_IB ) then
+  set GAMESS_RUNGMS_IB = "$HOME/$RUNGMS_IB"
+  goto start_prog
+endif
+
+if ( -f $GAMESS_TOP/$RUNGMS_IB ) then
+  set GAMESS_RUNGMS_IB = "$GAMESS_TOP/$RUNGMS_IB"
+  goto start_prog
+endif
+
+echo "Error: $RUNGMS_IB file not found. This file should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories.\n"
+echo "       where " '$GAMESS_TOP' " is $GAMESS_TOP"
+echo "             " '$HOME      ' " is $HOME\n"
+echo "subgms script executes GAMESS calculation via rungms.Infiniband, not rungms."
+echo "Type 'subgms help' for instruction of preparation of rungms.Infiniband file.\n"
+exit 1
+
+start_prog:
+
+onintr inter
+
+if ($#argv == 0) then
+  echo "   GAMESS 20180215 R1 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
+  echo "   ---------------------------------------------------------------------------\n"
+  echo "   Usage: subgmsmpi input [ output ]\n"
+  echo "   where input  is GAMESS input file with or without .inp extension.\n"
+  echo "   Example: subgmsmpi water_hf.input"
+  echo "            subgmsmpi water_hf water_hf_16cores\n"
+  echo "   GAMESS was built with MPI & MKL of Intel Parallel Studio XE 2018 update1 on."
+  echo "   Intel Xeon cluster equiped with Infiniband network.\n"
+  echo "   For MPI run,  Total number of MPI processes = NODES * PPN.\n"
+  echo "   where NODES is number of compute nodes."
+  echo "         PPN   is number of CPU cores per node (Max PPN is 40).\n"
+  exit 0
+endif
+
+ask_input:
+
+set INPUTFILE   = "$1"
+set USERINP = `basename $INPUTFILE .inp`
+set INPUTNAME = "$USERINP".inp
+set REALPATH = `realpath $INPUTNAME`
+set FULLPATH = `dirname $REALPATH`
+set INPUTFILE = "$FULLPATH/$USERINP".inp
+if (! -f $INPUTFILE) then
+  echo "Error: Unable to locate $INPUTFILE"
+  echo ""
+  exit 1
+endif
+
+if ("null$2" == "null") then
+  set OUTPUTNAME = "$USERINP".out
+  set OUTPUTFILE = "$FULLPATH/$USERINP".out
+else
+  set OUTNAMEGET = `basename $2 .out`
+  set OUTPUTNAME = "$OUTNAMEGET".out
+  set OUTPUTFILE = "$FULLPATH/$OUTNAMEGET".out
+endif
+
+ask_node:
+
+echo -n "Enter number of compute node [1]: "
+set NNODE = "$<"
+
+if ( $NNODE == "" || $NNODE == "1" ) then
+  set NODES = "1"
+  goto ask_cpus
+else if ( `echo $NNODE | grep -c '[a-z][A-Z]'` != 1 ) then
+  set NODES = "$NNODE"
+else
+  echo "Error: Number o compute node must be positive integer."
+  goto ask_node
+endif
+
+ask_cpus:
+
+echo -n "Enter number of CPU cores (per node) [1]: "
+set NUMPAL = "$<"
+
+if ( $NUMPAL == "" || $NUMPAL == "1" ) then
+  set CPUS = 1
+  set TOTALCPUS = 1
+  set JOBQUEUE = serial
+  set set WALLTIME = "96:00:00"
+  goto set_resource
+else if ( `echo $NUMPAL | grep -c '[a-z][A-Z]'` != 1 ) then
+  set CPUS = "$NUMPAL"
+  if ( $CPUS >= 2 && $CPUS <= 40 ) then
+    goto ask_queue
+  else if ( $CPUS > 40 ) then
+    echo "Warning: Number of MPI processes is over 40. Hence, it will be set to 40."
+    set CPUS = 40
+    goto ask_queue
+  endif
+else
+  echo "Error: Number of OMP threads must be 1 - 40."
+  goto ask_cpus
+endif
+
+ask_queue:
+
+@ TOTALCPUS = ($NODES * $CPUS)
+
+check_queue:
+
+if ( $TOTALCPUS <= 40 ) then 
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+else if ( $TOTALCPUS <= 160 ) then 
+  set JOBQUEUE = cf160
+  set WALLTIME = "96:00:00"
+else if ( $TOTALCPUS <= 400 ) then 
+  set JOBQUEUE = ct400
+  set WALLTIME = "96:00:00"
+else if ( $TOTALCPUS <= 800 ) then 
+  set JOBQUEUE = ct800
+  set WALLTIME = "72:00:00"
+else if ( $TOTALCPUS <= 1200 ) then 
+  set JOBQUEUE = cf1200
+  set WALLTIME = "48:00:00"
+else if ( $TOTALCPUS <= 2000 ) then 
+  set JOBQUEUE = ct2k
+  set WALLTIME = "48:00:00"
+else if ( $TOTALCPUS <= 6000 ) then 
+  set JOBQUEUE = ct6k
+  set WALLTIME = "24:00:00"
+else
+  echo "Error: Max CPU cores is 6000."
+  goto ask_node
+endif
+
+echo -n "Optimal queue for your job is $JOBQUEUE [y/n]: "
+set QUEUE = "$<"
+
+if ( $QUEUE == "n" || $QUEUE == "no" ) then
+  echo "Warning: you denied the recommended optimial queue. You must assign job queue and wall-time yourself."
+  echo -n "Enter job queue (e.g. cf40): "
+  set JOBQUEUE = "$<"
+  echo -n "Enter wall-time (e.g. 72:00:00): "
+  set WALLTIME = "$<"
+  goto set_resource
+endif
+
+if ( $QUEUE == "" || $QUEUE == "y" || $QUEUE == "yes" ) then
+  set JOBQUEUE = "$JOBQUEUE"
+else if ( $QUEUE == "ctest" && $NODES <= 2 && $TOTALCPUS <= 80 ) then
+  set JOBQUEUE = ctest
+  set WALLTIME = "00:30:00"
+else
+  echo "Error: Either assigned job queue is incorrect or total CPU cores does not match to queue policy."
+  goto ask_queue
+endif
+
+set_resource:
+
+set MPIPROCS = "$CPUS"
+set THREADS = 1
+set JOBNAME = "$USERINP"
+
+set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
+
+if ( "$LISTID" == "" ) then
+  echo "Error: No available Project ID."
+  exit 1
+else if ( $#LISTID == 1 ) then
+  set PROJ_ID = "$LISTID[1]"
+  goto jobinfo
+endif
+
+if ( -f $PROJ_ID_FILE ) then
+  set PROJID_1 = `head -1 $PROJ_ID_FILE`
+  if ( `get_su_balance | grep -wc "$PROJID_1"` == 0 ) then
+    echo "Error: Project ID specified in first line of $PROJ_ID_FILE is not correct."
+    exit 1
+  endif
+  set PROJ_ID = "$PROJID_1"
+  goto jobinfo
+endif
+
+set BALANCE = ( `get_su_balance | awk -F, '{print $1}' | xargs` )
+echo ""
+echo " Your available Project ID & SU Balance:"
+@ i = 1
+while ( $i <= $#LISTID )
+echo " [$i]  $LISTID[$i]  $BALANCE[$i]"
+set PROJ_ID = "$LISTID[1]"
+@ i++
+end
+echo ""
+
+ask_id_choice:
+echo -n "Enter Project ID choice [1]: "
+set PROJINP = "$<"
+set PROJINP_C = `echo $PROJINP | grep -c '[a-z][A-Z]*'`
+
+if ( $PROJINP_C == 1 ) then
+  echo "Error: Please assign choice as positive integer."
+  goto ask_id_choice
+endif
+
+if ( $PROJINP > $#LISTID || $PROJINP <= 0 ) then
+  echo "Error: Choice you selected is out of range."
+  goto ask_id_choice
+endif
+
+if ( "null$PROJINP" == "null" ) then
+  set PROJINP = 1
+  set PROJ_ID = "$LISTID[1]"
+else
+  set PROJ_ID = "$LISTID[$PROJINP]"
+endif
+
+jobinfo:
+
+#####################################################
+# Show all info before submitting job
+#####################################################
+
+echo "\n      ----- Job Info -----\n"
+echo "          Input file  :  $INPUTFILE"
+echo "         Output file  :  $OUTPUTFILE"
+echo "        Compute node  :  $NODES"
+echo "           CPU cores  :  $CPUS"
+echo "       MPI processes  :  $MPIPROCS"
+echo "         OMP Threads  :  $THREADS"
+echo " Total MPI processes  :  $NODES x $CPUS = $TOTALCPUS"
+echo "            Job Name  :  $JOBNAME"
+echo "           Job Queue  :  $JOBQUEUE"
+echo "           Wall-Time  :  $WALLTIME"
+echo "           Project ID :  $PROJ_ID\n"
+
+echo -n "Submit your job now ? [yes]: "
+set SUBMIT = "$<"
+if ("null$SUBMIT" == "null" || "null$SUBMIT" == "nully" || "null$SUBMIT" == "nullyes") then
+  goto submit
+else
+  echo "...Quit..."
+  exit 0
+endif
+
+submit:
+set PBS_SCRIPT = "$FULLPATH/submit.GAMESS.MPI.$USERINP.sh"
+
+cat <<EOF > $PBS_SCRIPT
+#!/bin/bash 
+
+#PBS -l select=${NODES}:ncpus=${CPUS}:mpiprocs=${MPIPROCS}:ompthreads=${THREADS}
+#PBS -l walltime=$WALLTIME
+#PBS -q $JOBQUEUE
+#PBS -N $JOBNAME
+#PBS -P $PROJ_ID
+
+################################################################
+#### This PBS Pro script was generated by subgmsmpi program ####
+################################################################
+
+module purge
+module load intel/2018_u1 
+
+cd \$PBS_O_WORKDIR
+
+export GAMESS_TOP="$GAMESS_TOP"
+export GAMESS_VER="$GAMESS_VER"
+export GAMESS_EXE="$GAMESS_EXE"
+export GAMESS_RUN="$GAMESS_RUN"
+export GAMESS_RUN_IB="$RUNGMS_IB"
+export GAMESS_SCR_DIR="/work1/$USER/SCRATCH/gamess/pbs.\${PBS_JOBID/\.srvc1/}"
+if [ ! -d \$GAMESS_SCR_DIR ]; then mkdir -p "\$GAMESS_SCRATCH_DIR" ; fi
+mkdir -p "\$GAMESS_SCR_DIR/USER"
+
+cp -r \$GAMESS_TOP/\$GAMESS_RUN_IB \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+sed -i 's/TEMPLATE_1/\\\$GAMESS_SCR_DIR/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+sed -i 's/TEMPLATE_2/\\\$GAMESS_SCR_DIR\/USER/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+sed -i 's/TEMPLATE_3/\\\$GAMESS_TOP/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+
+export MACHLIST=\$PBS_O_WORKDIR/nodelist.\${PBS_JOBID/\.srvc1/}
+cat \$PBS_NODEFILE | uniq -c > \$MACHLIST
+
+\$GAMESS_SCR_DIR/USER/\$GAMESS_RUN $INPUTNAME $GAMESS_VER $TOTALCPUS >& $OUTPUTFILE
+
+echo "" >> $OUTPUTFILE
+echo "Number of MPI processes and Compute Node" >> $OUTPUTFILE
+echo "----------------------------------------" >> $OUTPUTFILE
+cat \$MACHLIST >> $OUTPUTFILE
+echo "----------------------------------------" >> $OUTPUTFILE
+
+EOF
+
+qsub $PBS_SCRIPT
+#echo "Your job has been submitted."
+exit 0
+
+rungms_IB:
+clear
+cat << EOF | less
+
+                            -----------------------------------------------------
+                            INFOMATION OF subgmsmpi AND rungms.Infiniband SCRIPTS 
+                            -----------------------------------------------------
+
+ INTRODUCTION: This 'subgmsmpi' script is used to submit GAMESS calculation on Taiwania cluster, NCHC, Taiwan. 
+ rungms.Infiniband, which is a modification of original rungms script (rungms-like), executes GAMESS calculation 
+ with MPI parallelization over multinode and multiprocessors. GAMESS must be built with MPI parallelization.
+
+ IMPORTANT: To submit GAMESS job via PBS Pro job scheduler, subgmsmpi and rungms.Infiniband are needed together.
+ rungms.Infiniband must be saved in either your HOME directory or in GAMESS top directory.
+
+ If you want to run GAMESS on master node (front-end), rungms.Infiniband can be used directly, without subgmsmpi.
+
+ Rangsiman Ketkaew  (e-mail: rangsiman1993@gmail.com)
+
+EOF
+
+exit 0
+
+inter: 
+  echo "\nError: you pressed Ctrl+C ...Quit...\n"
+  exit 1
+
+

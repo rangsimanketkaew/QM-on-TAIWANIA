@@ -1,0 +1,369 @@
+#!/bin/csh
+
+# GAMESS 20180214 R1 Interactive PBS Pro Job Submission
+# on Taiwania cluster, NCHC, Taiwan
+#
+# This version of subgms supports only OpenMP run.
+#
+# Updated 20180706  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# https://github.com/rangsimanketkaew/PBS-submission/
+
+########################### BOX A ############################
+set GAMESS_TOP = "$HOME/gamess-OpenMP"
+set GAMESS_VER = "00"
+##############################################################
+
+##############################################################
+######### DO NOT MODIFY ANY COMMANDS BELOW THIS LINE #########
+##############################################################
+set GAMESS_EXE = "gamess.${GAMESS_VER}.x"
+set GAMESS_RUN = "rungms"
+set RUNGMS_MOD = "rungms.mod"
+set PROJ_ID_FILE = "$HOME/.proj_id"
+##############################################################
+
+# Check if help is requested.
+if ( "$1" == "help" || "$1" == "-help" || "$1" == "-h" ) goto rungms_mod
+
+echo ""
+
+# Check GAMESS top dir.
+if ( ! -e $GAMESS_TOP ) then
+  echo "Error: unable to locate GAMESS top directory. Please check" '$GAMESS_TOP' "again.\n"
+  exit 1
+endif
+
+# Check GAMESS_* env vir.
+if ( ! -f $GAMESS_TOP/$GAMESS_EXE ) then
+  echo "Error: $GAMESS_EXE executable not found in $GAMESS_TOP\n"
+  exit 1
+endif
+
+if ( -f $HOME/$RUNGMS_MOD ) then
+  set GAMESS_RUNGMS_MOD = "$HOME/$RUNGMS_MOD"
+  goto check_rungmsmod
+endif
+
+if ( -f $GAMESS_TOP/$RUNGMS_MOD ) then
+  set GAMESS_RUNGMS_MOD = "$GAMESS_TOP/$RUNGMS_MOD"
+  goto check_rungmsmod
+endif
+
+echo "Error: rungms.mod file not found. rungms.mod should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories.\n"
+echo "       where " '$GAMESS_TOP' " is $GAMESS_TOP"
+echo "             " '$HOME      ' " is $HOME\n"
+echo "subgms script executes GAMESS calculation via rungms.mod, not rungms."
+echo "Type 'subgms help' for instruction of preparation of rungms.mod file.\n"
+exit 1
+
+check_rungmsmod:
+
+set CHK_ERR = 0
+
+if ( `grep -wc 'TEMPLATE_1' $GAMESS_RUNGMS_MOD` == 0 ) then
+  echo "Error: set SCR=TEMPLATE_1 command line not found in rungms.mod file.\n"
+  set CHK_ERR = 1
+endif
+
+if ( `grep -wc 'TEMPLATE_2' $GAMESS_RUNGMS_MOD` == 0 ) then
+  echo "Error: set USERSCR=TEMPLATE_2 command line not found in rungms.mod file.\n"
+  set CHK_ERR = 1
+endif
+
+if ( `grep -wc 'TEMPLATE_3' $GAMESS_RUNGMS_MOD` == 0 ) then
+  echo "Error: set GMSPATH=TEMPLATE_3 command line not found in rungms.mod file.\n"
+  set CHK_ERR = 1
+endif
+
+if ( $CHK_ERR == 1 ) exit 1
+
+onintr inter
+
+if ($#argv == 0) then
+  echo "   GAMESS 20180215 R1 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
+  echo "   ---------------------------------------------------------------------------\n"
+  echo "   Usage: subgms input [ output ]\n"
+  echo "   where input  is GAMESS input file with or without .inp extension.\n"
+  echo "   Example: subgms water_hf.input"
+  echo "            subgms water_hf water_hf_16cores\n"
+  echo "   This GAMESS was built with Intel Math Kernel Library (MKL) for parallel run."
+  echo "   Max OpenMP threads per node (OMP_NUM_THREADS) is 40.\n"
+  exit 0
+endif
+
+ask_input:
+set INPUTFILE   = "$1"
+set USERINP = `basename $INPUTFILE .inp`
+set INPUTNAME = "$USERINP".inp
+set REALPATH = `realpath $INPUTNAME`
+set FULLPATH = `dirname $REALPATH`
+set INPUTFILE = "$FULLPATH/$USERINP".inp
+if (! -f $INPUTFILE) then
+  echo "Error: Unable to locate $INPUTFILE"
+  echo ""
+  exit 1
+endif
+
+if ("null$2" == "null") then
+  set OUTPUTNAME = "$USERINP".out
+  set OUTPUTFILE = "$FULLPATH/$USERINP".out
+else
+  set OUTNAMEGET = `basename $2 .out`
+  set OUTPUTNAME = "$OUTNAMEGET".out
+  set OUTPUTFILE = "$FULLPATH/$OUTNAMEGET".out
+endif
+
+ask_cpus:
+set SERIAL = 0
+set PARALLEL = 0
+
+echo -n "Enter number of OMP threads [1]: "
+set NUMPAL = "$<"
+
+if ( $NUMPAL == "" || $NUMPAL == "1" ) then
+  set CPUS = 1
+  set JOBQUEUE = serial
+  set WALLTIME = "96:00:00"
+  set SERIAL = 1
+  goto set_resource
+endif
+
+if ( `echo $NUMPAL | grep -c '[a-z][A-Z]'` != 1 ) then
+  set CPUS = "$NUMPAL"
+  if ( $CPUS >= 2 && $CPUS <= 40 ) then
+    set JOBQUEUE = cf40
+    set WALLTIME = "96:00:00"
+    set PARALLEL = 1
+    goto ask_queue
+  else if ( $CPUS > 40 ) then
+    echo "Warning: Number of MPI processes is over 40. Hence, it will be set to 40."
+    set CPUS = 40
+    set JOBQUEUE = cf40
+    set WALLTIME = "96:00:00"
+    set PARALLEL = 1
+    goto ask_queue
+  endif
+else
+  echo "Error: Number of OMP threads must be 1 - 40."
+  goto ask_cpus
+endif
+
+ask_queue:
+if ( $PARALLEL == 1 ) then
+  echo -n "Enter optimal queue [cf40]: "
+  set QUEUE = "$<"
+endif
+
+if ( $QUEUE == "" || $QUEUE == "cf40" ) then
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+else if ( $QUEUE == "ctest" ) then
+  set JOBQUEUE = ctest
+  set WALLTIME = "00:30:00"
+  goto set_resource
+else
+  echo "Error: Enter queue again: cf40 or ctest."
+  goto ask_queue
+endif
+
+set_resource:
+set NODES = 1
+set THREADS = "$CPUS"
+set MPIPROCS = 1
+set JOBNAME = "$USERINP"
+
+set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
+
+if ( "$LISTID" == "" ) then
+  echo "Error: No available Project ID."
+  exit 1
+else if ( $#LISTID == 1 ) then
+  set PROJ_ID = "$LISTID[1]"
+  goto jobinfo
+endif
+
+if ( -f $PROJ_ID_FILE ) then
+  set PROJID_1 = `head -1 $PROJ_ID_FILE`
+  if ( `get_su_balance | grep -wc "$PROJID_1"` == 0 ) then
+    echo "Error: Project ID specified in first line of $PROJ_ID_FILE is not correct."
+    exit 1
+  endif
+  set PROJ_ID = "$PROJID_1"
+  goto jobinfo
+endif
+
+set BALANCE = ( `get_su_balance | awk -F, '{print $1}' | xargs` )
+echo ""
+echo " Your available Project ID & SU Balance:"
+@ i = 1
+while ( $i <= $#LISTID )
+echo " [$i]  $LISTID[$i]  $BALANCE[$i]"
+set PROJ_ID = "$LISTID[1]"
+@ i++
+end
+echo ""
+
+ask_id_choice:
+echo -n "Enter Project ID choice [1]: "
+set PROJINP = "$<"
+set PROJINP_C = `echo $PROJINP | grep -c '[a-z][A-Z]*'`
+
+if ( $PROJINP_C == 1 ) then
+  echo "Error: Please assign choice as positive integer."
+  goto ask_id_choice
+endif
+
+if ( $PROJINP > $#LISTID || $PROJINP <= 0 ) then
+  echo "Error: Choice you selected is out of range."
+  goto ask_id_choice
+endif
+
+if ( "null$PROJINP" == "null" ) then
+  set PROJINP = 1
+  set PROJ_ID = "$LISTID[1]"
+else
+  set PROJ_ID = "$LISTID[$PROJINP]"
+endif
+
+jobinfo:
+
+#####################################################
+# Show all info before submitting job
+#####################################################
+
+echo "\n      ----- Job Info -----\n"
+echo "    Input file  :  $INPUTFILE"
+echo "   Output file  :  $OUTPUTFILE"
+echo "  Compute node  :  $NODES"
+echo "     CPU cores  :  $CPUS"
+echo " MPI processes  :  $MPIPROCS"
+echo "   OMP Threads  :  $THREADS"
+echo "      Job Name  :  $JOBNAME"
+echo "     Job Queue  :  $JOBQUEUE"   
+echo "     Wall-Time  :  $WALLTIME"
+echo "     Project ID :  $PROJ_ID\n"
+
+echo -n "Submit your job now ? [yes]: "
+set SUBMIT = "$<"
+if ("null$SUBMIT" == "null" || "null$SUBMIT" == "nully" || "null$SUBMIT" == "nullyes") then
+  goto submit
+else
+  echo "...Quit..."
+  exit 0
+endif
+
+submit:
+set PBS_SCRIPT = "$FULLPATH/submit.GAMESS.$USERINP.sh"
+
+cat <<EOF > $PBS_SCRIPT
+#!/bin/bash 
+
+#PBS -l select=${NODES}:ncpus=${CPUS}:ompthreads=${THREADS}
+#PBS -l walltime=$WALLTIME
+#PBS -q $JOBQUEUE
+#PBS -N $JOBNAME
+#PBS -P $PROJ_ID
+
+#############################################################
+#### This PBS Pro script was generated by subgms program ####
+#############################################################
+
+module purge
+module load intel/2018_u1 gcc/6.3.0
+
+cd \$PBS_O_WORKDIR
+
+export GAMESS_TOP="$GAMESS_TOP"
+export GAMESS_VER="$GAMESS_VER"
+export GAMESS_EXE="$GAMESS_EXE"
+export GAMESS_RUN="$GAMESS_RUN"
+export RUNGMS_MOD="$RUNGMS_MOD"
+export GAMESS_SCR_DIR="/work1/$USER/SCRATCH/gamess/pbs.\${PBS_JOBID/\.srvc1/}"
+if [ ! -d \$GAMESS_SCR_DIR ]; then mkdir -p "\$GAMESS_SCRATCH_DIR" ; fi
+mkdir -p "\$GAMESS_SCR_DIR/USER"
+
+cp -r \$GAMESS_TOP/\$RUNGMS_MOD \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+sed -i 's/TEMPLATE_1/\\\$GAMESS_SCR_DIR/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+sed -i 's/TEMPLATE_2/\\\$GAMESS_SCR_DIR\/USER/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+sed -i 's/TEMPLATE_3/\\\$GAMESS_TOP/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+
+EOF
+
+if ( $SERIAL == 1 ) then
+cat <<EOF >> $PBS_SCRIPT
+\$GAMESS_SCR_DIR/USER/\$GAMESS_RUN $INPUTNAME >& $OUTPUTFILE
+
+EOF
+endif
+
+if ( $PARALLEL == 1 ) then
+cat <<EOF >> $PBS_SCRIPT
+\$GAMESS_SCR_DIR/USER/\$GAMESS_RUN $INPUTNAME $GAMESS_VER $CPUS >& $OUTPUTFILE
+
+EOF
+endif
+
+qsub $PBS_SCRIPT
+#echo "Your job has been submitted."
+exit 0
+
+rungms_mod:
+clear
+cat << EOF | less
+
+                                      ---------------------------------------------
+                                      INSTRUCTION OF PREPARATION OF rungms.mod FILE
+                                      ---------------------------------------------
+
+ INTRODUCTION: 
+ ------------
+ GAMESS program normally uses 'rungms' C-shell script to execute the calculation in both serial and parallel methods.
+ Originical rungms given by developer generally defines the locatation of SCRATCH and USER's SCRATCH as a static path.
+ This default setting is against to job scheduler when submitting the job and writing scratch files in different location.
+ rungms must be modified in order to define the \$SCR and \$USERSCR with dynamics path. Instruction below is step-by-step
+ of preparation of 'rungms.mod' file, which will be used instead of original rungms.
+
+ FIRSTLY: Create rungms.mod
+ --------------------------
+ rungms.mod can be copied from rungms. rungms.mod must be saved in either GAMESS top directory or user's home directory. 
+ In case that user has no permission to write/modify GAMESS top directory, please do this step in users' home directory. 
+ For example, use following command to copy the original rungms file to user's home and rename to rungms.mod file.
+
+   \$ cp \$GAMESS_TOP/rungms \$HOME/rungms.mod
+
+ where \$GAMESS_TOP  is set to $GAMESS_TOP
+       \$HOME        is set to $HOME
+
+ Note that \$GAMESS_TOP environment variable can be found in 'BOX A' around the beginning lines of this subgms file.
+
+ SECONDLY: Modify rungms.mod
+ ---------------------------
+ After created rungms.mod file, modify the code around the beginning line of file as following
+ 
+ Original rungms             -->         modified rungms.mod
+ ---------------                         --------------------
+
+ set SCR=/scr/\$USER                      set SCR=TEMPLATE_1
+ set USERSCR=/u1/\$USER/scr               set USERSCR=TEMPLATE_2
+ set GMSPATH=/u1/mike/gamess             set GMSPATH=TEMPLATE_3
+
+ where \$SCR     is Scratch directory 
+       \$USERSCR is Specific local user's scratch directory
+       \$GMSPATH is Top directory of GAMESS program, which also contains program executable
+ 
+ FINALLY: Check is rungms.mod exists
+ -----------------------------------
+ Run this subgms script to see if subgms can locate rungms.mod in proper directory.
+
+
+ Rangsiman Ketkaew  (e-mail: rangsiman1993@gmail.com)
+
+EOF
+
+exit 0
+
+inter: 
+  echo "\nError: you pressed Ctrl+C ...Quit...\n"
+  exit 1
+
+

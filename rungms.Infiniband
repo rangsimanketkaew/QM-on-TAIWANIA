@@ -1,0 +1,115 @@
+#!/bin/csh
+
+# rungms.Infiniband is a rungms-like script modified from the 
+# original rungms for submitting job of GAMESS calculation in 
+# parallel on Intel Xeon cluster with Infiniband
+#
+# This script has been created for running GAMESS calculation on
+# TAIWANIA cluster with Intel MPI.
+#
+# GAMESS executable was built with Intel MKL math library.
+#
+# Updated 20180708  Rangsiman Ketkaew  rangsiman1993@gmail.com
+##################################################################
+
+#      All welcome messages, general infomation, program resource, 
+#      CPU timing summary, and job summary woule not be printed 
+#      because this is not real rungms.
+
+echo "This calculation was carried out by GAMESS version 20180214 R1 (MPI)."
+echo "GAMESS was executed by a 'rungms.Infiniband', modified from rungms."
+echo "GAMESS was built by Intel Parallel Studio XE 2018 update1 equiped with"
+echo "Infiniband network, on Taiwania cluster, NCHC, Taiwan."
+echo ""
+
+#      TARGET is normally set to mpi in order to enable MPI method.
+#      SCR & USERSCR directories are set to directory where is
+#      network shared-file system, which large enough to store the 
+#      temporary scratch files.
+
+set TARGET=mpi
+set SCR=TEMPLATE_1
+set USERSCR=TEMPLATE_2
+set GMSPATH=TEMPLATE_3
+
+echo "TARGET  is set to $TARGET"
+echo "SCR     is set to $SCR"
+echo "USERSCR is set to $USERSCR"
+echo "GMSPATH is set to $GMSPATH"
+echo ""
+
+#      USER-defined MPI executable. Default setting is mpiexec of 
+#      Intel Studio Suite 2018
+
+set CHECK_MPI = `which mpiexec`
+
+if ( -e $CHECK_MPI ) then
+  set MPIEXE = "$CHECK_MPI"
+  echo "MPI executable is $MPIEXE"
+  echo ""
+else 
+  echo "Error: MPI executable 'mpiexec' not found."
+  exit 1
+endif
+
+#      The following command lines are carefuly extracted from the 
+#      original rungms. Please carefully modify the code in case
+#      you want to change the default setting. However, the default
+#      setting is the best solution.
+
+set GET_JOB=$1
+set VERNO=$2
+set NCPUS=$3
+
+echo "Assgined input file    is $GET_JOB"
+echo "GAMESS program version is $VERNO"
+echo "Number of processors   is $NCPUS"
+echo ""
+
+set JOB = `basename $GET_JOB .inp`
+
+#      Copy input to scratch directory.
+#      and define the path of all relavant files.
+
+cp $JOB.inp $SCR/$JOB.F05
+
+setenv INPUT $SCR/$JOB.F05
+setenv TRAJECT $USERSCR/$JOB.trj
+setenv RESTART $USERSCR/$JOB.rst
+setenv DATA $USERSCR/$JOB.dat
+
+echo "Following environment variables were set by SETENV command."
+echo '$INPUT  ' "Input file      is $INPUT"
+echo '$TRAJECT' "Trajectory file is $TRAJECT"
+echo '$RESTART' "Restarting file is $RESTART"
+echo '$DATA   ' "Data file       is $DATA"
+echo ""
+
+#      Delete trajectory and scratch files of previous calculation.
+
+if ( -e $TRAJECT ) then
+  rm $TRAJECT
+  echo "$TRAJECT of previous calculation has been deleted."
+endif
+if ( -e $RESTART ) then
+  rm $RESTART
+  echo "$RESTART of previous calculation has been deleted."
+endif
+if ( -e $DATA ) then
+  rm $DATA
+  echo "$DATA of previous calculation has been deleted."
+endif
+echo ""
+
+source $GMSPATH/gms-files.csh
+
+#      GAMESS is clever enough to recognize the input file from 
+#      the $JOB environment variable.
+#      Print of output will be defined in submission script of server scheduler.
+#      Normally, as default setting, base name of input will be used to name
+#      output automatically.
+
+$MPIEXE -n $NCPUS $GMSPATH/gamess.$VERNO.x 
+
+#      For run quick test on front-end node, the above command is validate.
+
