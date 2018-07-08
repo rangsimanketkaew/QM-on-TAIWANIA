@@ -50,6 +50,7 @@ where **input** is your g16 input file with or without .com extension. For examp
 
 * Capability
   - [x] OpenMP
+  - [ ] Intel MPI
   - [ ] OpenMPI
   - [ ] MPICH or MVAPICH
   - [x] GP-GPU (CUDA) - only in modified version.
@@ -215,6 +216,7 @@ where **input** is your g09 input file with or without .com extension. For examp
 
 * Capability
   - [x] OpenMP
+  - [ ] Intel MPI
   - [ ] OpenMPI
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
@@ -236,6 +238,7 @@ Default value of thread is 1.
 
 * Capability
   - [x] OpenMP
+  - [x] Intel MPI (TBA)
   - [ ] OpenMPI
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
@@ -294,7 +297,8 @@ Example of using subnwchem are following
 
 * Capability
   - [ ] OpenMP
-  - [x] OpenMPI
+  - [x] Intel MPI
+  - [ ] OpenMPI
   - [x] MPICH or MVAPICH
   - [x] GP-GPU (CUDA)
 
@@ -342,7 +346,8 @@ Note that first NWChem input is at least required.
 
 * Capability
   - [ ] OpenMP
-  - [x] OpenMPI
+  - [x] Intel MPI
+  - [ ] OpenMPI
   - [x] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
@@ -363,13 +368,16 @@ where **input** is ORCA input file with or without .in extension.
 
 * Capability
   - [ ] OpenMP
+  - [ ] Intel MPI
   - [x] OpenMPI
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
 * ORCA generates a lot of tempolrary and scratch files in working directory, where input file is. suborca will make the symbolic link of input file to scratch folder of server in order to avoid writing scratch files in working directory. Hence, ORCA will read linking standard input file and write output file in working directory.
 
-* suborca supports the PBS job submission with only OpenMPI parallel method. suborca detects the user-defined number of MPI processes from value of **PALn** keyword, where n is sensible positive integer, in keyword line of input file. Following is an example of single-point energy calculation run in parallel with 8 MPI ranks.
+* suborca supports the PBS job submission with only OpenMPI parallel method. Please unload/disable other MPI module before running ORCA.
+
+* suborca detects the user-defined number of MPI processes from value of **PALn** keyword, where n is sensible positive integer, in keyword line of input file. Following is an example of single-point energy calculation run in parallel with 8 MPI ranks.
 
 <details>
 <summary> Click here to see example of ORCA input for 8 MPI ranks.</summary>
@@ -398,6 +406,98 @@ where **input** is ORCA input file with or without .in extension.
 <br/>
 
 * ORCA official website: https://orcaforum.cec.mpg.de/
+
+---
+
+### GAMESS (OpenMP and MPI/Infiniband)
+* [subgms](subgms) and [subgmsmpi](subgmsmpi)
+
+* Capability
+  - [x] OpenMP
+  - [x] Intel MPI
+  - [ ] OpenMPI
+  - [ ] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
+
+#### OpenMP
+
+* Usage: `subgms input [output]`  
+
+* This subgms supports only OpenMP parallelization. Running calculation over multinode and/or multiprocessors are forbidden.
+
+* To use this subgms script, a modified rungms script, called `rungms.mod` is requested. Instruction of preparation of `rungms.mod` can be read by typing `subgms help`.
+
+#### MPI
+
+* Usage: `subgmsmpi input [output]`
+where **input** is ORCA input file with or without .in extension.
+
+* Dependency: [rungms.Infiniband](rungms.Infiniband)
+
+* This subgmsmpi supports only MPI parallelization for the current GAMESS version that built with Intel MKL on Intel Xeon cluster equiped with Infiniband network. To submit GAMESS job via PBS Pro, both `subgmsmpi` and `runggms.Infiniband` are needed together. In addition, runggms.Infiniband must be saved in either your $HOME directory or in GAMESS/MPI top directory.
+
+* Test run: first version of subgmsmpi was tested with GAMESS version 14 FEB 2018 R1 compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1 and Infiniband network. Help page can be invoked by typing `subgmsmpi help`.
+
+<details>
+<summary> Click here to see example of GAMESS input: Example test no. 12 **exam12.inp** for OpenMP and MPI.</summary>
+
+```
+!
+! Two pyrazine molecules at 20 A distance.
+!
+! INTOMP parameter in $INTGRL controls the algorithm of
+! MPI/OpenMP workload separation. INTOMP=2 assumes
+! MPI parallelization over top (I) and 2nd (J) loops collapsed,
+! and OpenMP parallelization over 3nd (K) and 4th (L) loops
+! collapsed.
+!
+! Method: RHF/6-31G*
+! Final energy:
+!   FINAL RHF ENERGY IS     -525.1379673445
+!
+ $CONTRL
+  SCFTYP=rhf
+  dfttyp=b3lyp
+!  RUNTYP=Optimize
+  RUNTYP=Energy
+  maxit=50 nprint=4 $END
+ $SYSTEM TIMLIM=50 MEMORY=10000000 $END
+ $SCF    DIRSCF=.TRUE. CONV=1.0d-7 FDIFF=.false. $END
+ $BASIS  GBASIS=n31 NGAUSS=6 npfunc=1 $END
+! $INTGRL INTOMP=2 $END
+ $BASIS  GBASIS=n31 NGAUSS=6 npfunc=1 ndfunc=1 $END
+ $GUESS  GUESS=huckel $END
+ $DATA
+ Two pyrazine molecules on the 20 A distance from each other
+C1
+NITROGEN    7.0      1.386350000        -0.291970000         0.013520000
+NITROGEN    7.0     -1.386330000         0.292270000         0.006810000
+CARBON      6.0      0.918820000         0.970770000        -0.018780000
+CARBON      6.0     -0.448890000         1.258970000        -0.022080000
+CARBON      6.0     -0.918810000        -0.970950000         0.007300000
+CARBON      6.0      0.448860000        -1.259140000         0.010580000
+HYDROGEN    1.0      1.661070000         1.765960000        -0.025760000
+HYDROGEN    1.0     -0.807120000         2.286040000        -0.031760000
+HYDROGEN    1.0      0.807140000        -2.286110000         0.027350000
+HYDROGEN    1.0     -1.661090000        -1.766020000         0.021390000
+NITROGEN    7.0      1.386350000        -0.291970000        20.013520000
+NITROGEN    7.0     -1.386330000         0.292270000        20.006810000
+CARBON      6.0      0.918820000         0.970770000        19.981220000
+CARBON      6.0     -0.448890000         1.258970000        19.977920000
+CARBON      6.0     -0.918810000        -0.970950000        20.007300000
+CARBON      6.0      0.448860000        -1.259140000        20.010580000
+HYDROGEN    1.0      1.661070000         1.765960000        19.974240000
+HYDROGEN    1.0     -0.807120000         2.286040000        19.968240000
+HYDROGEN    1.0      0.807140000        -2.286110000        20.027350000
+HYDROGEN    1.0     -1.661090000        -1.766020000        20.021390000
+ $END
+ 
+```
+
+</details>
+<br/>
+
+* GAMESS official website: http://www.msg.ameslab.gov/gamess/
 
 ---
 
