@@ -13,9 +13,7 @@ set GAMESS_TOP = "$HOME/gamess-OpenMP"
 set GAMESS_VER = "00"
 ##############################################################
 
-##############################################################
 ######### DO NOT MODIFY ANY COMMANDS BELOW THIS LINE #########
-##############################################################
 set GAMESS_EXE = "gamess.${GAMESS_VER}.x"
 set GAMESS_RUN = "rungms"
 set RUNGMS_MOD = "rungms.mod"
