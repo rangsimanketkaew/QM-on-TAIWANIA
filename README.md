@@ -453,7 +453,7 @@ where **input** is ORCA input file with or without .in extension.
 * This subgmsmpi script was tested with GAMESS version 14 FEB 2018 R1, which compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1 and Infiniband network. GNU-OpenMPI, MPICH, and MVAPICH are also supported. Help page is provided when using `subgmsmpi help` command.
 
 <details>
-<summary> Click here to see example of GAMESS input: Example test no. 12 **exam12.inp** for OpenMP and MPI protocols.</summary>
+<summary> Click here to see example of GAMESS input: Example test no. 12 'exam12.inp' for OpenMP and MPI protocols.</summary>
 
 ```
 !
