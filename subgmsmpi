@@ -3,12 +3,9 @@
 # GAMESS 20180214 R1 Interactive PBS Pro Job Submission on 
 # Taiwania cluster, NCHC, Taiwan
 #
-# GAMESS suited for this script should be built with MPI.
-# GAMESS on Taiwania was built by Intel Parallel Studio XE 
-# 2018 update1 on Intel Xeon cluster equiped with Infiniband
-#
-# This version of subgms supports only MPI run for Intel Xeon
-# with Infiniband network.
+# Taiwania is Intel Xeon cluster equiped with Intel Omni-Path
+# This script is tested with GAMESS on Taiwania that was built 
+# by Intel Parallel Studio XE 2018 update1.
 #
 # Updated 20180706  Rangsiman Ketkaew  rangsiman1993@gmail.com
 # https://github.com/rangsimanketkaew/PBS-submission/
@@ -21,7 +18,7 @@ set GAMESS_VER = "00"
 ######### DO NOT MODIFY ANY COMMANDS BELOW THIS LINE #########
 set GAMESS_EXE = "gamess.${GAMESS_VER}.x"
 set GAMESS_RUN = "rungms"
-set RUNGMS_IB = "rungms.Infiniband"
+set RUNGMS_MPI = "rungms.MPI"
 set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
 
@@ -42,21 +39,21 @@ if ( ! -f $GAMESS_TOP/$GAMESS_EXE ) then
   exit 1
 endif
 
-if ( -f $HOME/$RUNGMS_IB ) then
-  set GAMESS_RUNGMS_IB = "$HOME/$RUNGMS_IB"
+if ( -f $HOME/$RUNGMS_MPI ) then
+  set GAMESS_RUNGMS_MPI = "$HOME/$RUNGMS_MPI"
   goto start_prog
 endif
 
-if ( -f $GAMESS_TOP/$RUNGMS_IB ) then
-  set GAMESS_RUNGMS_IB = "$GAMESS_TOP/$RUNGMS_IB"
+if ( -f $GAMESS_TOP/$RUNGMS_MPI ) then
+  set GAMESS_RUNGMS_MPI = "$GAMESS_TOP/$RUNGMS_MPI"
   goto start_prog
 endif
 
-echo "Error: $RUNGMS_IB file not found. This file should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories.\n"
+echo "Error: $RUNGMS_MPI file not found. This file should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories.\n"
 echo "       where " '$GAMESS_TOP' " is $GAMESS_TOP"
 echo "             " '$HOME      ' " is $HOME\n"
-echo "subgms script executes GAMESS calculation via rungms.Infiniband, not rungms."
-echo "Type 'subgms help' for instruction of preparation of rungms.Infiniband file.\n"
+echo "subgms script executes GAMESS calculation via rungms.MPI, not rungms."
+echo "Type 'subgms help' for instruction of preparation of rungms.MPI file.\n"
 exit 1
 
 start_prog:
@@ -71,7 +68,7 @@ if ($#argv == 0) then
   echo "   Example: subgmsmpi water_hf.input"
   echo "            subgmsmpi water_hf water_hf_16cores\n"
   echo "   GAMESS was built with MPI & MKL of Intel Parallel Studio XE 2018 update1 on."
-  echo "   Intel Xeon cluster equiped with Infiniband network.\n"
+  echo "   Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect.\n"
   echo "   For MPI run,  Total number of MPI processes = NODES * PPN.\n"
   echo "   where NODES is number of compute nodes."
   echo "         PPN   is number of CPU cores per node (Max PPN is 40).\n"
@@ -307,12 +304,12 @@ export GAMESS_TOP="$GAMESS_TOP"
 export GAMESS_VER="$GAMESS_VER"
 export GAMESS_EXE="$GAMESS_EXE"
 export GAMESS_RUN="$GAMESS_RUN"
-export GAMESS_RUN_IB="$RUNGMS_IB"
+export GAMESS_RUN_MPI="$RUNGMS_MPI"
 export GAMESS_SCR_DIR="/work1/$USER/SCRATCH/gamess/pbs.\${PBS_JOBID/\.srvc1/}"
 if [ ! -d \$GAMESS_SCR_DIR ]; then mkdir -p "\$GAMESS_SCRATCH_DIR" ; fi
 mkdir -p "\$GAMESS_SCR_DIR/USER"
 
-cp -r \$GAMESS_TOP/\$GAMESS_RUN_IB \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
+cp -r \$GAMESS_TOP/\$GAMESS_RUN_MPI \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
 sed -i 's/TEMPLATE_1/\\\$GAMESS_SCR_DIR/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
 sed -i 's/TEMPLATE_2/\\\$GAMESS_SCR_DIR\/USER/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
 sed -i 's/TEMPLATE_3/\\\$GAMESS_TOP/' \$GAMESS_SCR_DIR/USER/\$GAMESS_RUN
@@ -338,18 +335,20 @@ rungms_IB:
 clear
 cat << EOF | less
 
-                            -----------------------------------------------------
-                            INFOMATION OF subgmsmpi AND rungms.Infiniband SCRIPTS 
-                            -----------------------------------------------------
+                             ----------------------------------------------
+                             INFOMATION OF subgmsmpi AND rungms.MPI SCRIPTS
+                             ----------------------------------------------
 
- INTRODUCTION: This 'subgmsmpi' script is used to submit GAMESS calculation on Taiwania cluster, NCHC, Taiwan. 
- rungms.Infiniband, which is a modification of original rungms script (rungms-like), executes GAMESS calculation 
- with MPI parallelization over multinode and multiprocessors. GAMESS must be built with MPI parallelization.
+ INTRODUCTION: This 'subgmsmpi' script is used to submit GAMESS job on cluster using PBS Pro job scheduler. 
+ To use this script, GAMESS must be built with MPI protocol.
 
- IMPORTANT: To submit GAMESS job via PBS Pro job scheduler, subgmsmpi and rungms.Infiniband are needed together.
- rungms.Infiniband must be saved in either your HOME directory or in GAMESS top directory.
+ rungms.MPI, which is a modification of original rungms script (rungms-like), is used to execute GAMESS 
+ calculation with MPI protocol over multiple compute node and/or multiple processors.
 
- If you want to run GAMESS on master node (front-end), rungms.Infiniband can be used directly, without subgmsmpi.
+ IMPORTANT: To submit GAMESS job via PBS Pro job scheduler, subgmsmpi and rungms.MPI are needed together.
+ rungms.MPI must be saved in either your HOME directory or in GAMESS top directory.
+
+ If you want to run GAMESS on master node (front-end), rungms.MPI can be used directly, without subgmsmpi.
 
  Rangsiman Ketkaew  (e-mail: rangsiman1993@gmail.com)
 
