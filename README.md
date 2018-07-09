@@ -421,6 +421,8 @@ where **input** is GAMESS input file with or without .inp extension.
 
 * [subgms](subgms)
 
+* Dependency: [rungms.mod](rungms.mod)
+
 * Capability
   - [x] OpenMP
   - [ ] Intel MPI
@@ -428,9 +430,11 @@ where **input** is GAMESS input file with or without .inp extension.
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
-* Support only shared memory parallel (SMP) system using OpenMP protocol for the current GAMESS version that built with 'sockets' model. Parallelization over multiple compute node and/or multiple processors is forbidden.
+* Support only shared memory parallel (SMP) system using OpenMP protocol for GAMESS version that built with OpenMP algorithm. Visit [this website](https://sites.google.com/site/rangsiman1993/comp-chem/install-gamess-parallel) for installation of GAMESS with OpenMP utilization. Parallelization over multiple compute node and/or multiple processors is forbidden.
 
-* To use this subgms script, a modified rungms script, called `rungms.mod`, is required. Preparation instruction for creating rungms.mod is provided in Help page, use `subgms help` command. Note that you must save rungms.mod in either your $HOME directory or in GAMESS top directory.
+* `rungms.mod` is required for subgms script. You must save rungms.mod in either your $HOME directory or in GAMESS top directory before running subgms.
+
+* This subgms script was tested with `$GAMESS/tests/openmp/parallel/omp-exam12.inp`.
 
 #### Distributed memory parallel system
 
@@ -445,11 +449,11 @@ where **input** is GAMESS input file with or without .inp extension.
   - [x] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
-* Support only distributed memory parallel system using MPI protocol for the current GAMESS version that built with MPI method. Parallelization over multiple compute node and/or multiple processors is allowed.
+* Support only distributed memory parallel system using MPI protocol for GAMESS version that built with MPI method. Visit [this website](https://sites.google.com/site/rangsiman1993/comp-chem/install-gamess-parallel) for installation of GAMESS with MPI utilization. Parallelization over multiple compute node and/or multiple processors is allowed.
 
-* Both `subgmsmpi` and `rungms.MPI` are needed together for submitting job via PBS Pro. Note that you must save rungms.MPI in either your $HOME directory or in GAMESS top directory.
+* `rungms.MPI` is required for subgmsmpi script. You must save rungms.MPI in either your $HOME directory or in GAMESS top directory before running subgmsmpi.
 
-* This subgmsmpi script was tested with GAMESS version 14 FEB 2018 R1, which compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1, on Taiwania Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect technology. GNU-OpenMPI, MPICH, and MVAPICH are also supported. Help page is provided when using `subgmsmpi help` command.
+* This subgmsmpi script was tested with GAMESS version 14 FEB 2018 R1, which compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1, on Taiwania Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect technology. GNU-OpenMPI, MPICH, and MVAPICH are also supported.
 
 <details>
 <summary> Click here to see example of GAMESS input for OpenMP testing: omp-exam12.inp, file is available at $GAMESS/tests/openmp/parallel/omp-exam12.inp </summary>
