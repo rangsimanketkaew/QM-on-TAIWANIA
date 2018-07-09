@@ -438,7 +438,7 @@ where **input** is GAMESS input file with or without .inp extension.
 
 * [subgmsmpi](subgmsmpi)
 
-* Dependency: [rungms.Infiniband](rungms.Infiniband)
+* Dependency: [rungms.MPI](rungms.MPI)
 
 * Capability
   - [ ] OpenMP
@@ -449,9 +449,9 @@ where **input** is GAMESS input file with or without .inp extension.
 
 * Support only distributed memory parallel system using MPI protocol for the current GAMESS version that built with MPI method. Parallelization over multiple compute node and/or multiple processors is allowed.
 
-* Both `subgmsmpi` and `rungms.Infiniband` are needed together for submitting job via PBS Pro. Note that you must save runggms.Infiniband in either your $HOME directory or in GAMESS top directory.
+* Both `subgmsmpi` and `rungms.MPI` are needed together for submitting job via PBS Pro. Note that you must save rungms.MPI in either your $HOME directory or in GAMESS top directory.
 
-* This subgmsmpi script was tested with GAMESS version 14 FEB 2018 R1, which compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1 and Infiniband network. GNU-OpenMPI, MPICH, and MVAPICH are also supported. Help page is provided when using `subgmsmpi help` command.
+* This subgmsmpi script was tested with GAMESS version 14 FEB 2018 R1, which compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1, on Taiwania Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect technology. GNU-OpenMPI, MPICH, and MVAPICH are also supported. Help page is provided when using `subgmsmpi help` command.
 
 <details>
 <summary> Click here to see example of GAMESS input: Example test no. 12 'exam12.inp' for OpenMP and MPI protocols.</summary>
