@@ -454,7 +454,7 @@ where **input** is GAMESS input file with or without .inp extension.
 * This subgmsmpi script was tested with GAMESS version 14 FEB 2018 R1, which compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1, on Taiwania Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect technology. GNU-OpenMPI, MPICH, and MVAPICH are also supported. Help page is provided when using `subgmsmpi help` command.
 
 <details>
-<summary> Click here to see example of GAMESS input: Example test no. 12 'exam12.inp' for OpenMP and MPI protocols.</summary>
+<summary> Click here to see example of GAMESS input for OpenMP testing: omp-exam12.inp, file is available at $GAMESS/tests/openmp/parallel/omp-exam12.inp </summary>
 
 ```
 !
