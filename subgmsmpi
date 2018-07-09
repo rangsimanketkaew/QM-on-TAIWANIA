@@ -11,7 +11,7 @@
 # https://github.com/rangsimanketkaew/PBS-submission/
 
 ########################### BOX A ############################
-set GAMESS_TOP = "$HOME/gamess-Intel-IB"
+set GAMESS_TOP = "$HOME/gamess-MPI"
 set GAMESS_VER = "00"
 ##############################################################
 
@@ -23,7 +23,7 @@ set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
 
 # Check if help is requested.
-if ( "$1" == "help" || "$1" == "-help" || "$1" == "-h" ) goto rungms_IB
+if ( "$1" == "help" || "$1" == "-help" || "$1" == "-h" ) goto rungms_MPI
 
 echo ""
 
@@ -331,7 +331,7 @@ qsub $PBS_SCRIPT
 #echo "Your job has been submitted."
 exit 0
 
-rungms_IB:
+rungms_MPI:
 clear
 cat << EOF | less
 
