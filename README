@@ -1,30 +1,31 @@
 
-QM on Taiwania 1.1
+QM on Taiwania 2.0
 ------------------
 
-   The 2nd release of PBS Pro script generator for running quantum chemistry calculation on 
-Taiwania (PETA) cluster, National Center for High-Performance Computing, Taiwan.
+   The 3rd release of PBS Pro script generator suite for interactive quantum chemistry calculation
+job submission on Taiwania (PETA) cluster, National Center for High-Performance Computing, Taiwan.
 
-PBS Professional script generator for interactive job submission of quantum chemistry program 
-package on Taiwania (PETA) cluster, National Center for High-Performance Computing, Taiwan. 
+Taiwania cluster is Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect.
 
-The source code of scripts were written in tcsh and tested during in stage open beta testing. 
+The source code of scripts were written in tcsh and tested during in stage open beta testing.
 Source code customization is required for use by other job scheduler and other cluster.
 
 
 Taiwania official website
 -------------------------
-https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778
+https://iservice.nchc.org.tw
 
 
 New Update
 ----------
-1. Automatic detection of Project ID from either 'get_su_balance' or $HOME/.proj_id file.
-
+1. New submission tool for GAMESS including shared and distributed memory parallel system.
+   subgms and subgmsmpi
+2. rungms.MPI is used with subgmsmpi for submitting job with MPI protocol on HPC cluster.
 
 Bug fixed
 ---------
-1. Fixed generating PBS script.
+1. Improved DL-subscript.csh
+2. Fixed 'ctest' queue recognition
 
 
 Terms of use
