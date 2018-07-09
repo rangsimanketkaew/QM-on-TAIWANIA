@@ -20,7 +20,7 @@ echo "This calculation was carried out by GAMESS version 20180214 R1 (MPI)"
 echo "on Taiwania cluster, NCHC, Taiwan, Intel Xeon cluster equiped with"
 echo "Intel Omni-Path high-speed interconnect technology."
 echo "GAMESS on Taiwania was built by Intel Parallel Studio XE 2018 update1."
-echo "GAMESS was executed by rungms.MPI, modified from originical rungms."
+echo "GAMESS was executed by rungms.MPI, modified from original rungms."
 echo ""
 
 #      TARGET is normally set to mpi in order to enable MPI method.
