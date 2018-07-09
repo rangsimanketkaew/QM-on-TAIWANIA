@@ -14,27 +14,25 @@ Taiwania official website: https://iservice.nchc.org.tw
 
 ### How-to download and activate submission script
 
-[DL-subscript.csh](DL-subscript.csh) is used to sequentially download submission scripts from this github repository to Linux machine.
+[DL-subscript.csh](DL-subscript.csh) is used to download and update PBS Pro scripts generator from this github repository.
 
-1. First, download DL-subscript.csh to your Linux machine using following command
+1. Download DL-subscript.csh to your Linux machine using following command
 
 ```
 wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/DL-subscript.csh
 ```
 
-2. Then activate and run script
+2. Activate script
 
 ```
 chmod +x DL-subscript.csh
 ```
 
-3. Finally, run script using following command. 
+3. Run script
 
 ```
 ./DL-subscript.csh
 ```
-
-4. Select the submission script that you want to download and wait for moment until download is complete.
 
 ---
 
