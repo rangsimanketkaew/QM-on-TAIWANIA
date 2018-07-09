@@ -342,7 +342,7 @@ Example of using subnwchem are following
 * [subnwmult](subnwmult)
 
 * Usage: `subnwmult 1st_inp.nw [ 2nd_inp.nw | 3rd_inp.nw | ... | 10th_inp.nw ]` <br />
-Note that first NWChem input is at least required.
+Note that the first NWChem input is at least required.
 
 * Capability
   - [ ] OpenMP
@@ -409,37 +409,51 @@ where **input** is ORCA input file with or without .in extension.
 
 ---
 
-### GAMESS (OpenMP and MPI/Infiniband)
+### GAMESS
 * [subgms](subgms) and [subgmsmpi](subgmsmpi)
+
+* Usage: `subgms input [output]`  
+* Usage: `subgmsmpi input [output]` <br/>
+where **input** is ORCA input file with or without .in extension.
+
+* These two scripts are used to submit GAMESS calculation using PBS Pro job scheduler for OpenMP (subgms) and MPI (subgmsmpi) parallelization methods. Default GAMESS executable is **gamess.00.x**.
+
+#### Shared memory parallel system
+
+* [subgms](subgms)
 
 * Capability
   - [x] OpenMP
-  - [x] Intel MPI
+  - [ ] Intel MPI
   - [ ] OpenMPI
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
-#### OpenMP
+* Support only shared memory parallel (SMP) system using OpenMP protocol for the current GAMESS version that built with 'sockets' model. Parallelization over multiple compute node and/or multiple processors is forbidden.
 
-* Usage: `subgms input [output]`  
+* To use this subgms script, a modified rungms script, called `rungms.mod`, is required. Preparation instruction for creating rungms.mod is provided in Help page, use `subgms help` command. Note that you must save rungms.mod in either your $HOME directory or in GAMESS top directory.
 
-* This subgms supports only OpenMP parallelization. Running calculation over multinode and/or multiprocessors are forbidden.
+#### Distributed memory parallel system
 
-* To use this subgms script, a modified rungms script, called `rungms.mod` is requested. Instruction of preparation of `rungms.mod` can be read by typing `subgms help`.
-
-#### MPI
-
-* Usage: `subgmsmpi input [output]`
-where **input** is ORCA input file with or without .in extension.
+* [subgmsmpi](subgmsmpi)
 
 * Dependency: [rungms.Infiniband](rungms.Infiniband)
 
-* This subgmsmpi supports only MPI parallelization for the current GAMESS version that built with Intel MKL on Intel Xeon cluster equiped with Infiniband network. To submit GAMESS job via PBS Pro, both `subgmsmpi` and `runggms.Infiniband` are needed together. In addition, runggms.Infiniband must be saved in either your $HOME directory or in GAMESS/MPI top directory.
+* Capability
+  - [ ] OpenMP
+  - [x] Intel MPI
+  - [x] OpenMPI
+  - [x] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
 
-* Test run: first version of subgmsmpi was tested with GAMESS version 14 FEB 2018 R1 compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1 and Infiniband network. Help page can be invoked by typing `subgmsmpi help`.
+* Support only distributed memory parallel system using MPI protocol for the current GAMESS version that built with MPI method. Parallelization over multiple compute node and/or multiple processors is allowed.
+
+* Both `subgmsmpi` and `rungms.Infiniband` are needed together for submitting job via PBS Pro. Note that you must save runggms.Infiniband in either your $HOME directory or in GAMESS top directory.
+
+* This subgmsmpi script was tested with GAMESS version 14 FEB 2018 R1, which compiled with MPI & MKL of Intel Parallel Studio XE 2018 update1 and Infiniband network. GNU-OpenMPI, MPICH, and MVAPICH are also supported. Help page is provided when using `subgmsmpi help` command.
 
 <details>
-<summary> Click here to see example of GAMESS input: Example test no. 12 **exam12.inp** for OpenMP and MPI.</summary>
+<summary> Click here to see example of GAMESS input: Example test no. 12 **exam12.inp** for OpenMP and MPI protocols.</summary>
 
 ```
 !
@@ -457,15 +471,15 @@ where **input** is ORCA input file with or without .in extension.
 !
  $CONTRL
   SCFTYP=rhf
-  dfttyp=b3lyp
+!  dfttyp=b3lyp
 !  RUNTYP=Optimize
   RUNTYP=Energy
   maxit=50 nprint=4 $END
  $SYSTEM TIMLIM=50 MEMORY=10000000 $END
  $SCF    DIRSCF=.TRUE. CONV=1.0d-7 FDIFF=.false. $END
  $BASIS  GBASIS=n31 NGAUSS=6 npfunc=1 $END
-! $INTGRL INTOMP=2 $END
- $BASIS  GBASIS=n31 NGAUSS=6 npfunc=1 ndfunc=1 $END
+ $INTGRL INTOMP=2 $END
+!$BASIS  GBASIS=n31 NGAUSS=6 npfunc=1 ndfunc=1 $END
  $GUESS  GUESS=huckel $END
  $DATA
  Two pyrazine molecules on the 20 A distance from each other
@@ -491,7 +505,6 @@ HYDROGEN    1.0     -0.807120000         2.286040000        19.968240000
 HYDROGEN    1.0      0.807140000        -2.286110000        20.027350000
 HYDROGEN    1.0     -1.661090000        -1.766020000        20.021390000
  $END
- 
 ```
 
 </details>
