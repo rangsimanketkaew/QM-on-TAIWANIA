@@ -282,6 +282,7 @@ $end
 * [subnwchem](subnwchem)
 
 * Usage: `subnwchem input [ gpu | casper | mpipr ] [ help ]` <br />
+where **input** is NWChem input file with or without .nwchem extension. <br/>
 Explaination of each optional keyword are below. <br /> 
 Example of using subnwchem are following
   - `subnwchem input`           
@@ -364,7 +365,7 @@ Note that the first NWChem input is at least required.
 * [suborca](suborca)
 
 * Usage: `suborca input [output]` <br />
-where **input** is ORCA input file with or without .in extension.
+where **input** is ORCA input file with or without .inp extension.
 
 * Capability
   - [ ] OpenMP
@@ -414,7 +415,7 @@ where **input** is ORCA input file with or without .in extension.
 
 * Usage: `subgms input [output]`  
 * Usage: `subgmsmpi input [output]` <br/>
-where **input** is ORCA input file with or without .in extension.
+where **input** is GAMESS input file with or without .inp extension.
 
 * These two scripts are used to submit GAMESS calculation using PBS Pro job scheduler for OpenMP (subgms) and MPI (subgmsmpi) parallelization methods. Default GAMESS executable is **gamess.00.x**.
 
