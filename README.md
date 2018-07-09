@@ -353,7 +353,7 @@ Note that the first NWChem input is at least required.
   - [ ] GP-GPU (CUDA)
 
 * READ BEFORE USE:
-  1. User is not allowed to specify output file. Basename of input file will be used for naming output file. E.g. nwchem.nw => nwchem.out
+  1. User is not allowed to specify output file. Basename of input file will be used for naming output file. For example, nwchem.nw => nwchem.out
   2. Existing output file whose basename is similar to name of submitting input will be overwritten.
   3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported at this time.
 
