@@ -1,25 +1,26 @@
 #!/bin/csh
 
-# rungms.Infiniband is a rungms-like script modified from the 
-# original rungms for submitting job of GAMESS calculation in 
-# parallel on Intel Xeon cluster with Infiniband
+# rungms.MPI is a rungms-like script for submitting GAMESS job with
+# distributed memory parallel system using MPI protocol.
 #
-# This script has been created for running GAMESS calculation on
-# TAIWANIA cluster with Intel MPI.
-#
-# GAMESS executable was built with Intel MKL math library.
+# This script is tested on TAIWANIA cluster, NCHC, Taiwan, Intel Xeon 
+# cluster equiped with Intel Omni-Path high-speed interconnect.
+# GAMESS on TAIWANIA was built with Intel Parallel Studio XE 2018 update1
+# and Intel Math Kernel Library (MKL)high-speed .
 #
 # Updated 20180708  Rangsiman Ketkaew  rangsiman1993@gmail.com
-##################################################################
+# https://github.com/rangsimanketkaew/PBS-submission
+###########################################################################
 
 #      All welcome messages, general infomation, program resource, 
 #      CPU timing summary, and job summary woule not be printed 
 #      because this is not real rungms.
 
-echo "This calculation was carried out by GAMESS version 20180214 R1 (MPI)."
-echo "GAMESS was executed by a 'rungms.Infiniband', modified from rungms."
-echo "GAMESS was built by Intel Parallel Studio XE 2018 update1 equiped with"
-echo "Infiniband network, on Taiwania cluster, NCHC, Taiwan."
+echo "This calculation was carried out by GAMESS version 20180214 R1 (MPI)"
+echo "on Taiwania cluster, NCHC, Taiwan, Intel Xeon cluster equiped with"
+echo "Intel Omni-Path high-speed interconnect technology."
+echo "GAMESS on Taiwania was built by Intel Parallel Studio XE 2018 update1."
+echo "GAMESS was executed by rungms.MPI, modified from originical rungms."
 echo ""
 
 #      TARGET is normally set to mpi in order to enable MPI method.
@@ -38,7 +39,7 @@ echo "USERSCR is set to $USERSCR"
 echo "GMSPATH is set to $GMSPATH"
 echo ""
 
-#      USER-defined MPI executable. Default setting is mpiexec of 
+#      USER-defined MPI executable. Default setting is 'mpiexec' of 
 #      Intel Studio Suite 2018
 
 set CHECK_MPI = `which mpiexec`
@@ -49,6 +50,9 @@ if ( -e $CHECK_MPI ) then
   echo ""
 else 
   echo "Error: MPI executable 'mpiexec' not found."
+  echo "Please load MPI module available on your cluster, e.g. intel/2018_u1"
+  echo "or mvapich2.2 or gnu-openmpi. Otherwise use 'locate mpirun' to search"
+  echo "the available MPI executable, otherwise talk to admin/staff of HPC."
   exit 1
 endif
 
@@ -83,7 +87,6 @@ echo '$INPUT  ' "Input file      is $INPUT"
 echo '$TRAJECT' "Trajectory file is $TRAJECT"
 echo '$RESTART' "Restarting file is $RESTART"
 echo '$DATA   ' "Data file       is $DATA"
-echo ""
 
 #      Delete trajectory and scratch files of previous calculation.
 
@@ -99,12 +102,20 @@ if ( -e $DATA ) then
   rm $DATA
   echo "$DATA of previous calculation has been deleted."
 endif
+
 echo ""
+
+if ( ! -e $GMSPATH/gms-files.csh ) then
+  echo "Error: gms-files.csh not found in $GMSPATH directory."
+  exit 1
+endif
 
 source $GMSPATH/gms-files.csh
 
-#      GAMESS is clever enough to recognize the input file from 
-#      the $JOB environment variable.
+echo "GAMESS execute command: $MPIEXE -n $NCPUS $GMSPATH/gamess.$VERNO.x $INPUT"
+echo ""
+
+#      GAMESS is clever to recognize input file from $JOB environment variable.
 #      Print of output will be defined in submission script of server scheduler.
 #      Normally, as default setting, base name of input will be used to name
 #      output automatically.
@@ -112,4 +123,5 @@ source $GMSPATH/gms-files.csh
 $MPIEXE -n $NCPUS $GMSPATH/gamess.$VERNO.x 
 
 #      For run quick test on front-end node, the above command is validate.
+
 
