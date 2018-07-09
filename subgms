@@ -3,7 +3,8 @@
 # GAMESS 20180214 R1 Interactive PBS Pro Job Submission
 # on Taiwania cluster, NCHC, Taiwan
 #
-# This version of subgms supports only OpenMP run.
+# This version of subgms supports only shared memory parallel
+# (SMP) system using OpenMP protocol.
 #
 # Updated 20180706  Rangsiman Ketkaew  rangsiman1993@gmail.com
 # https://github.com/rangsimanketkaew/PBS-submission/
