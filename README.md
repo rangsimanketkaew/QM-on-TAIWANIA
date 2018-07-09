@@ -4,7 +4,7 @@ PBS Professional script generator for interactive job submission of quantum chem
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
 <p/>
 
-Taiwania official website: https://www.nchc.org.tw/tw/inner.php?CONTENT_ID=778
+Taiwania official website: https://iservice.nchc.org.tw
 
 **Terms of use:**
 1. I am not staff and not related to National Center for High-Performance Computing, Taiwan.
