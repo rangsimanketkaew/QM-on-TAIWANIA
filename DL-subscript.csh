@@ -1,5 +1,9 @@
 #!/bin/csh -f
 
+# Download/Update PBS Pro submission scripts generator program
+# of quantum chemistry program package on Taiwania cluster, 
+# NCHC, Taiwan.
+#
 # Rangsiman Ketkaew
 # Computational Chemistry Research Unit
 # Department of Chemistry
@@ -8,24 +12,28 @@
 # https://github.com/rangsimanketkaew/PBS-submission
 #
 # Updated: 20180709  Rangsiman Ketkaew  arngsiman1993@gmail.com
+# #############################################################
 
 echo " -----------------------------------------------------------------"
 echo ""
-echo " This program is to download the tcsh program script for PBS Pro "
-echo " submission on Taiwania cluster, NCHC, Taiwan."
+echo " This is to download/update the C-shell program for the PBS Pro "
+echo " submission script generator on Taiwania cluster, NCHC, Taiwan."
+echo " Host server: https://github.com/rangsimanketkaew/PBS-submission"
 echo ""
-echo " [1] Download all submission scripts"
-echo " [2] Download subg09      Gaussian 09"
-echo " [3] Download subg16      Gaussian 16"
-echo " [4] Download subnwchem   NWChem"
-echo " [5] Download subnwmult   NWChem (multiple jobs)"
-echo " [6] Download subqchem    Q-Chem"
-echo " [7] Download suborca     ORCA"
-echo " [8] Download subgms      GAMESS (OpenMP)"
-echo " [9] Download subgmsmpi   GAMESS (MPI)"
+echo " [1] all submission scripts"
+echo " [2] subg09      Gaussian 09"
+echo " [3] subg16      Gaussian 16"
+echo " [4] subnwchem   NWChem"
+echo " [5] subnwmult   NWChem (multiple jobs)"
+echo " [6] subqchem    Q-Chem"
+echo " [7] suborca     ORCA"
+echo " [8] subgms      GAMESS (OpenMP)"
+echo "     rungms.mod"
+echo " [9] subgmsmpi   GAMESS (MPI)"
+echo "     rungms.MPI"
 echo ""
 
-if (-f subg09 || -f subg16 || -f subnwchem || -f subnwmult || -f subqchem || -f suborca || -f subgms || -f subgmsmpi) then
+if (-f subg09 || -f subg16 || -f subnwchem || -f subnwmult || -f subqchem || -f suborca || -f subgms || -f subgmsmpi ) then
 echo " Warning: some submission scripts have been found in this directory. Existing files will be replaced."
 echo ""
 endif
@@ -35,7 +43,7 @@ choice:
 echo -n " Enter your choice [1]: "
 set INPUT = "$<"
 if ( $INPUT == "" || $INPUT == "1" ) then
- rm subg09* subg16* subnwchem* subnwmult* subqchem* suborca subgms subgmsmpi
+ rm subg09* subg16* subnwchem* subnwmult* subqchem* suborca subgms subgmsmpi rungms.mod rungms.MPI
  wget $TOPDIR/subg09
  wget $TOPDIR/subg16
  wget $TOPDIR/subnwchem
@@ -43,6 +51,7 @@ if ( $INPUT == "" || $INPUT == "1" ) then
  wget $TOPDIR/subqchem
  wget $TOPDIR/suborca
  wget $TOPDIR/subgms
+ wget $TOPDIR/rungms.mod
  wget $TOPDIR/subgmsmpi
  wget $TOPDIR/rungms.MPI
 else if ($INPUT == "2") then
@@ -66,17 +75,19 @@ else if ($INPUT == "7") then
 else if ($INPUT == "8") then
  rm subgms
  wget $TOPDIR/subgms
+ wget $TOPDIR/rungms.mod
 else if ($INPUT == "9") then
  rm subgmsmpi
  wget $TOPDIR/subgmsmpi
  wget $TOPDIR/rungms.MPI
 else
- echo "Error: wrong choice, please enter choice number 1-9."
+ echo "Error: Your choice is incorrect. Please enter choice number 1-9."
  goto choice
 endif
 
 set HERE = "$PWD"
 chmod +x $HERE/sub*
+chmod +x $HERE/rungms*
 
 echo " -----------------------------------------------------------------"
 echo ""
