@@ -40,13 +40,14 @@ chmod +x DL-subscript.csh
 
 ---
 
-### Gaussian 16
-* [subg16](subg16) 
+### Gaussian 09
 
-* Usage: `subg16 input [output]` <br />
-where **input** is your g16 input file with or without .com extension. For example,  <br />
-`subg16 water_hf` <br />
-`subg16 water_hf water_hf_4cores.out`
+* [subg09](subg09) 
+
+* Usage: `subg09 input [output]` <br />
+where **input** is your g09 input file with or without .com extension. For example,  <br />
+`subg09 water_hf` <br />
+`subg09 water_hf water_hf_4cores.`
 
 * If no output specified, basename of input will be used to name output file automatically.
 
@@ -55,13 +56,13 @@ where **input** is your g16 input file with or without .com extension. For examp
   - [ ] Intel MPI
   - [ ] OpenMPI
   - [ ] MPICH or MVAPICH
-  - [x] GP-GPU (CUDA) - only in modified version.
+  - [ ] GP-GPU (CUDA)
 
-* This G16 runtime supports only OpenMP (shared-memory) parallel method.  <br />
+* This G09 runtime supports only OpenMP (shared-memory) parallel method.  <br />
   This program recognizes the OMP threads from the value of %nproc line in input.  <br />
   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
-  
-* GP-GPU is not now supported in current version of subg16, talk to me if you want a demo of modified `subg16gpu`.
+
+* Like G16, G09 will be submitted with serial queue if value of %nproc is set to 1.
 
 <details>
 <summary> Click here to see example of Gaussian input for 4 thread request on CPU queue.</summary>
@@ -128,6 +129,31 @@ Title Card Required
 
 </details>
 <br />
+
+---
+
+### Gaussian 16
+* [subg16](subg16) 
+
+* Usage: `subg16 input [output]` <br />
+where **input** is your g16 input file with or without .com extension. For example,  <br />
+`subg16 water_hf` <br />
+`subg16 water_hf water_hf_4cores.out`
+
+* If no output specified, basename of input will be used to name output file automatically.
+
+* Capability
+  - [x] OpenMP
+  - [ ] Intel MPI
+  - [ ] OpenMPI
+  - [ ] MPICH or MVAPICH
+  - [x] GP-GPU (CUDA) - only in modified version.
+
+* This G16 runtime supports only OpenMP (shared-memory) parallel method.  <br />
+  This program recognizes the OMP threads from the value of %nprocs line in input.  <br />
+  Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
+  
+* GP-GPU is not now supported in current version of subg16, talk to me if you want a demo of modified `subg16gpu`.
 
 <details>
 <summary> Click here to see example of Gaussian input for 4 thread and 4 GPU request on GPU queue.</summary>
@@ -202,81 +228,6 @@ Title Card Required
 * For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.
 
 * Gaussian official website: http://gaussian.com/
-
----
-
-### Gaussian 09
-
-* [subg09](subg09) 
-
-* Usage: `subg09 input [output]` <br />
-where **input** is your g09 input file with or without .com extension. For example,  <br />
-`subg09 water_hf` <br />
-`subg09 water_hf water_hf_4cores.`
-
-* If no output specified, basename of input will be used to name output file automatically.
-
-* Capability
-  - [x] OpenMP
-  - [ ] Intel MPI
-  - [ ] OpenMPI
-  - [ ] MPICH or MVAPICH
-  - [ ] GP-GPU (CUDA)
-
-* This G09 runtime supports only OpenMP (shared-memory) parallel method.  <br />
-  This program recognizes the OMP threads from the value of %nproc line in input.  <br />
-  Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
-
-* Like G16, G09 will be submitted with serial queue if value of %nproc is set to 1.
-
----
-
-### Q-Chem
-* [subqchem](subqchem)
-
-* Usage: `subqchem [thread] input [output]` <br />
-where **thread** is number of OpenMP threads and **input** is Q-Chem input file with or without .in extension.<br/>
-Default value of thread is 1.
-
-* Capability
-  - [x] OpenMP
-  - [x] Intel MPI (TBA)
-  - [ ] OpenMPI
-  - [ ] MPICH or MVAPICH
-  - [ ] GP-GPU (CUDA)
-  
-* Details: Parallelizability of Q-Chem that run in parallel with shared-memory (OpenMP) is better than that of non-shared memory (MPI).
-
-<details>
-<summary> Click here to see example of Q-Chem input.</summary>
-
-```
-$molecule
-0 1
-O
-H1 O OH
-H2 O OH H1 HOH
-
-OH  = 0.947
-HOH = 105.5
-$end
-
-
-$rem
-jobtype = freq
-exchange = pbe
-correlation = pbe
-basis = 6-31+g*
-ideriv = 2
-$end
-```
-
-</details>
-<br />
-
-* This script supports the Q-Chem PBS job submission with only OpenMP. If you want to use MPI instead, talk to TAIWANIA staff.
-
-* Q-Chem official website: http://www.q-chem.com/
 
 ---
 
@@ -360,6 +311,55 @@ Note that the first NWChem input is at least required.
   3. Neither ARMCI Casper, nor MPIPR, and nor GPU/CUDA are supported at this time.
 
 * To implement ARMCI and GPU modules in subnwmult, consult [subnwchem](subnwchem) script.
+
+---
+
+### Q-Chem
+* [subqchem](subqchem)
+
+* Usage: `subqchem [thread] input [output]` <br />
+where **thread** is number of OpenMP threads and **input** is Q-Chem input file with or without .in extension.<br/>
+Default value of thread is 1.
+
+* Capability
+  - [x] OpenMP
+  - [x] Intel MPI (TBA)
+  - [ ] OpenMPI
+  - [ ] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
+  
+* Details: Parallelizability of Q-Chem that run in parallel with shared-memory (OpenMP) is better than that of non-shared memory (MPI).
+
+<details>
+<summary> Click here to see example of Q-Chem input.</summary>
+
+```
+$molecule
+0 1
+O
+H1 O OH
+H2 O OH H1 HOH
+
+OH  = 0.947
+HOH = 105.5
+$end
+
+
+$rem
+jobtype = freq
+exchange = pbe
+correlation = pbe
+basis = 6-31+g*
+ideriv = 2
+$end
+```
+
+</details>
+<br />
+
+* This script supports the Q-Chem PBS job submission with only OpenMP. If you want to use MPI instead, talk to TAIWANIA staff.
+
+* Q-Chem official website: http://www.q-chem.com/
 
 ---
 
