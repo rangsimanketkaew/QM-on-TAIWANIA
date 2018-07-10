@@ -1,22 +1,26 @@
 # PBS-submission
-PBS Professional script generator for interactive job submission of quantum chemistry program package on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. All scripts were written in tcsh and tested during in stage open beta testing. Source code customization is required for use by other job scheduler and other cluster.
+
+A Suite of PBS Pro Script Generator for Interactive Job Submission on TAIWANIA Cluster 
+
+Automatic generator of PBS Professional script for interactive job submission of quantum chemistry application on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. All scripts were written in tcsh and tested during in stage open beta testing. Source code customization is required for use by other job scheduler and other cluster.
 <p align="center">
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
 <p/>
 
 Taiwania official website: https://iservice.nchc.org.tw
 
-**Terms of use:**
-1. I am not staff and not related to National Center for High-Performance Computing, Taiwan.
-2. I do not take any responsibility if any damage or failure cuased through use of all script or program taken through this Github repository.
+**DISCLAIMER:**
+1. I am not a staff of National Center for High-Performance Computing (NCHC), Taiwan.
+2. I am not related to National Center for High-Performance Computing (NCHC), Taiwan.
+3. I do not take any responsibility if any damage or failure cuased through use of all script or program taken through this Github repository.
 
 ---
 
-### How-to download and activate submission script
+### How-to download and activate programs
 
-[DL-subscript.csh](DL-subscript.csh) is used to download and update PBS Pro scripts generator from this github repository.
+[DL-subscript.csh](DL-subscript.csh) is used to download and update all programs from this github repository.
 
-1. Download DL-subscript.csh to your Linux machine using following command
+1. Download DL-subscript.csh to your Linux machine
 
 ```
 wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/DL-subscript.csh
