@@ -59,7 +59,7 @@ where **input** is your g09 input file with or without .com extension. For examp
   - [ ] GP-GPU (CUDA)
 
 * This G09 runtime supports only OpenMP (shared-memory) parallel method.  <br />
-  This program recognizes the OMP threads from the value of %nproc line in input.  <br />
+  This program recognizes the OMP threads from the value of %nprocs line in input.  <br />
   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
 
 * Like G16, G09 will be submitted with serial queue if value of %nproc is set to 1.
