@@ -26,8 +26,8 @@ echo "                    |--> ORCA input file with or without .inp extension.\n
 echo "   suborca detects number of MPI processes from value of 'PALn' keyword,"
 echo "   where n is sensible positive integer, in keyword line of input file."
 echo "   For example, \!B3LYP def2-SVP Opt PAL4 is requesting 4 MPI processes"
-echo "   for geometry optimization calculation using B3LYP/def2-SVP method.\n"
-
+echo "   for geometry optimization calculation using B3LYP/def2-SVP method."
+echo ""
 exit 0
 
 else if ($#argv == 1 || $#argv == 2) then
@@ -220,7 +220,6 @@ cd \$ORCA_SCRATCH_DIR
 ln -s $INPUTFILE \$ORCA_SCRATCH_DIR/${USERINP}.inp
 
 $ORCA_TOP/orca \$ORCA_SCRATCH_DIR/${USERINP}.inp > $OUTPUTFILE
-
 
 EOF
 

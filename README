@@ -1,44 +1,54 @@
 
-QM on Taiwania 2.0
-------------------
+                                         QM on TAIWANIA 1.0
+                                         ------------------
 
-   The 3rd release of PBS Pro script generator suite for interactive quantum chemistry calculation
-job submission on Taiwania (PETA) cluster, National Center for High-Performance Computing, Taiwan.
+          A Suite of PBS Pro Script Generator for Interactive Job Submission on TAIWANIA Cluster
+          --------------------------------------------------------------------------------------
 
-Taiwania cluster is Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect.
-
-The source code of scripts were written in tcsh and tested during in stage open beta testing.
-Source code customization is required for use by other job scheduler and other cluster.
-
-
-Taiwania official website
--------------------------
-https://iservice.nchc.org.tw
-
-
-New Update
-----------
-1. New submission tool for GAMESS including shared and distributed memory parallel system.
-   subgms and subgmsmpi
-2. rungms.MPI is used with subgmsmpi for submitting job with MPI protocol on HPC cluster.
-
-Bug fixed
----------
-1. Improved DL-subscript.csh
-2. Fixed 'ctest' queue recognition
-
-
-Terms of use
+INTRODUCTION
 ------------
-1. I am not staff and not related to National Center for High-Performance Computing, Taiwan.
-2. I do not take any responsibility if any damage or failure cuased through use of all script 
-   or program taken through this Github repository.
+This is the first release of the automatic generator of PBS Pro script for interactive job submission
+of chemistry application on TAIWANIA cluster, National Center for High-Performance Computing, Taiwan.
+TAIWANIA is Intel Xeon Gold 6148 cluster equiped with the Intel Omni-Path high-speed interconnect.
+The source code of all programs were written in C-shell, and tested during in stage open beta testing. 
+Source code customization is needed for other workload manager and for other HPC cluster.
 
+PROGRAMS
+--------
+This software suite contains the PBS Pro script generator of several Quantum Chemistry programs:
 
-Author
+  1. subg09      Gaussian 09
+  3. subg16      Gaussian 16
+  4. subnwchem   NWChem
+  5. subnwmult   NWChem (multiple jobs)
+  6. subqchem    Q-Chem
+  7. suborca     ORCA
+  8. subgms      GAMESS (OpenMP protocol)
+  9. subgmsmpi   GAMESS (MPI protocol)
+
+PROGRAM MANUAL
+--------------
+Information of all programs is available at https://github.com/rangsimanketkaew/PBS-submission
+
+FEATURES
+--------
+1. Interactive job submission.
+2. Automatic job queue recognition.
+3. Shared and distributed memory parallel processing.
+4. GPU accelerator are supported.
+
+DISCLAIMER
+----------
+1. I am not a staff of National Center for High-Performance Computing (NCHC), Taiwan.
+2. I am not related to National Center for High-Performance Computing (NCHC), Taiwan.
+3. I do not take any responsibility if any damage or failure cuased through use of all script 
+   or program taken through https://github.com/rangsimanketkaew/PBS-submission repository.
+
+AUTHOR
 ------
-Rangsiman Ketkaew                 rangsiman1993@gmail.com
-Department of Chemistry           https://github.com/rangsimanketkaew/PBS-submission
-Thammasat University, Thailand
+Rangsiman Ketkaew (MSc student)       rangsiman1993@gmail.com
+Department of Chemistry
+Faculty of Science and Technology     https://sites.google.com/site/compchem403/
+Thammasat University, Thailand        https://sites.google.com/site/rangsiman1993/
 
 
