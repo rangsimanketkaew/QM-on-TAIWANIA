@@ -51,7 +51,8 @@ echo ""
 
 set ARGV_ORDER = "$#argv"
 if ($ARGV_ORDER == 0) then
-  echo "   Normal usage:  subnwchem input [ gpu | casper | mpipr ] [ help ]\n"
+  echo "   Normal usage:  subnwchem input [ gpu | casper | mpipr ] [ help ]"
+  echo ""
   exit 0
 else if ("null$1" == "null-h" || "null$1" == "null-help" || "null$1" == "nullhelp") then
   goto help
@@ -775,7 +776,8 @@ endif
   echo " Std Error              = $FULLPATH/$JOBSTDERR"
   echo " Std Output             = $FULLPATH/$JOBSTDOUT"
   echo " Project ID             = $PROJ_ID"
-  echo " ==========================================================================\n"
+  echo " =========================================================================="
+  echo ""
 
 echo -n "Submit your job now ? [yes]: "
 set CONFIRM = "$<"
@@ -897,7 +899,9 @@ qsub $JOB_SCRIPT
   exit 0
 
 int:  
- echo "\nError: You pressed Ctrl-C  ....quit.... \n"
+ echo ""
+ echo "Error: You pressed Ctrl-C  ....quit.... "
+ echo ""
  exit 1
 
 help:

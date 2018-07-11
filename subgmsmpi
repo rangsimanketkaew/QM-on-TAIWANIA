@@ -29,13 +29,15 @@ echo ""
 
 # Check GAMESS top dir.
 if ( ! -e $GAMESS_TOP ) then
-  echo "Error: unable to locate GAMESS top directory. Please check" '$GAMESS_TOP' "again.\n"
+  echo "Error: unable to locate GAMESS top directory. Please check" '$GAMESS_TOP' "again."
+  echo ""
   exit 1
 endif
 
 # Check GAMESS_* env vir.
 if ( ! -f $GAMESS_TOP/$GAMESS_EXE ) then
-  echo "Error: $GAMESS_EXE executable not found in $GAMESS_TOP\n"
+  echo "Error: $GAMESS_EXE executable not found in $GAMESS_TOP"
+  echo ""
   exit 1
 endif
 
@@ -49,11 +51,14 @@ if ( -f $GAMESS_TOP/$RUNGMS_MPI ) then
   goto start_prog
 endif
 
-echo "Error: $RUNGMS_MPI file not found. This file should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories.\n"
+echo "Error: $RUNGMS_MPI file not found. This file should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories."
+echo ""
 echo "       where " '$GAMESS_TOP' " is $GAMESS_TOP"
-echo "             " '$HOME      ' " is $HOME\n"
+echo "             " '$HOME      ' " is $HOME"
+echo ""
 echo "subgms script executes GAMESS calculation via rungms.MPI, not rungms."
-echo "Type 'subgms help' for instruction of preparation of rungms.MPI file.\n"
+echo "Type 'subgms help' for instruction of preparation of rungms.MPI file."
+echo ""
 exit 1
 
 start_prog:
@@ -62,16 +67,23 @@ onintr inter
 
 if ($#argv == 0) then
   echo "   GAMESS 20180215 R1 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
-  echo "   ---------------------------------------------------------------------------\n"
-  echo "   Usage: subgmsmpi input [ output ]\n"
-  echo "   where input  is GAMESS input file with or without .inp extension.\n"
+  echo "   ---------------------------------------------------------------------------"
+  echo ""
+  echo "   Usage: subgmsmpi input [ output ]"
+  echo ""
+  echo "   where input  is GAMESS input file with or without .inp extension."
+  echo ""
   echo "   Example: subgmsmpi water_hf.input"
-  echo "            subgmsmpi water_hf water_hf_16cores\n"
+  echo "            subgmsmpi water_hf water_hf_16cores"
+  echo ""
   echo "   GAMESS was built with MPI & MKL of Intel Parallel Studio XE 2018 update1 on."
-  echo "   Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect.\n"
-  echo "   For MPI run,  Total number of MPI processes = NODES * PPN.\n"
+  echo "   Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect."
+  echo ""
+  echo "   For MPI run,  Total number of MPI processes = NODES * PPN."
+  echo ""
   echo "   where NODES is number of compute nodes."
-  echo "         PPN   is number of CPU cores per node (Max PPN is 40).\n"
+  echo "         PPN   is number of CPU cores per node (Max PPN is 40)."
+  echo ""
   exit 0
 endif
 
@@ -257,7 +269,9 @@ jobinfo:
 # Show all info before submitting job
 #####################################################
 
-echo "\n      ----- Job Info -----\n"
+echo ""
+echo "      ----- Job Info -----"
+echo ""
 echo "          Input file  :  $INPUTFILE"
 echo "         Output file  :  $OUTPUTFILE"
 echo "        Compute node  :  $NODES"
@@ -268,7 +282,8 @@ echo " Total MPI processes  :  $NODES x $CPUS = $TOTALCPUS"
 echo "            Job Name  :  $JOBNAME"
 echo "           Job Queue  :  $JOBQUEUE"
 echo "           Wall-Time  :  $WALLTIME"
-echo "           Project ID :  $PROJ_ID\n"
+echo "           Project ID :  $PROJ_ID"
+echo ""
 
 echo -n "Submit your job now ? [yes]: "
 set SUBMIT = "$<"
@@ -357,7 +372,9 @@ EOF
 exit 0
 
 inter: 
-  echo "\nError: you pressed Ctrl+C ...Quit...\n"
+  echo ""
+  echo "Error: you pressed Ctrl+C ...Quit..."
+  echo ""
   exit 1
 
 

@@ -19,10 +19,13 @@ if ($#argv == 0) then
 
 echo ""
 echo "   ORCA 4.0.1.2 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
-echo "   ---------------------------------------------------------------------\n"
-echo "   Usage: suborca input [output]\n"
+echo "   ---------------------------------------------------------------------"
+echo ""
+echo "   Usage: suborca input [output]"
+echo ""
 echo "                    |"
-echo "                    |--> ORCA input file with or without .inp extension.\n"
+echo "                    |--> ORCA input file with or without .inp extension."
+echo ""
 echo "   suborca detects number of MPI processes from value of 'PALn' keyword,"
 echo "   where n is sensible positive integer, in keyword line of input file."
 echo "   For example, \!B3LYP def2-SVP Opt PAL4 is requesting 4 MPI processes"
@@ -99,7 +102,8 @@ else if ( $CPUS >= 2 && $CPUS <= 40 ) then
   set JOBQUEUE = cf40
   set WALLTIME = "96:00:00"
 else if ( $CPUS > 40 ) then
-  echo "\nWarning: Number of MPI processes is over 40. Hence, it will be set to 40."
+  echo ""
+  echo "Warning: Number of MPI processes is over 40. Hence, it will be set to 40."
   set CPUS = 40
   set JOBQUEUE = cf40
   set WALLTIME = "96:00:00"
@@ -170,7 +174,9 @@ jobinfo:
 # Show all info before submitting job
 #####################################################
 
-echo "\n      ----- Job Info -----\n"
+echo ""
+echo "      ----- Job Info -----"
+echo ""
 echo "    Input file  :  $INPUTFILE"
 echo "   Output file  :  $OUTPUTFILE"
 echo "  Compute node  :  $NODES"
@@ -179,7 +185,8 @@ echo " MPI processes  :  $MPIPROCS"
 echo "   OMP Threads  :  $THREADS"
 echo "      Job Name  :  $JOBNAME"
 echo "     Job Queue  :  $JOBQUEUE"
-echo "     Wall-Time  :  $WALLTIME\n"
+echo "     Wall-Time  :  $WALLTIME"
+echo ""
 
 echo -n "Submit your job now ? [yes]: "
 set SUBMIT = "$<"
@@ -228,7 +235,9 @@ qsub $PBS_SCRIPT
 exit 0
 
 inter: 
-  echo "\nError: you pressed Ctrl+C ...Quit...\n"
+  echo ""
+  echo "Error: you pressed Ctrl+C ...Quit..."
+  echo ""
   exit 1
 
 

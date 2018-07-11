@@ -28,13 +28,15 @@ echo ""
 
 # Check GAMESS top dir.
 if ( ! -e $GAMESS_TOP ) then
-  echo "Error: unable to locate GAMESS top directory. Please check" '$GAMESS_TOP' "again.\n"
+  echo "Error: unable to locate GAMESS top directory. Please check" '$GAMESS_TOP' "again."
+  echo ""
   exit 1
 endif
 
 # Check GAMESS_* env vir.
 if ( ! -f $GAMESS_TOP/$GAMESS_EXE ) then
-  echo "Error: $GAMESS_EXE executable not found in $GAMESS_TOP\n"
+  echo "Error: $GAMESS_EXE executable not found in $GAMESS_TOP"
+  echo ""
   exit 1
 endif
 
@@ -48,11 +50,14 @@ if ( -f $GAMESS_TOP/$RUNGMS_MOD ) then
   goto check_rungmsmod
 endif
 
-echo "Error: rungms.mod file not found. rungms.mod should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories.\n"
+echo "Error: rungms.mod file not found. rungms.mod should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories."
+echo ""
 echo "       where " '$GAMESS_TOP' " is $GAMESS_TOP"
-echo "             " '$HOME      ' " is $HOME\n"
+echo "             " '$HOME      ' " is $HOME"
+echo ""
 echo "subgms script executes GAMESS calculation via rungms.mod, not rungms."
-echo "Type 'subgms help' for instruction of preparation of rungms.mod file.\n"
+echo "Type 'subgms help' for instruction of preparation of rungms.mod file."
+echo ""
 exit 1
 
 check_rungmsmod:
@@ -60,17 +65,20 @@ check_rungmsmod:
 set CHK_ERR = 0
 
 if ( `grep -wc 'TEMPLATE_1' $GAMESS_RUNGMS_MOD` == 0 ) then
-  echo "Error: set SCR=TEMPLATE_1 command line not found in rungms.mod file.\n"
+  echo "Error: set SCR=TEMPLATE_1 command line not found in rungms.mod file."
+  echo ""
   set CHK_ERR = 1
 endif
 
 if ( `grep -wc 'TEMPLATE_2' $GAMESS_RUNGMS_MOD` == 0 ) then
-  echo "Error: set USERSCR=TEMPLATE_2 command line not found in rungms.mod file.\n"
+  echo "Error: set USERSCR=TEMPLATE_2 command line not found in rungms.mod file."
+  echo ""
   set CHK_ERR = 1
 endif
 
 if ( `grep -wc 'TEMPLATE_3' $GAMESS_RUNGMS_MOD` == 0 ) then
-  echo "Error: set GMSPATH=TEMPLATE_3 command line not found in rungms.mod file.\n"
+  echo "Error: set GMSPATH=TEMPLATE_3 command line not found in rungms.mod file."
+  echo ""
   set CHK_ERR = 1
 endif
 
@@ -80,13 +88,18 @@ onintr inter
 
 if ($#argv == 0) then
   echo "   GAMESS 20180215 R1 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
-  echo "   ---------------------------------------------------------------------------\n"
-  echo "   Usage: subgms input [ output ]\n"
-  echo "   where input  is GAMESS input file with or without .inp extension.\n"
+  echo "   ---------------------------------------------------------------------------"
+  echo ""
+  echo "   Usage: subgms input [ output ]"
+  echo ""
+  echo "   where input  is GAMESS input file with or without .inp extension."
+  echo ""
   echo "   Example: subgms water_hf.input"
-  echo "            subgms water_hf water_hf_16cores\n"
+  echo "            subgms water_hf water_hf_16cores"
+  echo ""
   echo "   This GAMESS was built with Intel Math Kernel Library (MKL) for parallel run."
-  echo "   Max OpenMP threads per node (OMP_NUM_THREADS) is 40.\n"
+  echo "   Max OpenMP threads per node (OMP_NUM_THREADS) is 40."
+  echo ""
   exit 0
 endif
 
@@ -230,7 +243,9 @@ jobinfo:
 # Show all info before submitting job
 #####################################################
 
-echo "\n      ----- Job Info -----\n"
+echo ""
+echo "      ----- Job Info -----"
+echo ""
 echo "    Input file  :  $INPUTFILE"
 echo "   Output file  :  $OUTPUTFILE"
 echo "  Compute node  :  $NODES"
@@ -240,7 +255,8 @@ echo "   OMP Threads  :  $THREADS"
 echo "      Job Name  :  $JOBNAME"
 echo "     Job Queue  :  $JOBQUEUE"   
 echo "     Wall-Time  :  $WALLTIME"
-echo "     Project ID :  $PROJ_ID\n"
+echo "     Project ID :  $PROJ_ID"
+echo ""
 
 echo -n "Submit your job now ? [yes]: "
 set SUBMIT = "$<"
@@ -362,7 +378,9 @@ EOF
 exit 0
 
 inter: 
-  echo "\nError: you pressed Ctrl+C ...Quit...\n"
+  echo ""
+  echo "Error: you pressed Ctrl+C ...Quit..."
+  echo ""
   exit 1
 
 
