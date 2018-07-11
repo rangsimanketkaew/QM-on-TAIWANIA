@@ -57,7 +57,7 @@ if ($#argv == 1) then
   set CPUS = 1
   set INPUTFILE = "$1"
   set OUTPUTFILE = 0
-  goto check_argv
+  goto check_input
 endif
 
 if ($#argv == 2) then
@@ -66,13 +66,13 @@ if ($#argv == 2) then
     set CPUS = 1
     set INPUTFILE = "$1"
     set OUTPUTFILE = "$2"
-    goto check_argv
+    goto check_input
 # subqchem thread input
   else
     set CPUS = "$1"
     set INPUTFILE = "$2"
     set OUTPUTFILE = 0
-    goto check_argv
+    goto check_input
   endif
 endif
 
@@ -85,55 +85,13 @@ if ($#argv == 3) then
     set CPUS = "$1"
     set INPUTFILE = "$2"
     set OUTPUTFILE = "$3"
-    goto check_argv
+    goto check_input
   endif
 endif
 
 if ($#argv > 3) then
   echo "Error: Unable to recognize $4 command. Please assign only [number of threads] input and [output]."
   exit 1
-endif
-
-check_argv:
-#check cpu cores
-if ($CPUS > 40 ) then
-  echo "\nWarning: Value of threads you assigned is over 40. Thus, threads will be set to 40 automatically."
-  set CPUS = 40
-else if ($CPUS < 1 ) then
-  echo "Error: the number of OMP Threads must be positive integer. Max value is 40 threads."
-  exit 1
-endif
-
-if ($CPUS == 1) then
-  set CPUS = 1
-  set JOBQUEUE = serial
-  set WALLTIME = "96:00:00"
-  goto check_input
-endif
-
-echo ""
-echo "Optimal queues:  ctest (30 mins) [1]"
-echo "                 cf40            [2]"
-echo ""
-
-check_queue:
-if ($CPUS >= 2 && $CPUS <= 40) then
-  echo -n "Enter job queue [2]: "
-  set INPQUEUE = "$<"
-endif
-
-if ("null$INPQUEUE" == "null") then
-  set JOBQUEUE = cf40
-  set WALLTIME = "96:00:00"
-else if ($INPQUEUE == 1) then
-  set JOBQUEUE = ctest
-  set WALLTIME = "00:30:00"
-else if ($INPQUEUE == 2) then
-  set JOBQUEUE = cf40
-  set WALLTIME = "96:00:00"
-else
-  echo "Error: Your choice is wrong. Please enter either 1 or 2."
-  goto check_queue
 endif
 
 #check input
@@ -156,6 +114,56 @@ else
   set OUTPUTFILE = "$FULLPATH/$OUTPUTNAME".out
 endif
 
+echo ""
+
+check_argv:
+#check how many sub-jobs
+if (`grep -c '@@@' $INPUTFILE` >= 1) then
+  @ NUMJOBS = ( `grep -c '@@@' $INPUTFILE` + 1 )
+  echo "Warning: $REALNAME contains $NUMJOBS calculations."
+endif
+
+#check cpu cores
+if ($CPUS > 40 ) then
+  echo "Warning: Value of threads you assigned is over 40. Thus, threads will be set to 40 automatically."
+  set CPUS = 40
+else if ($CPUS < 1 ) then
+  echo "Error: the number of OMP Threads must be positive integer. Max value is 40 threads."
+  exit 1
+endif
+
+if ($CPUS == 1) then
+  set CPUS = 1
+  set JOBQUEUE = serial
+  set WALLTIME = "96:00:00"
+  goto check_resource
+endif
+
+check_queue:
+
+echo ""
+echo "Optimal queues:  ctest (30 mins) [1]"
+echo "                 cf40  (96 hrs)  [2]"
+echo ""
+
+if ($CPUS >= 2 && $CPUS <= 40) then
+  echo -n "Enter job queue [2]: "
+  set INPQUEUE = "$<"
+endif
+
+if ("null$INPQUEUE" == "null" || $INPQUEUE == 2) then
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+else if ($INPQUEUE == 1) then
+  set JOBQUEUE = ctest
+  set WALLTIME = "00:30:00"
+else
+  echo "Error: Your choice is incorrect."
+  goto check_queue
+endif
+
+check_resource:
+#Best threads per core with this Intel Xeon is 1.
 set THREADS = "$CPUS"
 
 set JOBNAME = "$INPUTNAME"
@@ -220,8 +228,8 @@ jobinfo:
 #####################################################
 
 echo "\n     ----- Job Info -----\n"
-echo "   Q-Chem top  :  $QC"
-echo '   Executable  :  $QC/exe/qcprog.exe\n'
+echo "  Q-Chem root  :  $QC"
+echo '   Executable  :  $QC/exe/qcprog.exe'
 echo "   Input file  :  $INPUTFILE"
 echo "  Output file  :  $OUTPUTFILE"
 echo " Compute node  :  $NODES"
