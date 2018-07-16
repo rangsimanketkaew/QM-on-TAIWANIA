@@ -521,6 +521,24 @@ HYDROGEN    1.0     -1.661090000        -1.766020000        20.021390000
 
 ---
 
+### LAMMPS
+* [sublmp](sublmp)
+
+* Usage: `sublmp INPUT NODES NMPI OMP [ OUTPUT ] [ help ]` <br/>
+INPUT  = LAMMPS input file. <br/>
+NODES  = Number of compute nodes. <br/>
+NMPI   = Number of MPI processes (per node). <br/>
+OMP    = Number of OMP threads (per process). <br/>
+OUTPUT = LAMMPS output file. [optional]
+
+* Maximum MPI processes/node and OMP threads/process are 40.
+
+* GPU is not yet supported.
+
+* This program was tested with LAMMPS that built with Intel compiler, MKL, MPI from Intel Parallel Studio XE 2018 update 1, and GCC 6.3.0 compiler. `make intel_cpu_intelmpi`
+
+---
+
 ### CONTACT
 Rangsiman Ketkaew  <br />
 E-mail: rangsiman1993@gmail.com
