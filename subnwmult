@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
-# Multiple NWChem 6.8.1 Interactive PBS Jobs Submission 
-# on Taiwania cluster, NCHC, Taiwan
+# Interactive PBS Pro submission program for multiple NWChem 
+# calculations on TAIWANIA cluster, NCHC, Taiwan.
 # 
 # Updated 20180623  Rangsiman Ketkaew  rangsiman1993@gmail.com
 # https://github.com/rangsimanketkaew/PBS-submission/
@@ -132,11 +132,15 @@ end
 echo "|"
 
 ask_id_choice:
-echo -n "| Enter Project ID choice [1]: "
+echo -n "| Enter Project ID [1]: "
 set PROJINP = "$<"
-set PROJINP_C = `echo $PROJINP | grep -c '[a-z][A-Z]*'`
 
-if ( $PROJINP_C == 1 ) then
+if ( "null$PROJINP" == "null" ) then
+  set PROJ_ID = "$LISTID[1]"
+  goto jobinfo
+endif
+
+if ( `echo $PROJINP | grep -c '[a-z][A-Z]*'` == 1 ) then
   echo "| Error: Please assign choice as positive integer."
   goto ask_id_choice
 endif
@@ -144,11 +148,6 @@ endif
 if ( $PROJINP > $#LISTID || $PROJINP <= 0 ) then
   echo "| Error: Choice you selected is out of range."
   goto ask_id_choice
-endif
-
-if ( "null$PROJINP" == "null" ) then
-  set PROJINP = 1
-  set PROJ_ID = "$LISTID[1]"
 else
   set PROJ_ID = "$LISTID[$PROJINP]"
 endif
@@ -187,6 +186,7 @@ input:
 
 cat <<EOF > $PBS_SCRIPT
 #!/bin/bash
+
 #PBS -l select=${JOBNODE}:ncpus=${JOBCPU}:mpiprocs=${JOBMPI}:ompthreads=${JOBTHREAD}
 #PBS -l walltime=$JOBTIME
 #PBS -q $JOBQUEUE

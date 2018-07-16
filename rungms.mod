@@ -60,10 +60,14 @@
 #       both Sun Grid Engine (SGE), and Portable Batch System (PBS).
 #       See also a very old LoadLeveler "ll-gms" for some IBM systems.
 #
+
+#######################  RK  #######################
 set TARGET=sockets
 set SCR=TEMPLATE_1
 set USERSCR=TEMPLATE_2
 set GMSPATH=TEMPLATE_3
+####################################################
+
 #
 set JOB=$1      # name of the input file xxx.inp, give only the xxx part
 set VERNO=$2    # revision number of the executable created by 'lked' step

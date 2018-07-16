@@ -111,8 +111,9 @@ endif
 check_queue:
 
 echo ""
-echo "Optimal queues:  ctest (30 mins) [1]"
-echo "                 cf40  (96 hrs)  [2]"
+echo "Optimal job queues: "
+echo "  [1]  ctest (00:30:00)"
+echo "  [2]  cf40  (96:00:00)"
 echo ""
 
 echo -n "Enter job queue [2]: "
@@ -165,11 +166,15 @@ end
 echo ""
 
 ask_id_choice:
-echo -n "Enter Project ID choice [1]: "
+echo -n "Enter Project ID [1]: "
 set PROJINP = "$<"
-set PROJINP_C = `echo $PROJINP | grep -c '[a-z][A-Z]*'`
 
-if ( $PROJINP_C == 1 ) then
+if ( "null$PROJINP" == "null" ) then
+  set PROJ_ID = "$LISTID[1]"
+  goto jobinfo
+endif
+
+if ( `echo $PROJINP | grep -c '[a-z][A-Z]*'` == 1 ) then
   echo "Error: Please assign choice as positive integer."
   goto ask_id_choice
 endif
@@ -177,11 +182,6 @@ endif
 if ( $PROJINP > $#LISTID || $PROJINP <= 0 ) then
   echo "Error: Choice you selected is out of range."
   goto ask_id_choice
-endif
-
-if ( "null$PROJINP" == "null" ) then
-  set PROJINP = 1
-  set PROJ_ID = "$LISTID[1]"
 else
   set PROJ_ID = "$LISTID[$PROJINP]"
 endif

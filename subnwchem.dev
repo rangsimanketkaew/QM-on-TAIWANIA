@@ -1,13 +1,13 @@
 #!/bin/csh
 
-# Interactive PBS Pro submission program for single NWChem calculation on 
-# TAIWANIA cluster, NCHC, Taiwan.
+# Interactive PBS Pro submission program for submitting NWChem job 
+# with MPI parallel on Taiwania cluster, NCHC, Taiwan.
 #
 # Capabilities:
-#  [/] support serial and parallel run using MPI protocol
-#  [/] support ARMCI methods: Casper and MPI-PR
-#  [/] support GPU/CUDA request
+#  [/] support serial and parallel using MPI method
+#  [/] submit job on GPU/CUDA request
 #  [/] automatically determine optimal PBS job queue
+#  [/] use ARMCI methods: Casper and MPI-PR
 #
 # Updated 2018.06.29  Rangsiman Ketkaew  rangsiman1993@gmail.com
 # https://github.com/rangsimanketkaew/PBS-submission/
@@ -15,12 +15,11 @@
 ###############################################################################
 set NWCHEM_VER            = "6.8"
 set NWCHEM_TOP            = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixmrcc"
-set NWCHEM_TOP_CASPER     = "$NWCHEM_TOP"
+set NWCHEM_TOP_CASPER     = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixmrcc"
 set NWCHEM_TOP_MPIPR      = "/pkg/nwchem/MPI-PR/i18gcc6/nwchem-6.8.1-fixmrcc"
 set NWCHEM_TOP_CASPER_GPU = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixcuda"
 set NWCHEM_TOP_MPIPR_GPU  = "NOTAVAIALBLE"
 set NWCHEM_TOP_GPU        = "$NWCHEM_TOP_CASPER_GPU"
-###############################################################################
 set CLEANSRC              = "$HOME/.nwchem-clean-up"
 ###############################################################################
 set PROJ_ID_FILE          = "$HOME/.proj_id"
@@ -41,9 +40,9 @@ set CLEAN_CASPER = 0
 set CLEAN_MPIPR  = 0
 
 echo ""
-echo "     ###############################################################"
-echo "    ##   NWChem $NWCHEM_VER Interactive PBS Pro Submission on TAIWANIA   ##"
-echo "   ###############################################################"
+echo "    ###############################################################"
+echo "   ##   NWChem $NWCHEM_VER Interactive PBS Pro Submission on TAIWANIA   ##"
+echo "  ###############################################################"
 echo ""
 
 #############################################
@@ -52,10 +51,10 @@ echo ""
 
 set ARGV_ORDER = "$#argv"
 if ($ARGV_ORDER == 0) then
-  echo "   Usage: subnwchem input [ gpu | casper | mpipr ] [ help ]"
+  echo "  Usage: subnwchem input.nw [output.out] [casper|mpipr] [gpu] [help]"
   echo ""
   exit 0
-else if ("null$1" == "nullhelp" || "null$1" == "null-help" || "null$1" == "null-h") then
+else if ("null$1" == "nullhelp" || "null$1" == "nullhelp" || "null$1" == "nullh") then
   goto help
 endif
 
@@ -63,22 +62,35 @@ if ($ARGV_ORDER == 1) then
   set INPUT_ARG1 = "$1"
 endif
 
+if ($ARGV_ORDER == 2) then
+  if ("null$2" == "nullhelp" || "null$2" == "nullhelp" || "null$2" == "nullh") goto help
+  set INPUT_ARG1 = "$1"
+  if ("$2" != "casper" && "$2" != "mpipr" && "$2" != "gpu") then
+    set OUTPUT_ARG2 = "$2"
+    goto nwchem_def
+  else
+    goto many_argv
+  endif
+endif
+
+many_argv:
 if ($ARGV_ORDER >1) then
   set INPUT_ARG1 = "$1"
+  set OUTPUT_ARG2 = "$2"
   @ i = 2
   while ($i <= $ARGV_ORDER)
     set ARGV = $argv[$i]
 #
     if ("null$ARGV" == "nullhelp") then
       goto help
-    else if ("null$ARGV" == "nullgpu") then
-      set USEGPU = 1
     else if ("null$ARGV" == "nullcasper") then
       set ARMCI = 1
       set CASPER = 1
     else if ("null$ARGV" == "nullmpipr") then
       set ARMCI = 1
       set MPIPR = 1
+    else if ("null$ARGV" == "nullgpu") then
+      set USEGPU = 1
     else 
       echo "Error: Invalid command $ARGV"
       echo -n "####### Enter to start help page. #######" 
@@ -681,7 +693,6 @@ endif
 #############################################
 
 if ( ! -e $CLEANSRC ) then
-  echo ""
   echo "This may be your first time to use subnwchem. CLEAN-UP file just has been created."
   mkdir -p $CLEANSRC
 endif
@@ -716,18 +727,17 @@ cat <<EOF > $CLEAN_CASPER
 
 MPIPR_JUNK_PREFIX="/dev/shm/*cmx"
 
-GARBAGE=\`ls -1 \${MPIPR_JUNK_PREFIX}* 2>/dev/null\`
-if [ "\$GARBAGE" != "" ]; then
-  echo "Cleaning up \$GARBAGE at \$HOSTNAME"
-  rm -f \$GARBAGE
+GARBAGE=`ls -1 ${MPIPR_JUNK_PREFIX}* 2>/dev/null`
+if [ "$GARBAGE" != "" ]; then
+  echo "Cleaning up $GARBAGE at $HOSTNAME"
+  rm -f $GARBAGE
 fi
 
 PSM2_JUNK_PREFIX="/dev/shm/psm2_shm"
-
-GARBAGE=\`ls -1 \${PSM2_JUNK_PREFIX}* 2>/dev/null\`
-if [ "\$GARBAGE" != "" ]; then
-  echo "Cleaning up \$GARBAGE at \$HOSTNAME"
-  rm -f \$GARBAGE
+GARBAGE=`ls -1 ${PSM2_JUNK_PREFIX}* 2>/dev/null`
+if [ "$GARBAGE" != "" ]; then
+  echo "Cleaning up $GARBAGE at $HOSTNAME"
+  rm -f $GARBAGE
 fi
 
 EOF
@@ -741,7 +751,7 @@ clean_mpipr:
 if ( $CLEAN_MPIPR == 1 ) then
   set CLEAN_MPIPR = "$CLEANSRC/cleanup-cmx.sh"
 else
-  goto job_proj_id
+  goto 
 endif
 
 if ( ! -f $CLEAN_MPIPR ) then
@@ -765,10 +775,10 @@ cat <<EOF > $CLEAN_MPIPR
 
 MPIPR_JUNK_PREFIX="/dev/shm/*cmx"
 
-GARBAGE=\`ls -1 \${MPIPR_JUNK_PREFIX}* 2>/dev/null\`
-if [ "\$GARBAGE" != "" ]; then
-  echo "Cleaning up \$GARBAGE at \$HOSTNAME"
-  rm -f \$GARBAGE
+GARBAGE=`ls -1 ${MPIPR_JUNK_PREFIX}* 2>/dev/null`
+if [ "$GARBAGE" != "" ]; then
+  echo "Cleaning up $GARBAGE at $HOSTNAME"
+  rm -f $GARBAGE
 fi
 
 EOF
@@ -924,8 +934,8 @@ if [ ! -f ~/.nwchemrc ]; then ln -s /pkg/nwchem/etc/default.nwchemrc ~/.nwchemrc
 export MACHLIST=\$PBS_O_WORKDIR/nodelist.\${PBS_JOBID/\.srvc1/}
 
 cat \$PBS_NODEFILE | sed -e 's/.*/&\.nchc\.opa/' > \$MACHLIST
-export CASCLEAN="for RUNNODE in \`uniq \$MACHLIST\`; ssh \$RUNNODE $CLEANSRC/cleanup-devshm.sh; done"
-export MPIPRCLEAN="for RUNNODE in \`uniq \$MACHLIST\`; ssh \$RUNNODE $CLEANSRC/cleanup-cmx.sh; done"
+export CASCLEAN="for RUNNODE in \`uniq \$MACHLIST\`; ssh \$RUNNODE \$HOME/.cleanup-devshm.sh; done"
+export MPIPRCLEAN="for RUNNODE in \`uniq \$MACHLIST\`; ssh \$RUNNODE \$HOME/.cleanup-cmx.sh; done"
 
 EOF
 
@@ -942,64 +952,34 @@ $JOBINPUT > $JOBOUTPUT
 \$CASCLEAN
 
 EOF
-
-#---------------------------------------
-
+#
 else if ("null$NWCHEM_RUNTIME" == "nullCASPER_GPU" || "null$NWCHEM_RUNTIME" == "nullCASPER") then
 cat <<EOF >> $JOB_SCRIPT
 export ARMCI_NETWORK=ARMCI
-
-########################
 \$CASCLEAN
-########################
-
 mpirun -PSM2 -n $TOTALMPI -genv CSP_NG 1 -genv LD_PRELOAD \$NWCHEM_CASLIB/libcasper.so \
 $NWCHEM_EXE \
-$JOBINPUT > \
-$JOBOUTPUT
-
-########################
+$JOBINPUT > $JOBOUTPUT
 \$CASCLEAN
-########################
 
 EOF
-
-#---------------------------------------
-
+#
 else if ("null$NWCHEM_RUNTIME" == "nullMPIPR_GPU" || "null$NWCHEM_RUNTIME" == "nullMPIPR") then
 cat <<EOF >> $JOB_SCRIPT
 export ARMCI_NETWORK=MPI-PR
-
-########################
 \$MPIPRCLEAN
-########################
-
 mpirun -PSM2 -n $TOTALMPI $NWCHEM_EXE \
-$JOBINPUT > \
-$JOBOUTPUT
-
-########################
+$JOBINPUT > $JOBOUTPUT
 \$MPIPRCLEAN
-########################
 
 EOF
-
-#---------------------------------------
-
+#
 else if ("null$NWCHEM_RUNTIME" == "nullNORM") then
 cat <<EOF >> $JOB_SCRIPT
-
-########################
 \$CASCLEAN
-########################
-
 mpirun -PSM2 -n $TOTALMPI $NWCHEM_EXE \
-$JOBINPUT > \
-$JOBOUTPUT
-
-########################
+$JOBINPUT > $JOBOUTPUT
 \$CASCLEAN
-########################
 
 EOF
 endif
@@ -1045,7 +1025,7 @@ cat << EOF | less
                  such as HF, DFT, TD-DFT, PW-DFT, MP2, CI, CC, TCE, MC-SCF, QM/MM, etc.
                  This NWChem can exploit ARMCI method: MPI-PR and Casper, and GPU/CUDA accelerator on GPU compute node.
 
-                 Yet another NWChem runtimes were compiled with ARMCI methods comprise of Casper and MPI-PR models.
+                 Another NWChem runtimes were compiled with ARMCI methods comprise of Casper and MPI-PR models.
                  When ARMCI is enabled, one rank of all MPI ranks on each compute node will be used as ghost processes
                  dedicated to help asynchronous progress for high efficient scalable MPI calculation.
                  For example, request of 40 processes on 20 compute node each, the total MPI processes is 800.

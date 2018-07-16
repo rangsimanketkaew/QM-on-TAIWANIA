@@ -1,0 +1,372 @@
+#!/bin/csh
+
+# LAMMPS Interactive PBS Pro Job Submissionon TAIWANIA cluster, 
+# NCHC, Taiwan
+#
+# This script is tested with LAMMPS that built by Intel Parallel 
+# Studio XE 2018 update 1.
+#
+# Updated 20180715  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# https://github.com/rangsimanketkaew/PBS-submission/
+
+##################################################################
+set LMP_TOP = "$HOME"
+set LMP_EXE = "$LMP_TOP/lmp_intel_cpu_intelmpi"
+set LMP_VER = "16MAR2018"
+##################################################################
+set PROJ_ID_FILE = "$HOME/.proj_id"
+##################################################################
+
+onintr inter
+
+if ( "$1" == "help" || "$1" == "-help" || "$1" == "-h" ) goto helppage
+
+if ( ! -e $LMP_TOP ) then
+  echo "Error: Unable to locate $LMP_TOP top directory. Please check" '$LMP_TOP' "again."
+  exit 1
+endif
+
+if ( ! -f $LMP_EXE ) then
+  echo "Error: Unable to locate $LMP_EXE executable. Please check" '$LMP_EXE' "again."
+  exit 1
+endif
+
+if ($#argv == 0) then
+  echo ""
+  echo "   LAMMPS $LMP_VER Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
+  echo "   -------------------------------------------------------------------------"
+  echo ""
+  echo "   Usage: sublmp INPUT NODES NMPI OMP [ OUTPUT ] [ help ]"
+  echo ""
+  echo "   INPUT  = LAMMPS input file."
+  echo "   NODES  = Number of compute nodes."
+  echo "   NMPI   = Number of MPI processes (per node)."
+  echo "   OMP    = Number of OMP threads (per process)."
+  echo "   OUTPUT = LAMMPS output file. [optional]"
+  echo ""
+  echo "   Max MPI processes/node & OMP threads/process are 40."
+  echo ""
+  exit 0
+endif
+
+if ( $#argv < 4 ) then
+  echo "Error: Too less argument. Missing either INPUT or NODES or NMPI or OMP."
+  exit 1
+else if ( $#argv > 5 ) then
+  echo "Error: Too many argument. sublmp needs only INPUT, NODES, NMPI, and OMP."
+  exit 1
+endif
+
+ask_input:
+set INPUTFILE = "$1"
+if ( ! -f $INPUTFILE ) then
+  echo "Error: Unable to locate $INPUTFILE"
+  exit 1
+endif
+
+ask_node:
+set NODES = "$2" 
+if ( `echo $NODES | grep -c '[a-z][A-Z]*'` != 1 ) then
+  set NODES = "$NODES"
+else
+  echo "Error: Number o compute node must be positive integer."
+endif
+
+ask_mpi:
+set NMPI = "$3"
+if ( `echo $NMPI | grep -c '[a-z][A-Z]*'` != 1 ) then
+  if ( $NMPI > 40 ) then
+    echo "Warning: Max number of MPI processes is 40."
+    exit 1
+  else
+    set NMPI = "$NMPI"
+  endif
+else
+  echo "Error: Number of MPI processes must be positive integer."
+endif
+
+ask_omp:
+set THREADS = "$4"
+if ( `echo $THREADS | grep -c '[a-z][A-Z]*'` != 1 ) then
+  if ( $THREADS > 40 ) then
+    echo "Warning: Max number of OMP threads per processes is 40."
+    exit 1
+  else
+    set THREADS = "$THREADS"
+  endif
+else
+  echo "Error: Number of OMP threads must be positive integer."
+endif
+
+ask_output:
+set OUTPUTNAME = `basename $INPUTFILE .in`
+set OUTPUTFILE = "$OUTPUTNAME".log
+if ( $5 != "" ) set OUTPUTFILE = "$5"
+
+ask_queue:
+@ TOTALCPUS = ($NODES * $NMPI)
+
+check_queue:
+if ( $TOTALCPUS == 1 ) then 
+  set JOBQUEUE = serial
+  set WALLTIME = "96:00:00"
+else if ( $TOTALCPUS <= 40 ) then 
+  set JOBQUEUE = cf40
+  set WALLTIME = "96:00:00"
+else if ( $TOTALCPUS <= 160 ) then 
+  set JOBQUEUE = cf160
+  set WALLTIME = "96:00:00"
+else if ( $TOTALCPUS <= 400 ) then 
+  set JOBQUEUE = ct400
+  set WALLTIME = "96:00:00"
+else if ( $TOTALCPUS <= 800 ) then 
+  set JOBQUEUE = ct800
+  set WALLTIME = "72:00:00"
+else if ( $TOTALCPUS <= 1200 ) then 
+  set JOBQUEUE = cf1200
+  set WALLTIME = "48:00:00"
+else if ( $TOTALCPUS <= 2000 ) then 
+  set JOBQUEUE = ct2k
+  set WALLTIME = "48:00:00"
+else if ( $TOTALCPUS <= 6000 ) then 
+  set JOBQUEUE = ct6k
+  set WALLTIME = "24:00:00"
+else
+  echo "Error: Maximum total MPI processes cores is 6000."
+  exit 1
+endif
+
+echo ""
+echo "Optimal job qeueue for this job is $JOBQUEUE"
+echo "Optimal wall-time for this job is $WALLTIME"
+echo ""
+echo -n "OK ? [y]: "
+set QUEUE = "$<"
+
+if ( $QUEUE == "" || $QUEUE == "y" || $QUEUE == "yes" ) then
+  set JOBQUEUE = "$JOBQUEUE"
+  set WALLTIME = "$WALLTIME"
+else if ( $QUEUE == "n" || $QUEUE == "no" ) then
+  echo ""
+  echo "--------- Please specify job queue and wall-time manually. ---------"
+  echo ""
+  echo -n "Enter job queue (e.g. ctest): "
+  set JOBQUEUE = "$<"
+  echo -n "Enter wall-time: Second [0-60]: "
+  set SEC = "$<"
+  echo -n "Enter wall-time: Second [0-60]: "
+  set MIN = "$<"
+  echo -n "Enter wall-time: Second [0-96]: "
+  set HRS = "$<"
+  set WALLTIME = "${HRS}:${MIN}:${SEC}"
+endif
+
+set_resource:
+set CPUS = "$NMPI"
+set JOBNAME = "$OUTPUTNAME"
+
+set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
+
+if ( "$LISTID" == "" ) then
+  echo "Error: No available Project ID."
+  exit 1
+else if ( $#LISTID == 1 ) then
+  set PROJ_ID = "$LISTID[1]"
+  goto jobinfo
+endif
+
+if ( -f $PROJ_ID_FILE ) then
+  set PROJID_1 = `head -1 $PROJ_ID_FILE`
+  if ( `get_su_balance | grep -wc "$PROJID_1"` == 0 ) then
+    echo "Error: Project ID specified in first line of $PROJ_ID_FILE is not correct."
+    exit 1
+  endif
+  set PROJ_ID = "$PROJID_1"
+  goto jobinfo
+endif
+
+set BALANCE = ( `get_su_balance | awk -F, '{print $1}' | xargs` )
+echo ""
+echo " Your available Project ID & SU Balance:"
+@ i = 1
+while ( $i <= $#LISTID )
+echo " [$i]  $LISTID[$i]  $BALANCE[$i]"
+set PROJ_ID = "$LISTID[1]"
+@ i++
+end
+echo ""
+
+ask_id_choice:
+echo -n "Enter Project ID [1]: "
+set PROJINP = "$<"
+
+if ( "null$PROJINP" == "null" ) then
+  set PROJ_ID = "$LISTID[1]"
+  goto jobinfo
+endif
+
+if ( `echo $PROJINP | grep -c '[a-z][A-Z]*'` == 1 ) then
+  echo "Error: Please assign choice as positive integer."
+  goto ask_id_choice
+endif
+
+if ( $PROJINP > $#LISTID || $PROJINP <= 0 ) then
+  echo "Error: Choice you selected is out of range."
+  goto ask_id_choice
+else
+  set PROJ_ID = "$LISTID[$PROJINP]"
+endif
+
+jobinfo:
+
+#####################################################
+# Show all info before submitting job
+#####################################################
+
+echo ""
+echo "      ----- Job Info -----"
+echo ""
+echo "          Input file  :  $INPUTFILE"
+echo "         Output file  :  $OUTPUTFILE"
+echo "        Compute node  :  $NODES"
+echo "           CPU cores  :  $CPUS"
+echo "       MPI processes  :  $NMPI"
+echo "         OMP Threads  :  $THREADS"
+echo " Total MPI processes  :  $NODES x $NMPI = $TOTALCPUS"
+echo "            Job Name  :  $JOBNAME"
+echo "           Job Queue  :  $JOBQUEUE"
+echo "           Wall-Time  :  $WALLTIME"
+echo "           Project ID :  $PROJ_ID"
+echo ""
+
+echo -n "Submit your job now ? [yes]: "
+set SUBMIT = "$<"
+if ("null$SUBMIT" == "null" || "null$SUBMIT" == "nully" || "null$SUBMIT" == "nullyes") then
+  goto submit
+else
+  echo "...Quit..."
+  exit 0
+endif
+
+submit:
+set PBS_SCRIPT = "submit.LAMMPS.MPI.$OUTPUTNAME.sh"
+
+cat <<EOF > $PBS_SCRIPT
+#!/bin/bash 
+
+#PBS -l select=${NODES}:ncpus=${CPUS}:mpiprocs=${NMPI}:ompthreads=${THREADS}
+#PBS -l walltime=$WALLTIME
+#PBS -q $JOBQUEUE
+#PBS -N $JOBNAME
+#PBS -P $PROJ_ID
+
+#############################################################
+#### This PBS Pro script was generated by sublmp program ####
+#############################################################
+
+module purge
+module load intel/2018_u1 
+
+cd \$PBS_O_WORKDIR
+
+export I_ROOT="/pkg/intel/2018_u1"
+source \$I_ROOT/parallel_studio_xe_2018/psxevars.sh
+source \$I_ROOT/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh
+
+export MPI="mpiexec"
+export LMP_BIN="$LMP_EXE"
+export LMP_THREAD_LIST="$THREADS"
+
+export KMP_BLOCKTIME="0"
+export I_MPI_PIN_DOMAIN=core 
+export I_MPI_FABRICS=shm 
+
+#Following line for USER-INTEL package.
+#export LMP_ARGS="-screen none -pk intel 0 -sf intel"
+export LMP_ARGS="-screen none -pk intel 0"
+
+export OMP_NUM_THREADS=\$LMP_THREAD_LIST
+echo "Running $OUTPUTNAME"
+
+\$MPI -np $TOTALCPUS \$LMP_BIN -in $INPUTFILE -log $OUTPUTFILE \$LMP_ARGS
+
+EOF
+
+qsub $PBS_SCRIPT
+#echo "Your job has been submitted."
+exit 0
+
+inter: 
+  echo ""
+  echo "Error: you pressed Ctrl+C ...Quit..."
+  echo ""
+  exit 1
+
+helppage:
+
+cat << EOF | less
+
+                                    ***********************************
+                                     INSTRUCTION OF sublmp ON TAIWANIA 
+                                    ***********************************
+
+============
+NORMAL USAGE
+============
+
+1. Prepare LAMMPS input. Auxiliary files, such as data file should be placed at the same directory.
+   For example, /home/$USER/lammps/test/atoms.in
+
+2. Submit LAMMPS job using following command
+
+   Usage: sublmp INPUT NODES NMPI OMP [ OUTPUT ] [ help ]"
+
+   INPUT  = LAMMPS input file
+   NODES  = Number of compute nodes
+   NMPI   = Number of MPI processes   (per node)
+   OMP    = Number of OMP threads     (per process)
+   OUTPUT = LAMMPS output file        [optional]
+
+   Please note that max MPI processes/node & OMP threads/process are 40.
+
+3. Example of command for submiting job
+   
+   \$ cd /home/$USER/lammps/test/
+
+   \$ sublmp atoms.in 1 8 1              Request 1 compute, 8 MPI processes, and 1 OMP thread.
+                                        Total processes = 1 x 8 = 8
+
+   \$ sublmp atoms.in 1 8 2              Request 1 compute, 8 MPI processes, and 2 OMP threads.
+                                        Total processes = 1 x 8 = 8 with 2 threads each.
+
+   \$ sublmp atoms.in 2 8 1              Request 1 compute, 8 MPI processes, and 1 OMP threads.
+                                        Total processes = 2 x 8 = 16
+
+   \$ sublmp atoms.in 2 8 1 atoms.log    Request 1 compute, 8 MPI processes, and 1 OMP threads.
+                                        Total processes = 2 x 8 = 16
+
+
+==============
+INSTALL LAMMPS
+==============
+
+
+Install LAMMPS is not easy and not too difficult. It is tricky sometimes.
+
+Visit my website for installation instruction of LAMMPS on TAIWANIA cluster.
+Customization is needed for use of my workflow on other cluster/system.
+
+https://sites.google.com/site/rangsiman1993/comp-chem/install-lammps-intel-xeon
+
+
+==================
+AUTHOR AND CONTACT
+==================
+
+Rangsiman Ketkaew (MSc student)          E-mail: rangsiman1993@gmail.com
+Computational Chemistry Research Unit    Department of Chemisty
+Faculty of Science and Technology        Thammasat University, Thailand
+
+
+EOF
+
