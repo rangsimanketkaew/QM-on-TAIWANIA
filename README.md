@@ -234,7 +234,7 @@ Title Card Required
 ### NWChem (single job submission)
 * [subnwchem](subnwchem)
 
-* Usage: `subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr ] [ help]` <br />
+* Usage: `subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr | help]` <br />
 where **input** is NWChem input file with or without .nwchem extension. <br/>
 Explaination of each optional keyword are below. <br /> 
 Example of using subnwchem are following
