@@ -314,6 +314,11 @@ module load intel/2018_u1
 
 cd \$PBS_O_WORKDIR
 
+export I_MPI_FABRICS=shm:tmi
+export I_MPI_PIN_DOMAIN=omp
+export I_MPI_HYDRA_BRANCH_COUNT=-1
+export I_MPI_HYDRA_PMI_CONNECT=alltoall
+
 export GAMESS_TOP="$GAMESS_TOP"
 export GAMESS_VER="$GAMESS_VER"
 export GAMESS_EXE="$GAMESS_EXE"

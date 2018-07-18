@@ -10,8 +10,8 @@
 # https://github.com/rangsimanketkaew/PBS-submission/
 
 ##################################################################
-set LMP_TOP = "$HOME"
-set LMP_EXE = "$LMP_TOP/lmp_intel_cpu_intelmpi"
+set LMP_TOP = "$HOME/lammps-stable_16Mar2018_RK"
+set LMP_EXE = "$LMP_TOP/bin/lmp_intel_cpu_intelmpi_full"
 set LMP_VER = "16MAR2018"
 ##################################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
@@ -38,6 +38,8 @@ if ($#argv == 0) then
   echo ""
   echo "   Usage: sublmp INPUT NODES NMPI OMP [ OUTPUT ] [ help ]"
   echo ""
+  echo "   Example: sublmp atoms.in 1 20 1 atoms.log"
+  echo ""
   echo "   INPUT  = LAMMPS input file."
   echo "   NODES  = Number of compute nodes."
   echo "   NMPI   = Number of MPI processes (per node)."
@@ -50,7 +52,7 @@ if ($#argv == 0) then
 endif
 
 if ( $#argv < 4 ) then
-  echo "Error: Too less argument. Missing either INPUT or NODES or NMPI or OMP."
+  echo "Error: Too less argument. sublmp needs at least INPUT or NODES or NMPI or OMP."
   exit 1
 else if ( $#argv > 5 ) then
   echo "Error: Too many argument. sublmp needs only INPUT, NODES, NMPI, and OMP."
@@ -69,7 +71,7 @@ set NODES = "$2"
 if ( `echo $NODES | grep -c '[a-z][A-Z]*'` != 1 ) then
   set NODES = "$NODES"
 else
-  echo "Error: Number o compute node must be positive integer."
+  echo "Error: Number of compute node must be positive integer."
 endif
 
 ask_mpi:
@@ -99,9 +101,13 @@ else
 endif
 
 ask_output:
-set OUTPUTNAME = `basename $INPUTFILE .in`
-set OUTPUTFILE = "$OUTPUTNAME".log
-if ( $5 != "" ) set OUTPUTFILE = "$5"
+if ( $5 == "" ) then
+  set OUTPUTNAME = `basename $INPUTFILE .in`
+  set OUTPUTFILE = "$OUTPUTNAME".log
+else
+  set OUTPUTFILE = "$5"
+  set OUTPUTNAME = `basename $OUTPUTFILE .log`
+endif
 
 ask_queue:
 @ TOTALCPUS = ($NODES * $NMPI)
@@ -140,7 +146,7 @@ echo ""
 echo "Optimal job qeueue for this job is $JOBQUEUE"
 echo "Optimal wall-time for this job is $WALLTIME"
 echo ""
-echo -n "OK ? [y]: "
+echo -n 'Enter "y" to proceed, or enter "n" to specify job queue manually ? [y]: '
 set QUEUE = "$<"
 
 if ( $QUEUE == "" || $QUEUE == "y" || $QUEUE == "yes" ) then
@@ -152,11 +158,11 @@ else if ( $QUEUE == "n" || $QUEUE == "no" ) then
   echo ""
   echo -n "Enter job queue (e.g. ctest): "
   set JOBQUEUE = "$<"
-  echo -n "Enter wall-time: Second [0-60]: "
+  echo -n "Enter wall-time: Second (0-60): "
   set SEC = "$<"
-  echo -n "Enter wall-time: Second [0-60]: "
+  echo -n "Enter wall-time: Minute (0-60): "
   set MIN = "$<"
-  echo -n "Enter wall-time: Second [0-96]: "
+  echo -n "Enter wall-time:  Hour  (0-96): "
   set HRS = "$<"
   set WALLTIME = "${HRS}:${MIN}:${SEC}"
 endif
@@ -236,7 +242,7 @@ echo " Total MPI processes  :  $NODES x $NMPI = $TOTALCPUS"
 echo "            Job Name  :  $JOBNAME"
 echo "           Job Queue  :  $JOBQUEUE"
 echo "           Wall-Time  :  $WALLTIME"
-echo "           Project ID :  $PROJ_ID"
+echo "          Project ID  :  $PROJ_ID"
 echo ""
 
 echo -n "Submit your job now ? [yes]: "
@@ -265,30 +271,27 @@ cat <<EOF > $PBS_SCRIPT
 #############################################################
 
 module purge
-module load intel/2018_u1 
+module load intel/2018_u1 gcc/6.3.0
 
 cd \$PBS_O_WORKDIR
+
+export KMP_BLOCKTIME="0"
+export I_MPI_FABRICS=shm:tmi
+export I_MPI_PIN_DOMAIN=auto
+export I_MPI_HYDRA_BRANCH_COUNT=-1
+export I_MPI_HYDRA_PMI_CONNECT=alltoall
 
 export I_ROOT="/pkg/intel/2018_u1"
 source \$I_ROOT/parallel_studio_xe_2018/psxevars.sh
 source \$I_ROOT/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh
-
-export MPI="mpiexec"
+export MPI="mpiexec.hydra"
 export LMP_BIN="$LMP_EXE"
 export LMP_THREAD_LIST="$THREADS"
-
-export KMP_BLOCKTIME="0"
-export I_MPI_PIN_DOMAIN=core 
-export I_MPI_FABRICS=shm 
-
-#Following line for USER-INTEL package.
-#export LMP_ARGS="-screen none -pk intel 0 -sf intel"
-export LMP_ARGS="-screen none -pk intel 0"
 
 export OMP_NUM_THREADS=\$LMP_THREAD_LIST
 echo "Running $OUTPUTNAME"
 
-\$MPI -np $TOTALCPUS \$LMP_BIN -in $INPUTFILE -log $OUTPUTFILE \$LMP_ARGS
+\$MPI -PSM2 -np $TOTALCPUS \$LMP_BIN -in $INPUTFILE -log $OUTPUTFILE -screen none
 
 EOF
 

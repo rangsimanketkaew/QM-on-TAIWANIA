@@ -1,12 +1,12 @@
 #!/bin/csh
 
-# rungms.MPI is a rungms-like script for submitting GAMESS job with
+# rungms.MPI is a rungms-like script for executing GAMESS calculation on
 # distributed memory parallel system using MPI protocol.
 #
 # This script is tested on TAIWANIA cluster, NCHC, Taiwan, Intel Xeon 
 # cluster equiped with Intel Omni-Path high-speed interconnect.
 # GAMESS on TAIWANIA was built with Intel Parallel Studio XE 2018 update 1
-# and Intel Math Kernel Library (MKL).
+# and Intel Math Kernel Library (MKL) and Intel MPI library.
 #
 # Updated 20180708  Rangsiman Ketkaew  rangsiman1993@gmail.com
 # https://github.com/rangsimanketkaew/PBS-submission
@@ -43,17 +43,17 @@ echo ""
 #      USER-defined MPI executable. Default setting is 'mpiexec' of 
 #      Intel Studio Suite 2018
 
-set CHECK_MPI = `which mpiexec`
+set CHECK_MPI = `which mpiexec.hydra`
 
 if ( -e $CHECK_MPI ) then
   set MPIEXE = "$CHECK_MPI"
   echo "MPI executable is $MPIEXE"
   echo ""
 else 
-  echo "Error: MPI executable 'mpiexec' not found."
-  echo "Please load MPI module available on your cluster, e.g. intel/2018_u1"
-  echo "or mvapich2.2 or gnu-openmpi. Otherwise use 'locate mpirun' to search"
-  echo "the available MPI executable, otherwise talk to admin/staff of HPC."
+  echo "Error: Intel MPI executable 'mpiexec.hydra' not found."
+  echo "This GAMESS runtime was built with Intel compiler and Intel MPI library."
+  echo "please purge all loaded module and load Intel module, e.g. 'intel/2018_u1'."
+  echo "If you have problem about Intel MPI, please talk to admin/staff of HPC."
   exit 1
 endif
 
