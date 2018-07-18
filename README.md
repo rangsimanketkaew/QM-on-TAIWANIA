@@ -234,7 +234,7 @@ Title Card Required
 ### NWChem (single job submission)
 * [subnwchem](subnwchem)
 
-* Usage: `subnwchem input [ gpu | casper | mpipr ] [ help ]` <br />
+* Usage: `subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr ] [ help]` <br />
 where **input** is NWChem input file with or without .nwchem extension. <br/>
 Explaination of each optional keyword are below. <br /> 
 Example of using subnwchem are following
@@ -267,6 +267,7 @@ Example of using subnwchem are following
 | Command | Function |
 | :---:   | --- |
 | input   | MWChem input file with or without .nw extension |
+| output  | MWChem output file with or without .out extension |
 | gpu     | Requests GPU accelerator |
 | casper  | Requests Casper method (against MPI-PR) |
 | mpipr   | Requests MPI-PR method (against Casper) |
@@ -531,9 +532,16 @@ NMPI   = Number of MPI processes (per node). <br/>
 OMP    = Number of OMP threads (per process). <br/>
 OUTPUT = LAMMPS output file. [optional]
 
+* Capability
+  - [ ] OpenMP
+  - [x] Intel MPI
+  - [ ] OpenMPI
+  - [ ] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
+
 * Maximum MPI processes/node and OMP threads/process are 40.
 
-* GPU is not yet supported.
+* GPU is not now supported.
 
 * This program was tested with LAMMPS that built with Intel compiler, MKL, MPI from Intel Parallel Studio XE 2018 update 1, and GCC 6.3.0 compiler. `make intel_cpu_intelmpi`
 
