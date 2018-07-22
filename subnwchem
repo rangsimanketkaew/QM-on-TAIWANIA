@@ -1,7 +1,7 @@
 #!/bin/csh
 
-# Interactive PBS Pro submission program for single NWChem calculation on 
-# TAIWANIA cluster, NCHC, Taiwan.
+# NWChem Interactive PBS Pro submission program on TAIWANIA cluster, 
+# NCHC, Taiwan.
 #
 # Capabilities:
 #  [/] support serial and parallel run using MPI protocol
@@ -51,7 +51,9 @@ echo ""
 # Check each argument.
 #############################################
 
+# Total arguments
 set ARGV_ORDER = "$#argv"
+
 if ($ARGV_ORDER == 0) then
   echo "   Usage: subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr | help]"
   echo ""
@@ -70,25 +72,34 @@ if ($ARGV_ORDER >1) then
   set INPUT_ARG1 = "$1"
   @ i = 2
   while ($i <= $ARGV_ORDER)
-# Set OUTPUT to 2nd arguement
+#############################################
+# Check if the 2nd argument is special request 
+# (help, gpu, casper, & mpipr).
+#############################################
     if ("$i" == "2") then
-      set OUTPUT_ARG2 = "$argv[2]"
-# Check another arguments
+      set SPEC_RE = `echo $argv[2] | grep -Eiwc 'help|gpu|casper|mpipr'`
+      if ($SPEC_RE != "1") then
+        set OUTPUT_ARG2 = "$argv[2]"
+      else
+        goto check_special_argv
+      endif
+# Check other arguments
     else
+check_special_argv:
       set ARGV = $argv[$i]
-      if ("null$ARGV" == "nullhelp") then
+      if (`echo $ARGV|grep -Eiwc 'help'` == "1") then
         goto help
-      else if ("null$ARGV" == "nullgpu") then
+      else if (`echo $ARGV|grep -Eiwc 'gpu'` == "1") then
         set USEGPU = 1
-      else if ("null$ARGV" == "nullcasper") then
+      else if (`echo $ARGV|grep -Eiwc 'casper'` == "1") then
         set ARMCI = 1
         set CASPER = 1
-      else if ("null$ARGV" == "nullmpipr") then
+      else if (`echo $ARGV|grep -Eiwc 'mpipr'` == "1") then
         set ARMCI = 1
         set MPIPR = 1
       else
         echo "Error: Invalid command $ARGV"
-        echo -n "####### Enter to start help page. #######" 
+        echo -n "######### Enter to start help page. #########" 
         set HELP = "$<"
         clear
         goto help
