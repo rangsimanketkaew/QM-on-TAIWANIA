@@ -16,7 +16,7 @@ Taiwania official website: https://iservice.nchc.org.tw
 
 ---
 
-### List of Program
+### Table of Contents
 <!--ts-->
    * [Getting Program](#getting-program)
    * [Gaussian 09](#gaussian-09)
