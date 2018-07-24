@@ -37,7 +37,7 @@ Taiwania official website: https://iservice.nchc.org.tw
 
 ### Getting Program
 
-Program suite can be obtained from [release area](https://github.com/rangsimanketkaew/PBS-submission/releases).
+Program source codes are available at [releases page](https://github.com/rangsimanketkaew/PBS-submission/releases).
 
 ---
 
