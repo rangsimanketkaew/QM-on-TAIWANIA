@@ -24,7 +24,7 @@ Taiwania official website: https://iservice.nchc.org.tw
    * [NWChem](#nwchem)
       * [Single job submission](#single-job-submission)
       * [Multiple jobs submission](#multiple-jobs-submission)
-   * [Q-chem](#q-chem)
+   * [Q-Chem](#q-chem)
    * [ORCA](#orca)
    * [GAMESS](#gamess)
       * [Shared memory parallel system](#shared-memory-parallel-system)
