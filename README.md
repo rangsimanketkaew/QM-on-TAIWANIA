@@ -16,27 +16,9 @@ Taiwania official website: https://iservice.nchc.org.tw
 
 ---
 
-### How-to download and activate programs
+### Getting Program
 
-[DL-subscript.csh](DL-subscript.csh) is used to download and update all programs from this github repository.
-
-1. Download DL-subscript.csh to your Linux machine
-
-```
-wget https://raw.githubusercontent.com/rangsimanketkaew/PBS-submission/master/DL-subscript.csh
-```
-
-2. Activate script
-
-```
-chmod +x DL-subscript.csh
-```
-
-3. Run script
-
-```
-./DL-subscript.csh
-```
+[QM on Taiwania](QM on Taiwania) can be obtained from [release area](https://github.com/rangsimanketkaew/PBS-submission/releases).
 
 ---
 
