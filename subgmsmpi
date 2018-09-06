@@ -75,11 +75,6 @@ if ($#argv == 0) then
   echo "   Example: subgmsmpi water_hf.inp"
   echo "            subgmsmpi water_hf.inp water_hf_16cores"
   echo ""
-  echo "   For MPI run,  Total number of MPI processes = NODES * PPN."
-  echo ""
-  echo "   where NODES is number of compute nodes."
-  echo "         PPN   is number of CPU cores per node (Max PPN is 40)."
-  echo ""
   exit 0
 endif
 
