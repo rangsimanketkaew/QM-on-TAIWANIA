@@ -22,7 +22,7 @@ set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
 
 # Check if help is requested.
-if ( "$1" == "help" || "$1" == "-help" || "$1" == "-h" ) goto rungms_mod
+if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) goto rungms_mod
 
 echo ""
 
@@ -87,18 +87,14 @@ if ( $CHK_ERR == 1 ) exit 1
 onintr inter
 
 if ($#argv == 0) then
+#  echo ""
   echo "   GAMESS 20180215 R1 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
   echo "   ---------------------------------------------------------------------------"
   echo ""
-  echo "   Usage: subgms input [ output ]"
+  echo "   Usage: subgms input[.inp] [output[.out]] [-help]"
   echo ""
-  echo "   where input  is GAMESS input file with or without .inp extension."
-  echo ""
-  echo "   Example: subgms water_hf.input"
-  echo "            subgms water_hf water_hf_16cores"
-  echo ""
-  echo "   This GAMESS was built with Intel Math Kernel Library (MKL) for parallel run."
-  echo "   Max OpenMP threads per node (OMP_NUM_THREADS) is 40."
+  echo "   Example: subgms water_hf.inp"
+  echo "            subgms water_hf.inp water_hf_16cores.out"
   echo ""
   exit 0
 endif
@@ -325,52 +321,69 @@ rungms_mod:
 clear
 cat << EOF | less
 
-                                      ---------------------------------------------
-                                      INSTRUCTION OF PREPARATION OF rungms.mod FILE
-                                      ---------------------------------------------
+                                        ---------------------------------
+                                        GAMESS Interactive Job Submission
+                                        ---------------------------------
 
- INTRODUCTION: 
- ------------
- GAMESS program normally uses 'rungms' C-shell script to execute the calculation in both serial and parallel methods.
- Originical rungms given by developer generally defines the locatation of SCRATCH and USER's SCRATCH as a static path.
- This default setting is against to job scheduler when submitting the job and writing scratch files in different location.
- rungms must be modified in order to define the \$SCR and \$USERSCR with dynamics path. Instruction below is step-by-step
- of preparation of 'rungms.mod' file, which will be used instead of original rungms.
+======
+subgms
+======
 
- FIRSTLY: Create rungms.mod
- --------------------------
- rungms.mod can be copied from rungms. rungms.mod must be saved in either GAMESS top directory or user's home directory. 
- In case that user has no permission to write/modify GAMESS top directory, please do this step in users' home directory. 
- For example, use following command to copy the original rungms file to user's home and rename to rungms.mod file.
+subgms is used to submit share-memory GAMESS calculation on a single node.
 
+TAIWANIA Policy: Max OpenMP threads per node (OMP_NUM_THREADS) is 40.
+
+
+==========
+rungms.mod
+==========
+
+GAMESS program normally uses 'rungms' script to execute the calculation in both serial and parallel methods.
+Original rungms provided by developer specify the locatation of SCRATCH and USER's SCRATCH as a static path.
+This setting is against to job scheduler when submitting the job and writing scratch files in different location.
+Therefore, rungms must be modified in order to specify the \$SCR and \$USERSCR as dynamics path. 
+
+The following is step-by-step preparation of 'rungms.mod' file, which will be used instead of original rungms.
+
+Step 1: Create rungms.mod
+   rungms.mod can be copied from an original rungms. rungms.mod must be saved in either GAMESS or user's home directory. 
+   For example, following command is copy of an original rungms file to rungms.mod in user's home directory.
+  
    \$ cp \$GAMESS_TOP/rungms \$HOME/rungms.mod
-
- where \$GAMESS_TOP  is set to $GAMESS_TOP
-       \$HOME        is set to $HOME
-
- Note that \$GAMESS_TOP environment variable can be found in 'BOX A' around the beginning lines of this subgms file.
-
- SECONDLY: Modify rungms.mod
- ---------------------------
- After created rungms.mod file, modify the code around the beginning line of file as following
- 
- Original rungms             -->         modified rungms.mod
- ---------------                         --------------------
-
- set SCR=/scr/\$USER                      set SCR=TEMPLATE_1
- set USERSCR=/u1/\$USER/scr               set USERSCR=TEMPLATE_2
- set GMSPATH=/u1/mike/gamess             set GMSPATH=TEMPLATE_3
-
- where \$SCR     is Scratch directory 
-       \$USERSCR is Specific local user's scratch directory
-       \$GMSPATH is Top directory of GAMESS program, which also contains program executable
- 
- FINALLY: Check is rungms.mod exists
- -----------------------------------
- Run this subgms script to see if subgms can locate rungms.mod in proper directory.
+  
+   where \$GAMESS_TOP is set to $GAMESS_TOP
+         \$HOME       is set to $HOME
+  
+   Note that \$GAMESS_TOP setting can be found in 'BOX A' around the beginning lines of subgms source code.
 
 
- Rangsiman Ketkaew  (e-mail: rangsiman1993@gmail.com)
+Step 2: Modify rungms.mod
+   Modify rungms.mod source code around the beginning line of file as following
+  
+   Original rungms             -->         Modified rungms.mod
+   ---------------                         --------------------
+   set SCR=/scr/\$USER                     set SCR=TEMPLATE_1
+   set USERSCR=/u1/\$USER/scr              set USERSCR=TEMPLATE_2
+   set GMSPATH=/u1/mike/gamess             set GMSPATH=TEMPLATE_3
+  
+   where \$SCR     is Scratch directory.
+         \$USERSCR is Specific local user's scratch directory.
+         \$GMSPATH is Top directory of GAMESS program, which also contains program executable.
+
+Step 3: Check if rungms.mod exists
+   Run subgms script to see if subgms can locate rungms.mod in proper directory.
+
+
+======
+AUTHOR
+======
+
+Rangsiman Ketkaew (MSc student)
+E-mail: rangsiman1993@gmail.com
+Computational Chemistry Research Unit
+Department of Chemistry
+Faculty of Science and Technology
+Thammasat University, Thailand
 
 EOF
 

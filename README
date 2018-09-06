@@ -1,23 +1,42 @@
 
-                                         QM on TAIWANIA 1.0
-                                         ------------------
+                                            ------------------
+                                            QM on TAIWANIA 2.0
+                                            ------------------                                  
 
           A Suite of PBS Pro Script Generator for Interactive Job Submission on TAIWANIA Cluster
-          --------------------------------------------------------------------------------------
 
 
-INTRODUCTION
-------------
-This is the first release of the automatic generator of PBS Pro script for interactive job submission
-of chemistry application on TAIWANIA cluster, National Center for High-Performance Computing, Taiwan.
-TAIWANIA is Intel Xeon Gold 6148 cluster equiped with the Intel Omni-Path high-speed interconnect.
-The source code of all programs were written in C-shell, and tested during in stage open beta testing. 
-Source code customization is needed for other workload manager and for other HPC cluster.
+=============
+SOFTWARE INFO
+=============
 
+This is the second release of the PBS Pro script generator for interactive job submission of computational 
+chemistry calculation on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. 
+TAIWANIA cluster is Intel Xeon Gold 6148 cluster equiped with the Intel Omni-Path high-speed interconnect.
+Source code customization is needed for other workload managers and HPC clusters.
 
-PROGRAMS
---------
-This software suite contains the PBS Pro script generator of several Quantum Chemistry programs:
+========
+FEATURES
+========
+
+1. Interactive job submission.
+2. Automatic job queue recognition.
+3. Shared and distributed memory parallel processing.
+4. GPU accelerator are supported.
+
+================
+PARALLEL METHODS
+================
+
+1. Message Passing Interface (MPI) Parallel method.
+2. Shared-Memory Parallel method (SMP).
+3. Hybrid Parallel method for multiprocessor/multinode cluster (on request).
+
+==========
+COMPONENTS
+==========
+
+This software suite contains the PBS Pro script generator of several quantum chemistry programs:
 
   1. subg09      Gaussian 09
   3. subg16      Gaussian 16
@@ -28,34 +47,31 @@ This software suite contains the PBS Pro script generator of several Quantum Che
   8. subgms      GAMESS (OpenMP protocol)
   9. subgmsmpi   GAMESS (MPI protocol)
  10. sublmp      LAMMPS (CPU)
+ 11. submolpro   Molpro
 
+======
+MANUAL
+======
 
-PROGRAM MANUAL
---------------
-Information of all programs is available at https://github.com/rangsimanketkaew/PBS-submission
+Normal usage is available at https://github.com/rangsimanketkaew/PBS-submission
 
+===========
+DISCLAIMERS
+===========
 
-FEATURES
---------
-1. Interactive job submission.
-2. Automatic job queue recognition.
-3. Shared and distributed memory parallel processing.
-4. GPU accelerator are supported.
-
-
-DISCLAIMER
-----------
 1. I am not a staff of National Center for High-Performance Computing (NCHC), Taiwan.
-2. I am not related to National Center for High-Performance Computing (NCHC), Taiwan.
-3. I do not take any responsibility if any damage or failure cuased through use of all script 
+2. I do not take any responsibility if any damage or failure cuased through use of all script 
    or program taken through https://github.com/rangsimanketkaew/PBS-submission repository.
+3. All programs were written in C-shell and tested during in stage open beta testing.
 
-
+======
 AUTHOR
-------
-Rangsiman Ketkaew                     MSc student
-Department of Chemistry               rangsiman1993@gmail.com
-Faculty of Science and Technology     https://sites.google.com/site/compchem403/
-Thammasat University, Thailand        https://sites.google.com/site/rangsiman1993/
+======
+
+Rangsiman Ketkaew                          MSc student
+Computational Chemistry Research Unit      rangsiman1993@gmail.com
+Department of Chemistry                    rangsiman_k@sci.tu.ac.th
+Faculty of Science and Technology          https://bit.ly/rangsiman1993
+Thammasat University, Thailand             https://bit.ly/compchem403
 
 

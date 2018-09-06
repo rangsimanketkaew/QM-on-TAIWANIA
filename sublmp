@@ -19,7 +19,7 @@ set PROJ_ID_FILE = "$HOME/.proj_id"
 
 onintr inter
 
-if ( "$1" == "help" || "$1" == "-help" || "$1" == "-h" ) goto helppage
+if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) goto helppage
 
 if ( ! -e $LMP_TOP ) then
   echo "Error: Unable to locate $LMP_TOP top directory. Please check" '$LMP_TOP' "again."
@@ -36,31 +36,30 @@ if ($#argv == 0) then
   echo "   LAMMPS $LMP_VER Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
   echo "   -------------------------------------------------------------------------"
   echo ""
-  echo "   Usage: sublmp INPUT NODES NMPI OMP [ OUTPUT ] [ help ]"
+  echo "   Usage: sublmp input[.in] N PPN OMP [output[.log]] [-help]"
+  echo ""
+  echo "   where N   = Number of compute nodes."
+  echo "         PPN = Number of MPI processes per node."
+  echo "         OMP = Number of OMP threads per process."
   echo ""
   echo "   Example: sublmp atoms.in 1 20 1 atoms.log"
-  echo ""
-  echo "   INPUT  = LAMMPS input file."
-  echo "   NODES  = Number of compute nodes."
-  echo "   NMPI   = Number of MPI processes (per node)."
-  echo "   OMP    = Number of OMP threads (per process)."
-  echo "   OUTPUT = LAMMPS output file. [optional]"
-  echo ""
-  echo "   Max MPI processes/node & OMP threads/process are 40."
   echo ""
   exit 0
 endif
 
 if ( $#argv < 4 ) then
-  echo "Error: Too less argument. sublmp needs at least INPUT or NODES or NMPI or OMP."
+  echo "Error: Too less argument. sublmp needs at least input, N, PPN, and OMP."
   exit 1
 else if ( $#argv > 5 ) then
-  echo "Error: Too many argument. sublmp needs only INPUT, NODES, NMPI, and OMP."
+  echo "Error: Too many argument. sublmp needs only input, N, PPN, and OMP."
   exit 1
 endif
 
 ask_input:
-set INPUTFILE = "$1"
+set INPUTGET = "$1"
+set INPUTNAME = `basename $INPUTGET .in`
+set INPUTFILE = "$INPUTNAME".in
+
 if ( ! -f $INPUTFILE ) then
   echo "Error: Unable to locate $INPUTFILE"
   exit 1
@@ -105,8 +104,9 @@ if ( $5 == "" ) then
   set OUTPUTNAME = `basename $INPUTFILE .in`
   set OUTPUTFILE = "$OUTPUTNAME".log
 else
-  set OUTPUTFILE = "$5"
+  set OUTPUTGET = "$5"
   set OUTPUTNAME = `basename $OUTPUTFILE .log`
+  set OUTPUTFILE = "$OUTPUTNAME".log
 endif
 
 ask_queue:
@@ -309,32 +309,15 @@ helppage:
 
 cat << EOF | less
 
-                                    ***********************************
-                                     INSTRUCTION OF sublmp ON TAIWANIA 
-                                    ***********************************
+                               ---------------------------------
+                               LAMMPS Interactive Job Submission
+                               ---------------------------------
 
-============
-NORMAL USAGE
-============
+======
+sublmp
+======
 
-1. Prepare LAMMPS input. Auxiliary files, such as data file should be placed at the same directory.
-   For example, /home/$USER/lammps/test/atoms.in
-
-2. Submit LAMMPS job using following command
-
-   Usage: sublmp INPUT NODES NMPI OMP [ OUTPUT ] [ help ]"
-
-   INPUT  = LAMMPS input file
-   NODES  = Number of compute nodes
-   NMPI   = Number of MPI processes   (per node)
-   OMP    = Number of OMP threads     (per process)
-   OUTPUT = LAMMPS output file        [optional]
-
-   Please note that max MPI processes/node & OMP threads/process are 40.
-
-3. Example of command for submiting job
-   
-   \$ cd /home/$USER/lammps/test/
+Example of submission of LAMMPS calculations
 
    \$ sublmp atoms.in 1 8 1              Request 1 compute, 8 MPI processes, and 1 OMP thread.
                                         Total processes = 1 x 8 = 8
@@ -348,27 +331,31 @@ NORMAL USAGE
    \$ sublmp atoms.in 2 8 1 atoms.log    Request 1 compute, 8 MPI processes, and 1 OMP threads.
                                         Total processes = 2 x 8 = 16
 
+TAIWANIA Policy: Max MPI processes/node & OMP threads/process are 40.
+
 
 ==============
 INSTALL LAMMPS
 ==============
 
+Install LAMMPS is not too difficult. It is tricky sometimes.
 
-Install LAMMPS is not easy and not too difficult. It is tricky sometimes.
-
-Visit my website for installation instruction of LAMMPS on TAIWANIA cluster.
-Customization is needed for use of my workflow on other cluster/system.
-
+Visit my website for installation instruction of LAMMPS.
 https://sites.google.com/site/rangsiman1993/comp-chem/install-lammps-intel-xeon
 
+Customization is needed for use of my workflow on other cluster/system.
 
-==================
-AUTHOR AND CONTACT
-==================
 
-Rangsiman Ketkaew (MSc student)          E-mail: rangsiman1993@gmail.com
-Computational Chemistry Research Unit    Department of Chemisty
-Faculty of Science and Technology        Thammasat University, Thailand
+======
+AUTHOR
+======
+
+Rangsiman Ketkaew (MSc student)
+E-mail: rangsiman1993@gmail.com
+Computational Chemistry Research Unit
+Department of Chemistry
+Faculty of Science and Technology
+Thammasat University, Thailand
 
 
 EOF

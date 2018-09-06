@@ -1,84 +1,68 @@
 #!/bin/csh
 
-# Q-Chem 4.2.2 Interactive PBS Pro Job Submission
+# Molpro 2015 Interactive PBS Pro Job Submission
 # on Taiwania cluster, NCHC, Taiwan
 #
-# Support only OpenMP parallel method
+# Support only MPI parallel method
 #
-# Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# Updated 20180906  Rangsiman Ketkaew  rangsiman1993@gmail.com
 # https://github.com/rangsimanketkaew/PBS-submission/
 
 ##############################################################
-set QC         = /pkg/qchem/qc42.mpich
-set QCAUX      = $QC/qcaux/
-set QCRSH      = ssh
-set QCPLATFORM = LINUX_Ix86_64
+set MOLPRO     = /pkg/molpro/bin
 ##############################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
-
-set NODES = 1   #OpenMP
 
 onintr inter
 
 if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) goto help
 
-# no command line argument
 if ($#argv == 0) then
   echo ""
-  echo "   Q-Chem 4.2.2 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
-  echo "   ---------------------------------------------------------------------"
+  echo "   Molpro 2015 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
+  echo "   --------------------------------------------------------------------"
   echo ""
-  echo "   Usage: subqchem [thread] input[.in] [output[.out]] [-help]"
+  echo "   Usage: submolpro [PPN] input[.com] [output[.out]] [-help]"
   echo ""
-  echo "   Example: subqchem water-opt.in"
-  echo "            subqchem 16 water-opt.in water-opt.out"
+  echo "   Example: submolpro ccsd-water.com"
+  echo "            submolpro 16 ccsd-water.com ccsd-water.out"
   echo ""
   exit 0
 endif
 
-# check QC top directory
-if (! -e $QC) then
-  echo 'Error: Unable to locate Q-Chem top directory, please set $QC environment variable'
+if (! -e $MOLPRO) then
+  echo 'Error: Unable to locate Molpro top directory, please set $MOLPRO environment variable'
   exit 1
 endif
 
-if (! -e $QCAUX) then
-  echo 'Error: Unable to locate Q-Chem Auxiliary files, please set $QCAUX environment variable'
-  exit 1
-endif
-
-# subqchem input
 if ($#argv == 1) then
-  set CPUS = 1
+  set PPN = 1
   set INPUTFILE = "$1"
   set OUTPUTFILE = 0
   goto check_input
 endif
 
 if ($#argv == 2) then
-# subqchem input output
   if ( `echo $1 | grep -c '[a-zA-Z]'` == 1 ) then
-    set CPUS = 1
+    set PPN = 1
     set INPUTFILE = "$1"
     set OUTPUTFILE = "$2"
     goto check_input
-# subqchem thread input
   else
-    set CPUS = "$1"
+    set PPN = "$1"
     set INPUTFILE = "$2"
     set OUTPUTFILE = 0
     goto check_input
   endif
 endif
 
-# subqchem thread input output
 if ($#argv == 3) then
   if ( `echo $1 | grep -c '[a-zA-Z]'` == 1 ) then
-    echo "Error: the number of OMP Threads must be positive integer. Max value is 40 threads."
+    echo "Error: the number of MPI process must be positive integer. Max value is 40."
     exit 1
   else
-    set CPUS = "$1"
+    set PPN = "$1"
     set INPUTFILE = "$2"
     set OUTPUTFILE = "$3"
     goto check_input
@@ -86,23 +70,21 @@ if ($#argv == 3) then
 endif
 
 if ($#argv > 3) then
-  echo "Error: Unable to recognize $4 command. Please assign only [number of threads] input and [output]."
+  echo "Error: Unable to recognize $4 command."
   exit 1
 endif
 
-#check input
 check_input:
-set INPUTNAME = `basename $INPUTFILE .in`
-set REALNAME = "$INPUTNAME".in
+set INPUTNAME = `basename $INPUTFILE .com`
+set REALNAME = "$INPUTNAME".com
 set REALPATH = `realpath $REALNAME`
 set FULLPATH = `dirname $REALPATH`
-set INPUTFILE = "$FULLPATH/$INPUTNAME".in
+set INPUTFILE = "$FULLPATH/$INPUTNAME".com
 if (! -f $INPUTFILE) then
   echo "Error: Unable to locate $INPUTFILE"
   exit 1
 endif
 
-#check output
 if ("null$OUTPUTFILE" == "null0") then
   set OUTPUTFILE = "$FULLPATH/$INPUTNAME".out
 else
@@ -113,36 +95,28 @@ endif
 echo ""
 
 check_argv:
-#check how many sub-jobs
-if (`grep -c '@@@' $INPUTFILE` >= 1) then
-  @ NUMJOBS = ( `grep -c '@@@' $INPUTFILE` + 1 )
-  echo "Warning: $REALNAME contains $NUMJOBS calculations."
-endif
-
-#check cpu cores
-if ($CPUS > 40 ) then
-  echo "Warning: Value of threads you assigned is over 40. Thus, threads will be set to 40 automatically."
-  set CPUS = 40
-else if ($CPUS < 1 ) then
-  echo "Error: the number of OMP Threads must be positive integer. Max value is 40 threads."
+if ($PPN > 40 ) then
+  echo "Warning: Value of PPN you assigned is over 40. Thus, PPN will be set to 40 automatically."
+  set PPN = 40
+else if ($PPN < 1 ) then
+  echo "Error: the number of PPN must be positive integer. Max value is 40."
   exit 1
 endif
 
-if ($CPUS == 1) then
-  set CPUS = 1
+if ($PPN == 1) then
+  set PPN = 1
   set JOBQUEUE = serial
   set WALLTIME = "96:00:00"
   goto check_resource
 endif
 
 check_queue:
-
 echo ""
 echo "Optimal queues:  ctest (30 mins) [1]"
 echo "                 cf40  (96 hrs)  [2]"
 echo ""
 
-if ($CPUS >= 2 && $CPUS <= 40) then
+if ($PPN >= 2 && $PPN <= 40) then
   echo -n "Enter job queue [2]: "
   set INPQUEUE = "$<"
 endif
@@ -159,8 +133,9 @@ else
 endif
 
 check_resource:
-#Best threads per core with this Intel Xeon is 1.
-set THREADS = "$CPUS"
+set NODES = 1
+set CPUS = "$PPN"
+set THREADS = 1
 
 set JOBNAME = "$INPUTNAME"
 
@@ -225,12 +200,13 @@ jobinfo:
 echo ""
 echo "     ----- Job Info -----"
 echo ""
-echo "  Q-Chem root  :  $QC"
-echo '   Executable  :  $QC/exe/qcprog.exe'
+echo "  Molpro root  :  $MOLPRO"
+echo '   Executable  :  $MOLPRO/molpro'
 echo "   Input file  :  $INPUTFILE"
 echo "  Output file  :  $OUTPUTFILE"
 echo " Compute node  :  $NODES"
 echo "    CPU cores  :  $CPUS"
+echo "MPI processes  :  $PPN"
 echo "  OMP Threads  :  $THREADS"
 echo "     Job Name  :  $JOBNAME"
 echo "    Job Queue  :  $JOBQUEUE"   
@@ -248,38 +224,33 @@ else
 endif
 
 submit:
-set PBS_SCRIPT = "$FULLPATH/submit.QC.$INPUTNAME.sh"
+set PBS_SCRIPT = "$FULLPATH/submit.MOLPRO.$INPUTNAME.sh"
 
 cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 
 
-#PBS -l select=${NODES}:ncpus=${CPUS}:ompthreads=${THREADS}
+#PBS -l select=${NODES}:ncpus=${CPUS}:mpiprocs=${PPN}:ompthreads=${THREADS}
 #PBS -l walltime=$WALLTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
 #PBS -P $PROJ_ID
 
-###############################################################
-#### This PBS Pro script was generated by subqchem program ####
-###############################################################
+################################################################
+#### This PBS Pro script was generated by submolpro program ####
+################################################################
 
 module load intel/2018_u1
 
 cd \$PBS_O_WORKDIR
 
-export SCRATCH_DIR=/work1/$USER/SCRATCH/qchem/qchem.pbs\${PBS_JOBID/\.srvc1/}
+export SCRATCH_DIR=/work1/$USER/SCRATCH/molpro/molpro.pbs\${PBS_JOBID/\.srvc1/}
 if [ ! -d \$SCRATCH_DIR ]; then mkdir -p \$SCRATCH_DIR; fi
 
-export QC=$QC
-export QCAUX=$QCAUX
-export QCSCRATCH=\$SCRATCH_DIR
-export QCRSH=$QCRSH
-export QCPLATFORM=$QCPLATFORM
-export QCHEMRUN=\$QC/bin/qchem
-export QCTHREADS=$THREADS
-export OMP_NUM_THREADS=$THREADS
+export MOLPRO_EXE=$MOLPRO/molpro
+export INPUT=$INPUTFILE
+export OUTPUT=$OUTPUTFILE
 
-\$QCHEMRUN -nt $THREADS $INPUTFILE $OUTPUTFILE
+\$MOLPRO_EXE -n $PPN -d \$SCRATCH_DIR \$INPUT -o \$OUTPUT
 
 EOF
 
@@ -297,18 +268,22 @@ help:
 clear
 cat << EOF | less
 
-                                   ---------------------------------
-                                   Q-Chem Interactive Job Submission
-                                   ---------------------------------
+                      ---------------------------------
+                      Molpro Interactive Job Submission
+                      ---------------------------------
 
-========
-subqchem
-========
+=========
+submolpro
+=========
 
-subqchem is used to submit shared-memory (SMP) Q-Chem calculation on a single node cluster. 
-Parallelizability of Q-Chem that run in parallel with SMP is better than that of non-shared memory (MPI).
+submolpro is used to submit Molpro calculation in parallel mode on a cluster. 
 
-This script supports job submission with only OpenMP. If you want to use Q-Chem + MPI, talk to TAIWANIA staff."
+
+======
+MANUAL
+======
+
+Molpro manual can be found at https://www.molpro.net/info/2015.1/doc/manual/
 
 
 ======

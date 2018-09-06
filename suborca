@@ -15,21 +15,15 @@ set PROJ_ID_FILE = "$HOME/.proj_id"
 
 onintr inter
 
+if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) goto help
+
 if ($#argv == 0) then
 
 echo ""
 echo "   ORCA 4.0.1.2 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
 echo "   ---------------------------------------------------------------------"
 echo ""
-echo "   Usage: suborca input [output]"
-echo ""
-echo "                    |"
-echo "                    |--> ORCA input file with or without .inp extension."
-echo ""
-echo "   suborca detects number of MPI processes from value of 'PALn' keyword,"
-echo "   where n is sensible positive integer, in keyword line of input file."
-echo "   For example, \!B3LYP def2-SVP Opt PAL4 is requesting 4 MPI processes"
-echo "   for geometry optimization calculation using B3LYP/def2-SVP method."
+echo "   Usage: suborca input[.inp] [output[.out]] [-help]"
 echo ""
 exit 0
 
@@ -240,5 +234,41 @@ inter:
   echo "Error: you pressed Ctrl+C ...Quit..."
   echo ""
   exit 1
+
+help:
+clear
+cat << EOF | less
+
+                                   -------------------------------
+                                   ORCA Interactive Job Submission
+                                   ------------------------------- 
+
+=======
+suborca
+=======
+
+suborca detects number of MPI processes from value of 'PALn' keyword which specified in input file."
+
+  where n is a sensible positive integer, such as 2, 4, 8, 12, 24, 36, 40."
+
+For example, the following is requesting 4 MPI processes for geometry optimization calculation.
+
+  !B3LYP def2-SVP Opt PAL4
+
+
+======
+AUTHOR
+======
+
+Rangsiman Ketkaew (MSc student)
+E-mail: rangsiman1993@gmail.com
+Computational Chemistry Research Unit
+Department of Chemistry
+Faculty of Science and Technology
+Thammasat University, Thailand
+
+EOF
+
+
 
 

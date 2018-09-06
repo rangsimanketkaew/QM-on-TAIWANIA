@@ -23,7 +23,7 @@ set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
 
 # Check if help is requested.
-if ( "$1" == "help" || "$1" == "-help" || "$1" == "-h" ) goto rungms_MPI
+if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) goto rungms_MPI
 
 echo ""
 
@@ -66,18 +66,14 @@ start_prog:
 onintr inter
 
 if ($#argv == 0) then
+#echo ""
   echo "   GAMESS 20180215 R1 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
   echo "   ---------------------------------------------------------------------------"
   echo ""
-  echo "   Usage: subgmsmpi input [ output ]"
+  echo "   Usage: subgmsmpi input[.inp] [output[.out]] [-help]"
   echo ""
-  echo "   where input  is GAMESS input file with or without .inp extension."
-  echo ""
-  echo "   Example: subgmsmpi water_hf.input"
-  echo "            subgmsmpi water_hf water_hf_16cores"
-  echo ""
-  echo "   GAMESS was built with MPI & MKL of Intel Parallel Studio XE 2018 update1 on."
-  echo "   Intel Xeon cluster equiped with Intel Omni-Path high-speed interconnect."
+  echo "   Example: subgmsmpi water_hf.inp"
+  echo "            subgmsmpi water_hf.inp water_hf_16cores"
   echo ""
   echo "   For MPI run,  Total number of MPI processes = NODES * PPN."
   echo ""
@@ -121,7 +117,7 @@ if ( $NNODE == "" || $NNODE == "1" ) then
 else if ( `echo $NNODE | grep -c '[a-z][A-Z]'` != 1 ) then
   set NODES = "$NNODE"
 else
-  echo "Error: Number o compute node must be positive integer."
+  echo "Error: Number of compute node must be positive integer."
   goto ask_node
 endif
 
@@ -354,22 +350,50 @@ rungms_MPI:
 clear
 cat << EOF | less
 
-                             ----------------------------------------------
-                             INFOMATION OF subgmsmpi AND rungms.MPI SCRIPTS
-                             ----------------------------------------------
+                            ---------------------------------
+                            GAMESS Interactive Job Submission
+                            ---------------------------------
 
- INTRODUCTION: This 'subgmsmpi' script is used to submit GAMESS job on cluster using PBS Pro job scheduler. 
- To use this script, GAMESS must be built with MPI protocol.
+=========
+subgmsmpi
+=========
 
- rungms.MPI, which is a modification of original rungms script (rungms-like), is used to execute GAMESS 
- calculation with MPI protocol over multiple compute node and/or multiple processors.
+subgmsmpi is used to submit GAMESS calculation on multiprocessor/multinode cluster. 
+To use this program, GAMESS must be built with MPI protocol.
 
- IMPORTANT: To submit GAMESS job via PBS Pro job scheduler, subgmsmpi and rungms.MPI are needed together.
- rungms.MPI must be saved in either your HOME directory or in GAMESS top directory.
+Total number of MPI processes = NODES x PPN
+where NODES is number of compute nodes.
+      PPN   is number of CPU cores per node.
 
- If you want to run GAMESS on master node (front-end), rungms.MPI can be used directly, without subgmsmpi.
+TAIWANIA Policy: Max number of CPU cores per node (PPN) is 40.
 
- Rangsiman Ketkaew  (e-mail: rangsiman1993@gmail.com)
+
+==========
+rungms.MPI
+==========
+
+rungms.MPI - a modification of original rungms script (rungms-like) - is used to execute GAMESS 
+calculation with MPI protocol over multiple compute node and/or multiple processors.
+
+
+=======
+CAVEATS
+=======
+
+To submit GAMESS job via PBS Pro job scheduler, subgmsmpi and rungms.MPI are needed together.
+rungms.MPI must be saved in either your HOME directory or in GAMESS top directory.
+
+
+======
+AUTHOR
+======
+
+Rangsiman Ketkaew (MSc student)
+E-mail: rangsiman1993@gmail.com
+Computational Chemistry Research Unit
+Department of Chemistry
+Faculty of Science and Technology
+Thammasat University, Thailand
 
 EOF
 

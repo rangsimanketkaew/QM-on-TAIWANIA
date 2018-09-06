@@ -10,7 +10,7 @@
 set PROJ_ID_FILE = "$HOME/.proj_id"
 ################################################################
 
-if ("null$1" == "null-h" || "null$1" == "null-help") goto help
+if ("$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help") goto help
 
 if ($#argv == 0) then
 
@@ -18,22 +18,8 @@ echo ""
 echo "  Multiple NWChem Interactive PBS Jobs Submission on TAIWANIA, NCHC, Taiwan"
 echo "  -------------------------------------------------------------------------"
 echo ""
-echo "                       |--> 1st NWchem input file is at least required."
-echo "                       |"
+echo "  Usage: subnwmult inp_1.nw [inp_2.nw | inp_3.nw | ... | inp_10.nw] [-help]"
 echo ""
-echo "  Usage: subnwmult 1st_inp.nw [ 2nd_inp.nw | 3rd_inp.nw | ... | 10th_inp.nw ]"
-echo ""
-echo "                                     \-------------------------------/"
-echo "                                                     |"
-echo "      Optional 2nd, 3rd, ... , 10th input files.  <--|"
-echo ""
-echo "  User is not allowed to specify output file. Basename of input file will be"
-echo "  used to name the output file. E.g. nwchem.nw => nwchem.out"
-echo ""
-echo "  Existing output file whose basename is similar to name of submitting input"
-echo "  will be overwritten."
-echo ""
-echo "  subnwmult does not support ARMCI Casper, MPIPR, and GPU/CUDA at this time."
 echo ""
 
 exit 0
@@ -233,16 +219,37 @@ end
 echo "| "
 
 help:
+clear
+cat << EOF | less
 
-echo ""
-echo " Multiple NWChem 6.8.1 Jobs Submission on TAIWANIA, NCHC, Taiwan."
-echo " Interactive Job PBS Professional supported."
-echo " ----------------------------------------------------------------"
-echo ""
-echo " Rangsiman Ketkaew                E-mail: rangsiman1993@gmail.com"
-echo " Thammasat University, Thailand."
-echo ""
-echo " https://github.com/rangsimanketkaew/PBS-submission"
-echo ""
+                            -------------------------------------------
+                            Multiple NWChem Interactive Jobs Submission
+                            -------------------------------------------
+
+=========
+subnwmult
+=========
+
+Multiple NWChem 6.8.1 Jobs Submission on TAIWANIA, NCHC, Taiwan.
+
+ - Max number of input files is 10.
+ - Interactive Job PBS Professional supported.
+ - ARMCI Casper, MPIPR, and GPU/CUDA are not supported yet at this time.
+
+Basename of input file will be used to name the output file. For example, nwchem.nw --> nwchem.out
+
+Existing output file whose basename is similar to name of submitting input will be overwritten.
 
 
+======
+AUTHOR
+======
+
+Rangsiman Ketkaew (MSc student)
+E-mail: rangsiman1993@gmail.com
+Computational Chemistry Research Unit
+Department of Chemistry
+Faculty of Science and Technology
+Thammasat University, Thailand
+
+EOF

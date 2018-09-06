@@ -55,10 +55,10 @@ echo ""
 set ARGV_ORDER = "$#argv"
 
 if ($ARGV_ORDER == 0) then
-  echo "   Usage: subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr | help]"
+  echo "   Usage: subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr] [-help]"
   echo ""
   exit 0
-else if ("null$1" == "nullhelp" || "null$1" == "null-help" || "null$1" == "null-h") then
+else if ("$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) then
   goto help
 endif
 
@@ -1061,9 +1061,13 @@ help:
 clear
 cat << EOF | less
 
+                                       ---------------------------------
+                                       NWChem Interactive Job Submission
+                                       ---------------------------------
+
  NAME            subnwchem  -  Interactive PBS Professional Job Submission for NWChem $NWCHEM_VER
 
- SYNOPSIS        subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr | help]
+ SYNOPSIS        subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr] [-help]
 
  EXAMPLE         subnwchem water                             Run water.nw and print output to water.out.
 
@@ -1102,27 +1106,34 @@ cat << EOF | less
                  GP-GPU/CUDA supports only the tensor contraction engine (TCE) module for coupled-cluster (CC) calculation.
                  Note that CUDA/MPI-PR is not now supported. Please do avoid requesting CUDA and MPI-PR simultaneously.
                  
- COMMANDS
-                 input                 -   NWChem input file with or without .nw extension.
+ COMMANDS        input                 -   NWChem input file with or without .nw extension.
                  output                -   NWChem output file with or without .out extension.
                  gpu                   -   Requests GPU accelerator for CUDA to speed up calculation.
-                 casper                -   Requests Casper method (against MPI-PR).
-                 mpipr                 -   Requests MPI-PR method (against Casper).
-                 help                  -   Open this help.
+                 casper                -   Requests Casper method (conflicts with MPI-PR).
+                 mpipr                 -   Requests MPI-PR method (conflicts with Casper).
+                 -help                 -   Open this help.
 
- LIMITATION
-                 Maximum compute node  -   600
+ LIMITATION*     Maximum compute node  -   600
                  Maximum CPU cores     -   40   (per node)
                  Maximum MPI process   -   40   (per node)
                  Maximum Threads       -   40   (per node & per MPI rank)
+ 
+ * is TAIWANIA Policy
 
  MORE DETAILS    NWChem official website: http://www.nwchem-sw.org 
                  NWChem official manual: https://github.com/nwchemgit/nwchem/wiki
 
- AUTHOR          Rangsiman Ketkaew  rangsiman1993@gmail.com
-                 https://github.com/rangsimanketkaew/PBS-submission
+ AUTHOR          Rangsiman Ketkaew  (MSc student)
+                 E-mail: rangsiman1993@gmail.com
+                 Computational Chemistry Research Unit
+                 Department of Chemistry
+                 Faculty of Science and Technology
+                 Thammasat University, Thailand
 
-                 Last updated: June 29, 2018
+ Repository      https://github.com/rangsimanketkaew/PBS-submission
+
+ Last updated    June 29, 2018
+
 
 EOF
 
