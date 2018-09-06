@@ -2,14 +2,14 @@
 
 A Suite of PBS Pro Script Generator for Interactive Job Submission on TAIWANIA Cluster 
 
-Automatic generator of PBS Professional script for interactive job submission of quantum chemistry application on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. All scripts were written in tcsh and tested during in stage open beta testing. Source code customization is required for use by other job scheduler and other cluster.
+Automatic generator of PBS Professional script for interactive job submission of quantum chemistry application on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. Source code customization is required for use by other job scheduler and other cluster.
 <p align="center">
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
 <p/>
 
 Taiwania official website: https://iservice.nchc.org.tw
 
-**DISCLAIMER:**
+**DISCLAIMERS:**
 1. I am not a staff of National Center for High-Performance Computing (NCHC), Taiwan.
 2. I do not take any responsibility if any damage or failure cuased through use of all script or program taken through this Github repository.
 3. All programs were written in C-shell and tested during in stage open beta testing.
