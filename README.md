@@ -11,8 +11,8 @@ Taiwania official website: https://iservice.nchc.org.tw
 
 **DISCLAIMER:**
 1. I am not a staff of National Center for High-Performance Computing (NCHC), Taiwan.
-2. I am not related to National Center for High-Performance Computing (NCHC), Taiwan.
-3. I do not take any responsibility if any damage or failure cuased through use of all script or program taken through this Github repository.
+2. I do not take any responsibility if any damage or failure cuased through use of all script or program taken through this Github repository.
+3. All programs were written in C-shell and tested during in stage open beta testing.
 
 ---
 
@@ -30,6 +30,7 @@ Taiwania official website: https://iservice.nchc.org.tw
       * [Shared memory parallel system](#shared-memory-parallel-system)
       * [Distributed memory parallel system](#distributed-memory-parallel-system)
    * [LAMMPS](#lammps)
+   * [Molpro](#molpro)
    * [CONTACT](#contact)
 <!--te-->
 
@@ -43,10 +44,10 @@ Program source codes are available at [releases page](https://github.com/rangsim
 
 ### Gaussian 09
 
-* [subg09](subg09) 
+* [subg09](subg09)
 
-* Usage: `subg09 input [output]` <br />
-where **input** is your g09 input file with or without .com extension. For example,  <br />
+* Usage: `subg09 input[.com] [output[.out]]` <br />
+For example,  <br />
 `subg09 water_hf` <br />
 `subg09 water_hf water_hf_4cores.`
 
@@ -136,8 +137,8 @@ Title Card Required
 ### Gaussian 16
 * [subg16](subg16) 
 
-* Usage: `subg16 input [output]` <br />
-where **input** is your g16 input file with or without .com extension. For example,  <br />
+* Usage: `subg16 input[.com] [output[.out]]` <br />
+For example,  <br />
 `subg16 water_hf` <br />
 `subg16 water_hf water_hf_4cores.out`
 
@@ -238,7 +239,7 @@ Title Card Required
 
 * [subnwchem](subnwchem)
 
-* Usage: `subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr | help]` <br />
+* Usage: `subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr ] [-help]` <br />
 where **input** is NWChem input file with or without .nwchem extension. <br/>
 Explaination of each optional keyword are below. <br /> 
 Example of using subnwchem are following
@@ -275,7 +276,7 @@ Example of using subnwchem are following
 | gpu     | Requests GPU accelerator |
 | casper  | Requests Casper method (against MPI-PR) |
 | mpipr   | Requests MPI-PR method (against Casper) |
-| help   <br/> -h <br/> -help | Open this help |
+| -help   | Open this help |
 
 </center>
 
@@ -296,8 +297,8 @@ Example of using subnwchem are following
 
 * [subnwmult](subnwmult)
 
-* Usage: `subnwmult 1st_inp.nw [ 2nd_inp.nw | 3rd_inp.nw | ... | 10th_inp.nw ]` <br />
-Note that the first NWChem input is at least required.
+* Usage: `subnwmult inp_1.nw [inp_2.nw | inp_3.nw | ... | inp_10.nw] [-help]` <br />
+The first NWChem input file is at least required.
 
 * Capability
   - [ ] OpenMP
@@ -321,7 +322,7 @@ Note that the first NWChem input is at least required.
 ### Q-Chem
 * [subqchem](subqchem)
 
-* Usage: `subqchem [thread] input [output]` <br />
+* Usage: `subqchem [thread] input[.in] [output[.out]] [-help]` <br />
 where **thread** is number of OpenMP threads and **input** is Q-Chem input file with or without .in extension.<br/>
 Default value of thread is 1.
 
@@ -370,7 +371,7 @@ $end
 ### ORCA 
 * [suborca](suborca)
 
-* Usage: `suborca input [output]` <br />
+* Usage: `suborca input[.inp] [output[.out]] [-help]` <br />
 where **input** is ORCA input file with or without .inp extension.
 
 * Capability
@@ -419,8 +420,8 @@ where **input** is ORCA input file with or without .inp extension.
 ### GAMESS
 * [subgms](subgms) and [subgmsmpi](subgmsmpi)
 
-* Usage: `subgms input [output]`  
-* Usage: `subgmsmpi input [output]` <br/>
+* Usage: `subgms input[.inp] [output[.out]] [-help]`  
+* Usage: `subgmsmpi input[.inp] [output[.out]] [-help]` <br/>
 where **input** is GAMESS input file with or without .inp extension.
 
 * These two scripts are used to submit GAMESS calculation using PBS Pro job scheduler for OpenMP (subgms) and MPI (subgmsmpi) parallelization methods. Default GAMESS executable is **gamess.00.x**.
@@ -528,12 +529,10 @@ HYDROGEN    1.0     -1.661090000        -1.766020000        20.021390000
 ### LAMMPS
 * [sublmp](sublmp)
 
-* Usage: `sublmp INPUT NODES NMPI OMP [ OUTPUT ] [ help ]` <br/>
-INPUT  = LAMMPS input file. <br/>
-NODES  = Number of compute nodes. <br/>
-NMPI   = Number of MPI processes (per node). <br/>
-OMP    = Number of OMP threads (per process). <br/>
-OUTPUT = LAMMPS output file. [optional]
+* Usage: `sublmp input[.in] N PPN OMP [output[.log]] [-help]` <br/>
+N   = Number of compute nodes. <br/>
+PPN = Number of MPI processes per node. <br/>
+OMP = Number of OMP threads per process. <br/>
 
 * Capability
   - [ ] OpenMP
@@ -547,6 +546,26 @@ OUTPUT = LAMMPS output file. [optional]
 * GPU is not now supported.
 
 * This program was tested with LAMMPS that built with Intel compiler, MKL, MPI from Intel Parallel Studio XE 2018 update 1, and GCC 6.3.0 compiler. `make intel_cpu_intelmpi`
+
+---
+
+### Molpro
+* [submolpro](submolpro)
+
+* Usage: `sublmp [PPN] input[.com] [output[.out]] [-help]`
+
+* Example: submolpro 16 ccsd-water.com ccsd-water.out
+
+* Capability
+  - [ ] OpenMP
+  - [x] Intel MPI
+  - [x] OpenMPI
+  - [x] MPICH or MVAPICH
+  - [ ] GP-GPU (CUDA)
+
+* Maximum MPI processes/node and OMP threads/process are 40.
+
+* GPU is not now supported.
 
 ---
 
