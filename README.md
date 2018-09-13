@@ -1,24 +1,23 @@
 # PBS-submission
 
-A Suite of PBS Pro Script Generator for Interactive Job Submission on TAIWANIA Cluster 
+An Open Source Collection of Program for Interactive Quantum Chemistry Calculation Submission on TAIWANIA (PETA) Cluster, National Center for High-Performance Computing (NCHC), Taiwan.
 
-Automatic generator of PBS Professional script for interactive job submission of quantum chemistry application on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. Source code customization is required for use by other job scheduler and other cluster.
 <p align="center">
-   <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt" /> 
+   <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt"/> 
 <p/>
 
-Taiwania official website: https://iservice.nchc.org.tw
+NCHC official website: https://iservice.nchc.org.tw
 
-**DISCLAIMERS:**
-1. I am not a staff of National Center for High-Performance Computing (NCHC), Taiwan.
-2. I do not take any responsibility if any damage or failure cuased through use of all script or program taken through this Github repository.
-3. All programs were written in C-shell and tested during in stage open beta testing.
+**Disclaimers:**
+1. I do not take any responsibility if any damage or failure cuased through use of all script or program taken through this Github repository.
+2. All programs were written in C-shell and tested during in stage open beta testing.
 
 ---
 
 ### Table of Contents
 <!--ts-->
    * [Getting Program](#getting-program)
+   * [Application](#Application)
    * [Gaussian 09](#gaussian-09)
    * [Gaussian 16](#gaussian-16)
    * [NWChem](#nwchem)
@@ -42,13 +41,19 @@ Program source codes are available at [releases page](https://github.com/rangsim
 
 ---
 
+### Application
+
+Source code customization is required for use by other job scheduler and other cluster.
+
+---
+
 ### Gaussian 09
 
 * [subg09](subg09)
 
-* Usage: `subg09 input[.com] [output[.out]]` <br />
-For example,  <br />
-`subg09 water_hf` <br />
+* Usage: `subg09 input[.com] [output[.out]]` <br/>
+For example,  <br/>
+`subg09 water_hf` <br/>
 `subg09 water_hf water_hf_4cores.`
 
 * If no output specified, basename of input will be used to name output file automatically.
@@ -60,8 +65,8 @@ For example,  <br />
   - [ ] MPICH or MVAPICH
   - [ ] GP-GPU (CUDA)
 
-* This G09 runtime supports only OpenMP (shared-memory) parallel method.  <br />
-  This program recognizes the OMP threads from the value of %nprocs line in input.  <br />
+* This G09 runtime supports only OpenMP (shared-memory) parallel method.  <br/>
+  This program recognizes the OMP threads from the value of %nprocs line in input.  <br/>
   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
 
 * Like G16, G09 will be submitted with serial queue if value of %nproc is set to 1.
@@ -137,9 +142,9 @@ Title Card Required
 ### Gaussian 16
 * [subg16](subg16) 
 
-* Usage: `subg16 input[.com] [output[.out]]` <br />
-For example,  <br />
-`subg16 water_hf` <br />
+* Usage: `subg16 input[.com] [output[.out]]` <br/>
+For example,  <br/>
+`subg16 water_hf` <br/>
 `subg16 water_hf water_hf_4cores.out`
 
 * If no output specified, basename of input will be used to name output file automatically.
@@ -151,8 +156,8 @@ For example,  <br />
   - [ ] MPICH or MVAPICH
   - [x] GP-GPU (CUDA) - only in modified version.
 
-* This G16 runtime supports only OpenMP (shared-memory) parallel method.  <br />
-  This program recognizes the OMP threads from the value of %nprocs line in input.  <br />
+* This G16 runtime supports only OpenMP (shared-memory) parallel method.  <br/>
+  This program recognizes the OMP threads from the value of %nprocs line in input.  <br/>
   Max %nprocs is 40 and sensible value of %nproc are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
   
 * GP-GPU is not now supported in current version of subg16, talk to me if you want a demo of modified `subg16gpu`.
@@ -222,9 +227,9 @@ Title Card Required
 ```
 
 </details>
-<br />
+<br/>
 
-* Warning: If %nproc is set to 1, G16 job will be submitted in serial queue.  <br />
+* Warning: If %nproc is set to 1, G16 job will be submitted in serial queue.  <br/>
   If %nproc is 2 through 40, G16 job will be submitted in cf40 queue instead.
   
 * For requesting of other queue, we suggest you to modify the PBS script of cf40 as your need.
@@ -239,9 +244,9 @@ Title Card Required
 
 * [subnwchem](subnwchem)
 
-* Usage: `subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr ] [-help]` <br />
+* Usage: `subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr ] [-help]` <br/>
 where **input** is NWChem input file with or without .nwchem extension. <br/>
-Explaination of each optional keyword are below. <br /> 
+Explaination of each optional keyword are below. <br/> 
 Example of using subnwchem are following
   - `subnwchem input`           
   Submit job on CPU node.
@@ -297,7 +302,7 @@ Example of using subnwchem are following
 
 * [subnwmult](subnwmult)
 
-* Usage: `subnwmult inp_1.nw [inp_2.nw | inp_3.nw | ... | inp_10.nw] [-help]` <br />
+* Usage: `subnwmult inp_1.nw [inp_2.nw | inp_3.nw | ... | inp_10.nw] [-help]` <br/>
 The first NWChem input file is at least required.
 
 * Capability
@@ -314,7 +319,7 @@ The first NWChem input file is at least required.
 
 * To implement ARMCI and GPU modules in subnwmult, consult [subnwchem](subnwchem) script.
 
-* NWChem official website: http://www.nwchem-sw.org  <br />
+* NWChem official website: http://www.nwchem-sw.org  <br/>
 * NWChem official manual: https://github.com/nwchemgit/nwchem/wiki
 
 ---
@@ -322,7 +327,7 @@ The first NWChem input file is at least required.
 ### Q-Chem
 * [subqchem](subqchem)
 
-* Usage: `subqchem [thread] input[.in] [output[.out]] [-help]` <br />
+* Usage: `subqchem [thread] input[.in] [output[.out]] [-help]` <br/>
 where **thread** is number of OpenMP threads and **input** is Q-Chem input file with or without .in extension.<br/>
 Default value of thread is 1.
 
@@ -371,7 +376,7 @@ $end
 ### ORCA 
 * [suborca](suborca)
 
-* Usage: `suborca input[.inp] [output[.out]] [-help]` <br />
+* Usage: `suborca input[.inp] [output[.out]] [-help]` <br/>
 where **input** is ORCA input file with or without .inp extension.
 
 * Capability
@@ -570,6 +575,9 @@ OMP = Number of OMP threads per process. <br/>
 ---
 
 ### CONTACT
-Rangsiman Ketkaew  <br />
+Rangsiman Ketkaew  (MSc student) <br/>
+Computaional Chemistry Research Unit <br/>
+Department of Chemistry <br/>
+Faculty of Science and Technology <br/>
+Thammasat University, Thailand <br/>
 E-mail: rangsiman1993@gmail.com
-
