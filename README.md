@@ -1,9 +1,9 @@
-# PBS-submission
+# QM-on-TAIWANIA
 
 An Open Source Collection of Program for Interactive Submission of Computational Chemistry Calculation on TAIWANIA (PETA) Cluster, National Center for High-Performance Computing (NCHC), Taiwan.
 
 <p align="center">
-   <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt"/> 
+   <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/QM-on-TAIWANIA/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt"/> 
 <p/>
 
 NCHC official website: https://iservice.nchc.org.tw
@@ -37,7 +37,7 @@ NCHC official website: https://iservice.nchc.org.tw
 
 ### Getting Program
 
-Program source codes are available at [releases page](https://github.com/rangsimanketkaew/PBS-submission/releases).
+Program source codes are available at [releases page](https://github.com/rangsimanketkaew/QM-on-TAIWANIA/releases).
 
 ---
 
