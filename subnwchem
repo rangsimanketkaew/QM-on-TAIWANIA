@@ -1,19 +1,12 @@
 #!/bin/csh
 
-# NWChem Interactive PBS Pro submission program on TAIWANIA cluster, 
-# NCHC, Taiwan.
-#
-# Capabilities:
-#  [/] support serial and parallel run using MPI protocol
-#  [/] support ARMCI methods: Casper and MPI-PR
-#  [/] support GPU/CUDA request
-#  [/] automatically determine optimal PBS job queue
+# NWChem Interactive Job Submission on TAIWANIA cluster, NCHC, Taiwan.
 #
 # Updated 2018.06.29  Rangsiman Ketkaew  rangsiman1993@gmail.com
-# https://github.com/rangsimanketkaew/PBS-submission/
+# https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ###############################################################################
-set NWCHEM_VER            = "6.8"
+set NWCHEM_VER            = "6.8.0"
 set NWCHEM_TOP            = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixmrcc"
 set NWCHEM_TOP_CASPER     = "$NWCHEM_TOP"
 set NWCHEM_TOP_MPIPR      = "/pkg/nwchem/MPI-PR/i18gcc6/nwchem-6.8.1-fixmrcc"
@@ -42,9 +35,9 @@ set CLEAN_CASPER = 0
 set CLEAN_MPIPR  = 0
 
 echo ""
-echo "     #################################################################"
-echo "    ###   NWChem $NWCHEM_VER Interactive PBS Pro Submission on TAIWANIA   ###"
-echo "   #################################################################"
+echo "     ###########################################################"
+echo "    ###   NWChem $NWCHEM_VER Interactive Submission on TAIWANIA   ###"
+echo "   ###########################################################"
 echo ""
 
 #############################################
@@ -1061,9 +1054,9 @@ help:
 clear
 cat << EOF | less
 
-                                       ---------------------------------
-                                       NWChem Interactive Job Submission
-                                       ---------------------------------
+                                          ---------------------------------
+                                          NWChem Interactive Job Submission
+                                          ---------------------------------
 
  NAME            subnwchem  -  Interactive PBS Professional Job Submission for NWChem $NWCHEM_VER
 
@@ -1130,7 +1123,7 @@ cat << EOF | less
                  Faculty of Science and Technology
                  Thammasat University, Thailand
 
- Repository      https://github.com/rangsimanketkaew/PBS-submission
+ Repository      https://github.com/rangsimanketkaew/QM-on-TAIWANIA
 
  Last updated    June 29, 2018
 

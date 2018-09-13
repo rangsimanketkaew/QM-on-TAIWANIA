@@ -1,18 +1,23 @@
 
-                                            ------------------
-                                            QM on TAIWANIA 2.0
-                                            ------------------                                  
+                                                 ==================
+                                                 QM on TAIWANIA 2.0
+                                                 ==================                                  
 
-          A Suite of PBS Pro Script Generator for Interactive Job Submission on TAIWANIA Cluster
-
+      An Open Source Collection of Program for Interactive Submission of Computational Chemistry Calculation 
+            on TAIWANIA (PETA) Cluster, National Center for High-Performance Computing (NCHC), Taiwan.
 
 =============
 SOFTWARE INFO
 =============
 
-This is the second release of the PBS Pro script generator for interactive job submission of computational 
-chemistry calculation on TAIWANIA (PETA) cluster, National Center for High-Performance Computing, Taiwan. 
+This is the second release of an open source collection of program for interactive submission of computational chemistry 
+calculation on TAIWANIA (PETA) cluster, National Center for High-Performance Computing (NCHC), Taiwan.
 TAIWANIA cluster is Intel Xeon Gold 6148 cluster equiped with the Intel Omni-Path high-speed interconnect.
+
+===========
+APPLICATION
+===========
+
 Source code customization is needed for other workload managers and HPC clusters.
 
 ========
@@ -30,39 +35,37 @@ PARALLEL METHODS
 
 1. Message Passing Interface (MPI) Parallel method.
 2. Shared-Memory Parallel method (SMP).
-3. Hybrid Parallel method for multiprocessor/multinode cluster (on request).
+3. Hybrid parallel method for multiprocessor/multinode cluster (MPI+SMP).
 
 ==========
 COMPONENTS
 ==========
 
-This software suite contains the PBS Pro script generator of several quantum chemistry programs:
+This software suite contains a growing variety of several quantum chemistry program.
 
-  1. subg09      Gaussian 09
-  3. subg16      Gaussian 16
-  4. subnwchem   NWChem
-  5. subnwmult   NWChem (multiple jobs)
-  6. subqchem    Q-Chem
-  7. suborca     ORCA
-  8. subgms      GAMESS (OpenMP protocol)
-  9. subgmsmpi   GAMESS (MPI protocol)
- 10. sublmp      LAMMPS (CPU)
- 11. submolpro   Molpro
+   1. subg09      Gaussian   09
+   2. subg16      Gaussian   16
+   3. subnwchem   NWChem     6.8.0        single job
+   4. subnwmult   NWChem     6.8.0        multiple jobs
+   5. subqchem    Q-Chem     4.2.2
+   6. suborca     ORCA       4.0.1.2
+   7. subgms      GAMESS     20180215 R1  OpenMP protocol
+   8. subgmsmpi   GAMESS     20180215 R1  MPI protocol
+   9. sublmp      LAMMPS     16MAR2018    CPU            
+  10. submolpro   Molpro     2015
 
 ======
 MANUAL
 ======
 
-Normal usage is available at https://github.com/rangsimanketkaew/PBS-submission
+Normal usage is available at https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ===========
 DISCLAIMERS
 ===========
 
-1. I am not a staff of National Center for High-Performance Computing (NCHC), Taiwan.
-2. I do not take any responsibility if any damage or failure cuased through use of all script 
-   or program taken through https://github.com/rangsimanketkaew/PBS-submission repository.
-3. All programs were written in C-shell and tested during in stage open beta testing.
+1. I do not take any responsibility if any damage or failure cuased through use of all programs.
+2. All programs were written in C-shell and tested during in stage open beta testing.
 
 ======
 AUTHOR

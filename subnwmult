@@ -1,10 +1,9 @@
 #!/bin/csh -f
 
-# Interactive PBS Pro submission program for multiple NWChem 
-# calculations on TAIWANIA cluster, NCHC, Taiwan.
+# Multiple NWChem Interactive Job Submission on TAIWANIA cluster, NCHC, Taiwan.
 # 
 # Updated 20180623  Rangsiman Ketkaew  rangsiman1993@gmail.com
-# https://github.com/rangsimanketkaew/PBS-submission/
+# https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ################################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
@@ -15,11 +14,10 @@ if ("$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help") goto 
 if ($#argv == 0) then
 
 echo ""
-echo "  Multiple NWChem Interactive PBS Jobs Submission on TAIWANIA, NCHC, Taiwan"
-echo "  -------------------------------------------------------------------------"
+echo "  Multiple NWChem Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
+echo "  --------------------------------------------------------------------"
 echo ""
 echo "  Usage: subnwmult inp_1.nw [inp_2.nw | inp_3.nw | ... | inp_10.nw] [-help]"
-echo ""
 echo ""
 
 exit 0
@@ -222,15 +220,15 @@ help:
 clear
 cat << EOF | less
 
-                            -------------------------------------------
-                            Multiple NWChem Interactive Jobs Submission
-                            -------------------------------------------
+                                -------------------------------------------
+                                Multiple NWChem Interactive Jobs Submission
+                                -------------------------------------------
 
 =========
 subnwmult
 =========
 
-Multiple NWChem 6.8.1 Jobs Submission on TAIWANIA, NCHC, Taiwan.
+Multiple NWChem 6.8.1 Job Submissions on TAIWANIA cluster, NCHC, Taiwan.
 
  - Max number of input files is 10.
  - Interactive Job PBS Professional supported.

@@ -1,14 +1,9 @@
 #!/bin/csh
 
-# GAMESS 20180214 R1 Interactive PBS Pro Job Submission on 
-# Taiwania cluster, NCHC, Taiwan
-#
-# Taiwania is Intel Xeon cluster equiped with Intel Omni-Path
-# This script is tested with GAMESS on Taiwania that was built 
-# by Intel Parallel Studio XE 2018 update1.
+# GAMESS 20180214 R1 Interactive Job Submission on TAIWANIA cluster, NCHC, Taiwan
 #
 # Updated 20180706  Rangsiman Ketkaew  rangsiman1993@gmail.com
-# https://github.com/rangsimanketkaew/PBS-submission/
+# https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ########################### BOX A ############################
 set GAMESS_TOP = "$HOME/gamess-MPI"
@@ -67,8 +62,8 @@ onintr inter
 
 if ($#argv == 0) then
 #echo ""
-  echo "   GAMESS 20180215 R1 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
-  echo "   ---------------------------------------------------------------------------"
+  echo "   GAMESS 20180215 R1 Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
+  echo "   -----------------------------------------------------------------------"
   echo ""
   echo "   Usage: subgmsmpi input[.inp] [output[.out]] [-help]"
   echo ""

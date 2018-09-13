@@ -1,10 +1,9 @@
 #!/bin/csh
 
-# ORCA 4.0.1.2 Interactive PBS Pro Job Submission
-# on Taiwania cluster, NCHC, Taiwan
+# ORCA Interactive Job Submission on TAIWANIA cluster, NCHC, Taiwan
 #
 # Updated 20180622  Rangsiman Ketkaew  rangsiman1993@gmail.com
-# https://github.com/rangsimanketkaew/PBS-submission/
+# https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ##############################################################
 set ORCA_TOP = "/pkg/orca/orca.4.0.1.2"
@@ -20,8 +19,8 @@ if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) got
 if ($#argv == 0) then
 
 echo ""
-echo "   ORCA 4.0.1.2 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
-echo "   ---------------------------------------------------------------------"
+echo "   ORCA 4.0.1.2 Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
+echo "   -----------------------------------------------------------------"
 echo ""
 echo "   Usage: suborca input[.inp] [output[.out]] [-help]"
 echo ""
@@ -247,9 +246,8 @@ cat << EOF | less
 suborca
 =======
 
-suborca detects number of MPI processes from value of 'PALn' keyword which specified in input file."
-
-  where n is a sensible positive integer, such as 2, 4, 8, 12, 24, 36, 40."
+suborca detects number of MPI processes from value of 'PALn' keyword which specified in input file,
+where n is a sensible positive integer, such as 2, 4, 8, 12, 24, 36, 40.
 
 For example, the following is requesting 4 MPI processes for geometry optimization calculation.
 

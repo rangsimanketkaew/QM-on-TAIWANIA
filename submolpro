@@ -1,12 +1,9 @@
 #!/bin/csh
 
-# Molpro 2015 Interactive PBS Pro Job Submission
-# on Taiwania cluster, NCHC, Taiwan
-#
-# Support only MPI parallel method
+# Molpro 2015 Interactive Job Submission on TAIWANIA cluster, NCHC, Taiwan
 #
 # Updated 20180906  Rangsiman Ketkaew  rangsiman1993@gmail.com
-# https://github.com/rangsimanketkaew/PBS-submission/
+# https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ##############################################################
 set MOLPRO     = /pkg/molpro/bin
@@ -20,8 +17,8 @@ if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) got
 
 if ($#argv == 0) then
   echo ""
-  echo "   Molpro 2015 Interactive PBS Job Submission on TAIWANIA, NCHC, Taiwan"
-  echo "   --------------------------------------------------------------------"
+  echo "   Molpro 2015 Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
+  echo "   ----------------------------------------------------------------"
   echo ""
   echo "   Usage: submolpro [PPN] input[.com] [output[.out]] [-help]"
   echo ""
@@ -268,9 +265,9 @@ help:
 clear
 cat << EOF | less
 
-                      ---------------------------------
-                      Molpro Interactive Job Submission
-                      ---------------------------------
+                                 ---------------------------------
+                                 Molpro Interactive Job Submission
+                                 ---------------------------------
 
 =========
 submolpro
