@@ -1,6 +1,6 @@
 # PBS-submission
 
-An Open Source Collection of Program for Interactive Quantum Chemistry Calculation Submission on TAIWANIA (PETA) Cluster, National Center for High-Performance Computing (NCHC), Taiwan.
+An Open Source Collection of Program for Interactive Submission of Computational Chemistry Calculation on TAIWANIA (PETA) Cluster, National Center for High-Performance Computing (NCHC), Taiwan.
 
 <p align="center">
    <img alt="Capture_Menu" src="https://github.com/rangsimanketkaew/PBS-submission/blob/master/taiwania-cluster.jpeg" align=middle width="300pt" hight="100pt"/> 
