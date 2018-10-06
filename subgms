@@ -83,7 +83,7 @@ if ( $CHK_ERR == 1 ) exit 1
 onintr inter
 
 if ($#argv == 0) then
-  echo "   GAMESS 20180215 R1 Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
+  echo "   GAMESS 20180214 R1 Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
   echo "   -----------------------------------------------------------------------"
   echo ""
   echo "   Usage: subgms input[.inp] [output[.out]] [-help]"

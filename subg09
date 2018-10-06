@@ -6,6 +6,9 @@
 # https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ##############################################################
+set G09_DIR      = "/pkg/gaussian/g09/g09"
+set G09_EXE      = "$G09_DIR/g09"
+##############################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
 
@@ -27,6 +30,13 @@ if ( $#argv == 0) then
   exit 0
 else
   set INPUTFILE = "$1"
+endif
+
+#Check if Gaussian directory exists
+if (! -e $G09_DIR) then
+  echo "Error: Unable to locate Gaussian 09 directory, $G09_DIR."
+  echo "Please set the suitable path of Gaussian 09 at the beginning lines of this program source code."
+  exit 1
 endif
 
 set INPUTNAME = `basename $INPUTFILE .com`
@@ -216,11 +226,22 @@ cat <<EOF > $PBS_SCRIPT
 #############################################################
 
 module purge
-module load gaussian/g09
+
+export SCRATCH_DIR=/work1/$USER/SCRATCH/g09/g09.pbs\${PBS_JOBID/\.srvc1/}
+if [ ! -d \$SCRATCH_DIR ]; then mkdir -p \$SCRATCH_DIR; fi
+
+export g09root="$G09_DIR"
+. \$g09root/bsd/g09.profile
+export PATH="/pkg/gaussian/nbo6/bin:\$PATH"
+export GAUSS_SCRDIR="\$SCRATCH_DIR"
+export GAUSS_EXEDIR="\$g09root/"
+export GAUSS_EXECUT="\$g09root/g09"
 
 cd \$PBS_O_WORKDIR
 
-g09 < $INPUTFILE > $OUTPUTFILE
+\$GAUSS_EXECUT < \
+$INPUTFILE > \
+$OUTPUTFILE
 
 EOF
 

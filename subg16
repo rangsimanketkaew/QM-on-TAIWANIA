@@ -6,6 +6,9 @@
 # https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ##############################################################
+set G16_DIR      = "/pkg/gaussian/g16/g16"
+set G16_EXE      = "$G16_DIR/g16"
+##############################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
 
@@ -29,6 +32,13 @@ if ( $#argv == 0) then
   exit 0
 else
   set INPUTFILE = "$1"
+endif
+
+#Check if Gaussian directory exists
+if (! -e $G16_DIR) then
+  echo "Error: Unable to locate Gaussian 16 directory, $G16_DIR."
+  echo "Please set the suitable path of Gaussian 16 at the beginning lines of this program source code."
+  exit 1
 endif
 
 set INPUTNAME = `basename $INPUTFILE .com`
@@ -218,11 +228,22 @@ cat <<EOF > $PBS_SCRIPT
 #############################################################
 
 module purge
-module load gaussian/g16
+
+export SCRATCH_DIR=/work1/$USER/SCRATCH/g16/g16.pbs\${PBS_JOBID/\.srvc1/}
+if [ ! -d \$SCRATCH_DIR ]; then mkdir -p \$SCRATCH_DIR; fi
+
+export g16root="$G16_DIR"
+. \$g16root/bsd/g16.profile
+export PATH="/pkg/gaussian/nbo6/bin:\$PATH"
+export GAUSS_SCRDIR="\$SCRATCH_DIR"
+export GAUSS_EXEDIR="\$g16root/"
+export GAUSS_EXECUT="\$g16root/g16"
 
 cd \$PBS_O_WORKDIR
 
-g16 < $INPUTFILE > $OUTPUTFILE
+\$GAUSS_EXECUT < \
+$INPUTFILE > \
+$OUTPUTFILE
 
 EOF
 
