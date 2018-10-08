@@ -2,7 +2,7 @@
 
 # NWChem Interactive Job Submission on TAIWANIA cluster, NCHC, Taiwan.
 #
-# Updated 2018.06.29  Rangsiman Ketkaew  rangsiman1993@gmail.com
+# Updated 2018.10.08  Rangsiman Ketkaew  rangsiman1993@gmail.com
 # https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ###############################################################################
@@ -14,12 +14,16 @@ set NWCHEM_TOP_CASPER_GPU = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixcuda"
 set NWCHEM_TOP_MPIPR_GPU  = "NOTAVAIALBLE"
 set NWCHEM_TOP_GPU        = "$NWCHEM_TOP_CASPER_GPU"
 ###############################################################################
+set NWCHEM_CASLIB         = "/pkg/nwchem/exp/i18/deps/lib"
+###############################################################################
 set CLEANSRC              = "$HOME/.nwchem-clean-up"
+set CLEAN_CASPER          = "$CLEANSRC/cleanup-devshm.sh"
+set CLEAN_MPIPR           = "$CLEANSRC/cleanup-cmx.sh"
 ###############################################################################
 set PROJ_ID_FILE          = "$HOME/.proj_id"
 ###############################################################################
 
-every_thing_starts_from_here:
+begin_program:
 
 onintr int
 
@@ -31,8 +35,6 @@ set CASPER       = 0
 set CASPER_GPU   = 0
 set MPIPR        = 0
 set MPIPR_GPU    = 0
-set CLEAN_CASPER = 0
-set CLEAN_MPIPR  = 0
 
 echo ""
 echo "     ###########################################################"
@@ -41,7 +43,7 @@ echo "   ###########################################################"
 echo ""
 
 #############################################
-# Check each argument.
+# Check input arguments.
 #############################################
 
 # Total arguments
@@ -67,10 +69,10 @@ if ($ARGV_ORDER >1) then
   while ($i <= $ARGV_ORDER)
 #############################################
 # Check if the 2nd argument is special request 
-# (help, gpu, casper, & mpipr).
+# (help, gpu, casper, and mpipr).
 #############################################
     if ("$i" == "2") then
-      set SPEC_RE = `echo $argv[2] | grep -Eiwc 'help|gpu|casper|mpipr'`
+      set SPEC_RE = `echo $argv[2] | grep -Eiwc 'help|gpu|casper|mpipr|mpi-pr'`
       if ($SPEC_RE != "1") then
         set OUTPUT_ARG2 = "$argv[2]"
       else
@@ -87,7 +89,7 @@ check_special_argv:
       else if (`echo $ARGV|grep -Eiwc 'casper'` == "1") then
         set ARMCI = 1
         set CASPER = 1
-      else if (`echo $ARGV|grep -Eiwc 'mpipr'` == "1") then
+      else if (`echo $ARGV|grep -Eiwc 'mpipr|mpi-pr'` == "1") then
         set ARMCI = 1
         set MPIPR = 1
       else
@@ -129,8 +131,7 @@ else
 endif 
 
 #############################################
-# If ARMCI is requested, check either Casper
-# of MPI-PR will be used.
+# Check if Casper or MPI-PR will be used.
 #############################################
 
 armci_check:
@@ -157,7 +158,7 @@ else if ("null$MPIPR" == "null1") then
   set MPIPR = 1
   echo "Enabled ARMCI MPI-PR"
   if ($USEGPU == 1) then
-# Turn-off NWChem GPU/MPI-PR
+# Disable NWChem GPU/MPI-PR
     echo "Error: NWChem with GPU & MPI-PR is not available."
 # Set MPIPR_GPU = 1 to define $NWCHEM_RUNTIME
     set MPIPR_GPU = 1
@@ -168,8 +169,8 @@ else if ("null$MPIPR" == "null1") then
 endif
 
 #############################################
-# If neither GPU nor ARMCI are requested, 
-# Default NWCHEM_TOP is still used.
+# If no special method request, use default
+# setting.
 #############################################
 
 nwchem_def:
@@ -655,7 +656,6 @@ set JOBNAME = `basename $JOBINPUT .nw`
 set JOBSTDERR = `basename $JOBOUTPUT .out`.stderr
 set JOBSTDOUT = `basename $JOBOUTPUT .out`.stdout
 
-
 #############################################
 # Set NWChem runtime and determine clean-up 
 # file for Casper and MPI-PR methods.
@@ -682,57 +682,27 @@ else
 endif
 
 #############################################
-# Check clean-up file of whether Casper or 
-# MPI-PR will be used.
-#############################################
-
-if ($NWCHEM_RUNTIME == GPU) then
-  set CLEAN_CASPER = 1
-else if ($NWCHEM_RUNTIME == CASPER_GPU || $NWCHEM_RUNTIME == CASPER) then
-  set CLEAN_CASPER = 1
-else if ($NWCHEM_RUNTIME == MPIPR_GPU || $NWCHEM_RUNTIME == MPIPR) then
-  set CLEAN_MPIPR = 1
-else if ($NWCHEM_RUNTIME == NORM) then
-  set CLEAN_CASPER = 1
-endif
-
-#############################################
-# Check if $CLEANSRC exits
+# Check if $CLEANSRC exists
 #############################################
 
 if ( ! -e $CLEANSRC ) then
-  echo ""
-  echo "This may be your first time to use subnwchem. CLEAN-UP file just has been created."
   mkdir -p $CLEANSRC
-endif
-
-#--------------------------------------------------------------
-
-clean_casper:
-if ( $CLEAN_CASPER == 1 ) then
-  set CLEAN_CASPER = "$CLEANSRC/cleanup-devshm.sh"
-else
-  goto clean_mpipr
-endif
-
-if ( ! -f $CLEAN_CASPER ) then
-  echo ""
-  echo "Error: Failed to locate cleanup-devshm.sh in $CLEANSRC"
-  echo ""
-  echo -n "Do you want to create cleanup-devshm.sh under your HOME ? [y]: "
-  set CREATE_SHM = "$<"
 else
   goto job_proj_id
 endif
 
-if ( $CREATE_SHM == "" || $CREATE_SHM == "y" || $CREATE_SHM == "yes" ) then
+#############################################
+# Create cleanup-devshm.sh for Casper
+#############################################
+
+if ( ! -f $CLEAN_CASPER ) then
 cat <<EOF > $CLEAN_CASPER
 #!/bin/bash
 
-######### cleanup-devshm.sh was created by subnwchem #########
-# This script will be used to remove garbage on compute nodes 
-# before & after running NWChem on TAIWANIA cluster.
-##############################################################
+######### cleanup-devshm.sh was created by subnwchem ##########
+# This script will be used to remove garbage on compute nodes #
+# before & after running NWChem on TAIWANIA cluster.          #
+###############################################################
 
 MPIPR_JUNK_PREFIX="/dev/shm/*cmx"
 
@@ -751,37 +721,20 @@ if [ "\$GARBAGE" != "" ]; then
 fi
 
 EOF
-else if ( $CREATE_SHM == "n" || $CREATE_SHM == "no" )
-  exit 0
 endif
 
-#--------------------------------------------------------------
-
-clean_mpipr:
-if ( $CLEAN_MPIPR == 1 ) then
-  set CLEAN_MPIPR = "$CLEANSRC/cleanup-cmx.sh"
-else
-  goto job_proj_id
-endif
+#############################################
+# Create cleanup-cmx.sh for MPI-PR
+#############################################
 
 if ( ! -f $CLEAN_MPIPR ) then
-  echo ""
-  echo "Error: Failed to locate cleanup-cmx.sh in $CLEANSRC"
-  echo ""
-  echo -n "Do you want to create cleanup-cmx under your local directory ? [y]: "
-  set CREATE_CMX = "$<"
-else
-  goto job_proj_id
-endif
-
-if ( $CREATE_CMX == "" || $CREATE_CMX == "y" || $CREATE_CMX == "yes" ) then
 cat <<EOF > $CLEAN_MPIPR
 #!/bin/bash
 
-########### cleanup-cmx.sh was created by subnwchem ##########
-# This script will be used to remove garbage on compute nodes 
-# before & after running NWChem on TAIWANIA cluster.
-##############################################################
+########### cleanup-cmx.sh was created by subnwchem ###########
+# This script will be used to remove garbage on compute nodes #
+# before & after running NWChem on TAIWANIA cluster.          #
+###############################################################
 
 MPIPR_JUNK_PREFIX="/dev/shm/*cmx"
 
@@ -792,11 +745,11 @@ if [ "\$GARBAGE" != "" ]; then
 fi
 
 EOF
-else if ( $CREATE_CMX == "n" || $CREATE_CMX == "no" )
-  exit 0
 endif
 
-#--------------------------------------------------------------
+#############################################
+# Determine project id
+#############################################
 
 job_proj_id:
 set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
@@ -806,7 +759,7 @@ if ( "$LISTID" == "" ) then
   exit 1
 else if ( $#LISTID == 1 ) then
   set PROJ_ID = "$LISTID[1]"
-  goto jobinfo
+  goto job_info
 endif
 
 if ( -f $PROJ_ID_FILE ) then
@@ -816,7 +769,7 @@ if ( -f $PROJ_ID_FILE ) then
     exit 1
   endif
   set PROJ_ID = "$PROJID_1"
-  goto jobinfo
+  goto job_info
 endif
 
 set BALANCE = ( `get_su_balance | awk -F, '{print $1}' | xargs` )
@@ -836,7 +789,7 @@ set PROJINP = "$<"
 
 if ( "null$PROJINP" == "null" ) then
   set PROJ_ID = "$LISTID[1]"
-  goto jobinfo
+  goto job_info
 endif
 
 if ( `echo $PROJINP | grep -c '[a-z][A-Z]*'` == 1 ) then
@@ -851,7 +804,7 @@ else
   set PROJ_ID = "$LISTID[$PROJINP]"
 endif
 
-jobinfo:
+job_info:
 
 #############################################
 # Show job information before submit
@@ -895,7 +848,7 @@ re_submit:
     if ($RESUBMIT == "" || $RESUBMIT == "n" || $RESUBMIT == "no") then
       exit 1
     else if ($RESUBMIT == "y" || $RESUBMIT == "yes") then
-      goto every_thing_starts_from_here
+      goto begin_program
     else
       echo "Error: [y/n] ?"
       goto re_submit
@@ -943,7 +896,8 @@ export MPI_ROOT=\$I_MPI_ROOT/intel64
 export MPICC=\$MPI_ROOT/bin/mpiicc
 export MPICXX=\$MPI_ROOT/bin/mpiicpc
 export MPIFC=\$MPI_ROOT/bin/mpiifort
-export NWCHEM_CASLIB=$NWCHEM_TOP/../deps/lib/
+export NWCHEM_EXE=$NWCHEM_EXE
+export NWCHEM_CASLIB=$NWCHEM_CASLIB
 if [ ! -f ~/.nwchemrc ]; then ln -s /pkg/nwchem/etc/default.nwchemrc ~/.nwchemrc; fi
 
 export MACHLIST=\$PBS_O_WORKDIR/nodelist.\${PBS_JOBID/\.srvc1/}
@@ -954,10 +908,7 @@ export MPIPRCLEAN="for RUNNODE in \`uniq \$MACHLIST\`; ssh \$RUNNODE $CLEANSRC/c
 
 EOF
 
-#############################################
-# Append appropriate commands for cleaning
-# and running NWChem with MPI command.
-#############################################
+#---------------------------------------
 
 if ("null$NWCHEM_RUNTIME" == "nullGPU") then
 cat <<EOF >> $JOB_SCRIPT
@@ -966,7 +917,7 @@ cat <<EOF >> $JOB_SCRIPT
 \$CASCLEAN
 ########################
 
-mpiexec.hydra -PSM2 -n $TOTALMPI $NWCHEM_EXE \
+mpiexec.hydra -PSM2 -n $TOTALMPI \$NWCHEM_EXE \
 $JOBINPUT > $JOBOUTPUT
 
 ########################
@@ -986,7 +937,7 @@ export ARMCI_NETWORK=ARMCI
 ########################
 
 mpiexec.hydra -PSM2 -n $TOTALMPI -genv CSP_NG 1 -genv LD_PRELOAD \$NWCHEM_CASLIB/libcasper.so \
-$NWCHEM_EXE \
+\$NWCHEM_EXE \
 $JOBINPUT > \
 $JOBOUTPUT
 
@@ -1006,7 +957,7 @@ export ARMCI_NETWORK=MPI-PR
 \$MPIPRCLEAN
 ########################
 
-mpiexec.hydra -PSM2 -n $TOTALMPI $NWCHEM_EXE \
+mpiexec.hydra -PSM2 -n $TOTALMPI \$NWCHEM_EXE \
 $JOBINPUT > \
 $JOBOUTPUT
 
@@ -1025,7 +976,7 @@ cat <<EOF >> $JOB_SCRIPT
 \$CASCLEAN
 ########################
 
-mpiexec.hydra -PSM2 -n $TOTALMPI $NWCHEM_EXE \
+mpiexec.hydra -PSM2 -n $TOTALMPI \$NWCHEM_EXE \
 $JOBINPUT > \
 $JOBOUTPUT
 
@@ -1036,13 +987,15 @@ $JOBOUTPUT
 EOF
 endif
 
+################### End of SGE script preparation ###################
+
 #############################################
-# Submit the job of NWChem using 'qsub'.
+# Submit job using 'qsub'.
 #############################################
 
 qsub $JOB_SCRIPT
 #  echo "Your job has been submitted."
-  exit 0
+exit 0
 
 int:  
  echo ""
@@ -1122,12 +1075,13 @@ cat << EOF | less
                  Department of Chemistry
                  Faculty of Science and Technology
                  Thammasat University, Thailand
+                 Website: https://bit.ly/rangsiman1993
 
  Repository      https://github.com/rangsimanketkaew/QM-on-TAIWANIA
 
- Last updated    June 29, 2018
-
+ Last updated    October 08, 2018
 
 EOF
+
 
 
