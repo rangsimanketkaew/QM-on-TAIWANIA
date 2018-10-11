@@ -15,7 +15,7 @@ set PROJ_ID_FILE = "$HOME/.proj_id"
 
 onintr inter
 
-if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) goto helppage
+if ( "$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help" ) goto help_page
 
 if ( ! -e $LMP_TOP ) then
   echo "Error: Unable to locate $LMP_TOP top directory. Please check" '$LMP_TOP' "again."
@@ -29,7 +29,7 @@ endif
 
 if ($#argv == 0) then
   echo ""
-  echo "   LAMMPS 16MAR2018 Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
+  echo "   LAMMPS $LMP_VER Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
   echo "   ---------------------------------------------------------------------"
   echo ""
   echo "   Usage: sublmp input[.in] N PPN OMP [output[.log]] [-help]"
@@ -111,28 +111,20 @@ ask_queue:
 check_queue:
 if ( $TOTALCPUS == 1 ) then 
   set JOBQUEUE = serial
-  set WALLTIME = "96:00:00"
 else if ( $TOTALCPUS <= 40 ) then 
   set JOBQUEUE = cf40
-  set WALLTIME = "96:00:00"
 else if ( $TOTALCPUS <= 160 ) then 
   set JOBQUEUE = cf160
-  set WALLTIME = "96:00:00"
 else if ( $TOTALCPUS <= 400 ) then 
   set JOBQUEUE = ct400
-  set WALLTIME = "96:00:00"
 else if ( $TOTALCPUS <= 800 ) then 
   set JOBQUEUE = ct800
-  set WALLTIME = "72:00:00"
 else if ( $TOTALCPUS <= 1200 ) then 
   set JOBQUEUE = cf1200
-  set WALLTIME = "48:00:00"
 else if ( $TOTALCPUS <= 2000 ) then 
   set JOBQUEUE = ct2k
-  set WALLTIME = "48:00:00"
 else if ( $TOTALCPUS <= 6000 ) then 
   set JOBQUEUE = ct6k
-  set WALLTIME = "24:00:00"
 else
   echo "Error: Maximum total MPI processes cores is 6000."
   exit 1
@@ -140,27 +132,18 @@ endif
 
 echo ""
 echo "Optimal job qeueue for this job is $JOBQUEUE"
-echo "Optimal wall-time for this job is $WALLTIME"
 echo ""
 echo -n 'Enter "y" to proceed, or enter "n" to specify job queue manually ? [y]: '
 set QUEUE = "$<"
 
 if ( $QUEUE == "" || $QUEUE == "y" || $QUEUE == "yes" ) then
   set JOBQUEUE = "$JOBQUEUE"
-  set WALLTIME = "$WALLTIME"
 else if ( $QUEUE == "n" || $QUEUE == "no" ) then
   echo ""
   echo "--------- Please specify job queue and wall-time manually. ---------"
   echo ""
   echo -n "Enter job queue (e.g. ctest): "
   set JOBQUEUE = "$<"
-  echo -n "Enter wall-time: Second (0-60): "
-  set SEC = "$<"
-  echo -n "Enter wall-time: Minute (0-60): "
-  set MIN = "$<"
-  echo -n "Enter wall-time:  Hour  (0-96): "
-  set HRS = "$<"
-  set WALLTIME = "${HRS}:${MIN}:${SEC}"
 endif
 
 set_resource:
@@ -237,7 +220,6 @@ echo "         OMP Threads  :  $THREADS"
 echo " Total MPI processes  :  $NODES x $NMPI = $TOTALCPUS"
 echo "            Job Name  :  $JOBNAME"
 echo "           Job Queue  :  $JOBQUEUE"
-echo "           Wall-Time  :  $WALLTIME"
 echo "          Project ID  :  $PROJ_ID"
 echo ""
 
@@ -257,7 +239,6 @@ cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 
 
 #PBS -l select=${NODES}:ncpus=${CPUS}:mpiprocs=${NMPI}:ompthreads=${THREADS}
-#PBS -l walltime=$WALLTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
 #PBS -P $PROJ_ID
@@ -280,14 +261,15 @@ export I_MPI_HYDRA_PMI_CONNECT=alltoall
 export I_ROOT="/pkg/intel/2018_u1"
 source \$I_ROOT/parallel_studio_xe_2018/psxevars.sh
 source \$I_ROOT/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh
-export MPI="mpiexec.hydra"
-export LMP_BIN="$LMP_EXE"
+export MPI_EXE="mpiexec.hydra"
+
+export LMP_EXE="$LMP_EXE"
 export LMP_THREAD_LIST="$THREADS"
 
 export OMP_NUM_THREADS=\$LMP_THREAD_LIST
 echo "Running $OUTPUTNAME"
 
-\$MPI -PSM2 -np $TOTALCPUS \$LMP_BIN -in $INPUTFILE -log $OUTPUTFILE -screen none
+\$MPI_EXE -PSM2 -np $TOTALCPUS \$LMP_EXE -in $INPUTFILE -log $OUTPUTFILE -screen none
 
 EOF
 
@@ -301,7 +283,7 @@ inter:
   echo ""
   exit 1
 
-helppage:
+help_page:
 
 cat << EOF | less
 
@@ -312,6 +294,8 @@ cat << EOF | less
 ======
 sublmp
 ======
+
+sublmp is used to submit LAMMPS calculation on PBS Pro workload manager of TAIWANIA cluster, NCHC, Taiwan.
 
 Example of submission of LAMMPS calculations
 
@@ -334,10 +318,12 @@ TAIWANIA Policy: Max MPI processes/node & OMP threads/process are 40.
 INSTALL LAMMPS
 ==============
 
-Install LAMMPS is not too difficult. It is tricky sometimes.
+Install LAMMPS is not too difficult. LAMMPS manual is well documented available at its official website.
 
-Visit my website for installation instruction of LAMMPS.
-https://sites.google.com/site/rangsiman1993/comp-chem/install-lammps-intel-xeon
+Moreover, I wrote installation instruction of LAMMPS on my website for beginners or novices.
+Visit the following website for more details
+
+  https://sites.google.com/site/rangsiman1993/comp-chem/install-lammps-intel-xeon
 
 Customization is needed for use of my workflow on other cluster/system.
 

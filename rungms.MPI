@@ -16,12 +16,13 @@
 #      CPU timing summary, and job summary woule not be printed 
 #      because this is not real rungms.
 
-echo "This calculation was carried out by GAMESS version 20180214 R1 (MPI)"
-echo "on Taiwania cluster, NCHC, Taiwan, Intel Xeon cluster equiped with"
-echo "Intel Omni-Path high-speed interconnect technology."
-echo "GAMESS on Taiwania was built by Intel Parallel Studio XE 2018 update 1."
-echo "GAMESS was executed by 'rungms.MPI', written by Rangsiman Ketkaew"
-echo "Thammasat University, Thailand. E-mail: rangsiman1993@gmail.com"
+echo "/*****************************************************************************"
+echo "This calculation was carried out by GAMESS program package executed by using"
+echo "subgmsmpi program and rungms.MPI script, written by Rangsiman Ketkaew"
+echo "Computational Chemistry Research Unit, Department of Chemistry,"
+echo "Faculty of Science and Technology, Thammasat University, Thailand."
+echo "rangsiman1993@gmail.com and https://github.com/rangsimanketkaew/QM-on-TAIWANIA"
+echo "*****************************************************************************/"
 echo ""
 
 #      TARGET is normally set to mpi in order to enable MPI method.
@@ -34,6 +35,8 @@ set SCR=TEMPLATE_1
 set USERSCR=TEMPLATE_2
 set GMSPATH=TEMPLATE_3
 
+echo "Configuration and Settings created by rungms.MPI script."
+echo "========================================================"
 echo "TARGET  is set to $TARGET"
 echo "SCR     is set to $SCR"
 echo "USERSCR is set to $USERSCR"

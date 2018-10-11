@@ -6,6 +6,13 @@
 # https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ################################################################
+set NWCHEM_VER = "6.8.0"
+set NWCHEM_TOP = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixmrcc"
+################################################################
+set NWCHEM_TARGET = "LINUX64"
+set NWCHEM_EXE = "$NWCHEM_TOP/bin/$NWCHEM_TARGET/nwchem"
+set NWCHEM_RESRC = "/pkg/nwchem/etc/default.nwchemrc"
+################################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
 ################################################################
 
@@ -14,8 +21,8 @@ if ("$1" == "-help" || "$1" == "--help" || "$1" == "-h" || "$1" == "help") goto 
 if ($#argv == 0) then
 
 echo ""
-echo "  Multiple NWChem Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
-echo "  --------------------------------------------------------------------"
+echo "  Multiple NWChem $NWCHEM_VER Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
+echo "  --------------------------------------------------------------------------"
 echo ""
 echo "  Usage: subnwmult inp_1.nw [inp_2.nw | inp_3.nw | ... | inp_10.nw] [-help]"
 echo ""
@@ -24,9 +31,10 @@ exit 0
 
 endif
 
-set NWCHEM_TOP = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixmrcc"
-set NWCHEM_TARGET = LINUX64
-set NWCHEM_EXE = "$NWCHEM_TOP/bin/$NWCHEM_TARGET/nwchem"
+if (! -f $NWCHEM_EXE) then
+  echo 'Error: Unable to locate "nwchem" executable in $NWCHEM_TOP/bin/$NWCHEM_TARGET/ directory.'
+  exit 1
+endif
 
 set INPUTSUB = ( $argv[*] )
 set NUM = "$#INPUTSUB"
@@ -81,8 +89,6 @@ endif
   set JOBTHREAD = 1
   echo -n "| Enter job queue: "
   set JOBQUEUE = "$<"
-  echo -n "| Enter job wall-time (e.g. 00:30:00 for 30 minutes): "
-  set JOBTIME = "$<"
 
 set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
 
@@ -146,7 +152,6 @@ echo "| CPU cores        = $JOBCPU (per node)"
 echo "| MPI process      = $JOBMPI (per node)"
 echo "| OMP THREADS      = $JOBTHREAD (per MPI process)"
 echo "| Job Queue        = $JOBQUEUE"
-echo "| Wall-time        = $JOBTIME"
 echo "| Project ID       = $PROJ_ID"
 echo "|"
 
@@ -172,7 +177,6 @@ cat <<EOF > $PBS_SCRIPT
 #!/bin/bash
 
 #PBS -l select=${JOBNODE}:ncpus=${JOBCPU}:mpiprocs=${JOBMPI}:ompthreads=${JOBTHREAD}
-#PBS -l walltime=$JOBTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
 #PBS -P $PROJ_ID
@@ -201,12 +205,19 @@ export MPI_ROOT=\$I_MPI_ROOT/intel64
 export MPICC=\$MPI_ROOT/bin/mpiicc
 export MPICXX=\$MPI_ROOT/bin/mpiicpc
 export MPIFC=\$MPI_ROOT/bin/mpiifort
-if [ ! -f ~/.nwchemrc ]; then ln -s /pkg/nwchem/etc/default.nwchemrc ~/.nwchemrc; fi
+
+export NWCHEM_EXE=$NWCHEM_EXE
+export NWCHEM_TARGET="LINUX64"
+export NWCHEM_RESRC="$NWCHEM_RESRC"
+
+if [ ! -f ~/.nwchemrc ]; then ln -s \$NWCHEM_RESRC ~/.nwchemrc; fi
 
 export MACHLIST=\$PBS_O_WORKDIR/nodelist.\${PBS_JOBID/\.srvc1/}
 
-mpiexec.hydra -PSM2 -n $TOTALMPI $NWCHEM_EXE \
-$JOBINPUT > $JOBOUTPUT
+mpiexec.hydra -PSM2 -n $TOTALMPI \
+\$NWCHEM_EXE \
+$JOBINPUT > \
+$JOBOUTPUT
 
 EOF
 
@@ -228,7 +239,7 @@ cat << EOF | less
 subnwmult
 =========
 
-Multiple NWChem 6.8.1 Job Submissions on TAIWANIA cluster, NCHC, Taiwan.
+Multiple NWChem $NWCHEM_VER Job Submissions on TAIWANIA cluster, NCHC, Taiwan.
 
  - Max number of input files is 10.
  - Interactive Job PBS Professional supported.

@@ -14,6 +14,7 @@ set GAMESS_VER = "00"
 set GAMESS_EXE = "gamess.${GAMESS_VER}.x"
 set GAMESS_RUN = "rungms"
 set RUNGMS_MPI = "rungms.MPI"
+##############################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
 
@@ -46,13 +47,13 @@ if ( -f $GAMESS_TOP/$RUNGMS_MPI ) then
   goto start_prog
 endif
 
-echo "Error: $RUNGMS_MPI file not found. This file should be in either" '$GAMESS_TOP' "or in" '$HOME' "directories."
+echo "Error: $RUNGMS_MPI file not found. This file should be located in either" '$GAMESS_TOP' "or " '$HOME' "directories."
 echo ""
 echo "       where " '$GAMESS_TOP' " is $GAMESS_TOP"
 echo "             " '$HOME      ' " is $HOME"
 echo ""
-echo "subgms script executes GAMESS calculation via rungms.MPI, not rungms."
-echo "Type 'subgms help' for instruction of preparation of rungms.MPI file."
+echo "subgmsmpi program executes GAMESS calculation via rungms.MPI script, not rungms."
+echo "Type 'subgmsmpi -help' for preparation instruction of rungms.MPI script."
 echo ""
 exit 1
 
@@ -120,7 +121,6 @@ if ( $NUMPAL == "" || $NUMPAL == "1" ) then
   set CPUS = 1
   set TOTALCPUS = 1
   set JOBQUEUE = serial
-  set set WALLTIME = "96:00:00"
   goto set_resource
 else if ( `echo $NUMPAL | grep -c '[a-z][A-Z]'` != 1 ) then
   set CPUS = "$NUMPAL"
@@ -144,25 +144,18 @@ check_queue:
 
 if ( $TOTALCPUS <= 40 ) then 
   set JOBQUEUE = cf40
-  set WALLTIME = "96:00:00"
 else if ( $TOTALCPUS <= 160 ) then 
   set JOBQUEUE = cf160
-  set WALLTIME = "96:00:00"
 else if ( $TOTALCPUS <= 400 ) then 
   set JOBQUEUE = ct400
-  set WALLTIME = "96:00:00"
 else if ( $TOTALCPUS <= 800 ) then 
   set JOBQUEUE = ct800
-  set WALLTIME = "72:00:00"
 else if ( $TOTALCPUS <= 1200 ) then 
   set JOBQUEUE = cf1200
-  set WALLTIME = "48:00:00"
 else if ( $TOTALCPUS <= 2000 ) then 
   set JOBQUEUE = ct2k
-  set WALLTIME = "48:00:00"
 else if ( $TOTALCPUS <= 6000 ) then 
   set JOBQUEUE = ct6k
-  set WALLTIME = "24:00:00"
 else
   echo "Error: Max CPU cores is 6000."
   goto ask_node
@@ -172,11 +165,9 @@ echo -n "Optimal queue for your job is $JOBQUEUE [y/n]: "
 set QUEUE = "$<"
 
 if ( $QUEUE == "n" || $QUEUE == "no" ) then
-  echo "Warning: you denied the recommended optimial queue. You must assign job queue and wall-time yourself."
+  echo "Warning: you denied the recommended optimial queue. You must specify job queue yourself."
   echo -n "Enter job queue (e.g. cf40): "
   set JOBQUEUE = "$<"
-  echo -n "Enter wall-time (e.g. 72:00:00): "
-  set WALLTIME = "$<"
   goto set_resource
 endif
 
@@ -184,7 +175,6 @@ if ( $QUEUE == "" || $QUEUE == "y" || $QUEUE == "yes" ) then
   set JOBQUEUE = "$JOBQUEUE"
 else if ( $QUEUE == "ctest" && $NODES <= 2 && $TOTALCPUS <= 80 ) then
   set JOBQUEUE = ctest
-  set WALLTIME = "00:30:00"
 else
   echo "Error: Either assigned job queue is incorrect or total CPU cores does not match to queue policy."
   goto ask_queue
@@ -266,8 +256,7 @@ echo "         OMP Threads  :  $THREADS"
 echo " Total MPI processes  :  $NODES x $CPUS = $TOTALCPUS"
 echo "            Job Name  :  $JOBNAME"
 echo "           Job Queue  :  $JOBQUEUE"
-echo "           Wall-Time  :  $WALLTIME"
-echo "           Project ID :  $PROJ_ID"
+echo "          Project ID  :  $PROJ_ID"
 echo ""
 
 echo -n "Submit your job now ? [yes]: "
@@ -286,7 +275,6 @@ cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 
 
 #PBS -l select=${NODES}:ncpus=${CPUS}:mpiprocs=${MPIPROCS}:ompthreads=${THREADS}
-#PBS -l walltime=$WALLTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
 #PBS -P $PROJ_ID

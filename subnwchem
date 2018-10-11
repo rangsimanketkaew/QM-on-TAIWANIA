@@ -13,7 +13,9 @@ set NWCHEM_TOP_MPIPR      = "/pkg/nwchem/MPI-PR/i18gcc6/nwchem-6.8.1-fixmrcc"
 set NWCHEM_TOP_CASPER_GPU = "/pkg/nwchem/Casper/i18gcc6/nwchem-6.8.1-fixcuda"
 set NWCHEM_TOP_MPIPR_GPU  = "NOTAVAIALBLE"
 set NWCHEM_TOP_GPU        = "$NWCHEM_TOP_CASPER_GPU"
+set NWCHEM_TARGET         = "LINUX64"
 ###############################################################################
+set NWCHEM_RESRC          = "/pkg/nwchem/etc/default.nwchemrc"
 set NWCHEM_CASLIB         = "/pkg/nwchem/exp/i18/deps/lib"
 ###############################################################################
 set CLEANSRC              = "$HOME/.nwchem-clean-up"
@@ -184,15 +186,15 @@ set MPIPR = 0
 
 start_program:
 if (! -e $NWCHEM_TOP) then
-  echo 'Error: Unable to locate NWChem directory, $NWCHEM_TOP.'
+  echo 'Error: Unable to locate NWCHEM_TOP directory, $NWCHEM_TOP.'
   echo 'Please set the suitable path of $NWCHEM_TOP at the beginning lines of this program source code'
   exit 1
 else
-  set NWCHEM_EXE = "$NWCHEM_TOP/bin/LINUX64/nwchem"
+  set NWCHEM_EXE = "$NWCHEM_TOP/bin/$NWCHEM_TARGET/nwchem"
 endif
+
 if (! -f $NWCHEM_EXE) then
-  echo 'Error: Unable to locate "nwchem" executable in $NWCHEM_TOP/bin/LINUX64/ directory.'
-  echo 'Please locate the suitable "nwchem" executable, and move to $NWCHEM_TOP/bin/LINUX64/'
+  echo 'Error: Unable to locate "nwchem" executable in $NWCHEM_TOP/bin/$NWCHEM_TARGET/ directory.'
   exit 1
 endif
 
@@ -396,34 +398,24 @@ endif
 cpu_queue:
   if ($TOTALMPI == 1) then
    set CPUQUEUE = "serial"
-   set JOBTIME = "96:00:00"
   else if ($TOTALMPI <= 40) then
    set CPUQUEUE = "cf40"
-   set JOBTIME = "96:00:00"
   else if ($TOTALMPI <= 160) then
    set CPUQUEUE = "cf160"
-   set JOBTIME = "96:00:00"
   else if ($TOTALMPI <= 400) then
    set CPUQUEUE = "ct400"
-   set JOBTIME = "96:00:00"
   else if ($TOTALMPI <= 800) then
    set CPUQUEUE = "ct800"
-   set JOBTIME = "72:00:00"
   else if ($TOTALMPI <= 1200) then
    set CPUQUEUE = "cf1200"
-   set JOBTIME = "48:00:00"
   else if ($TOTALMPI <= 2000) then
    set CPUQUEUE = "ct2k"
-   set JOBTIME = "48:00:00"
   else if ($TOTALMPI <= 6000) then
    set CPUQUEUE = "ct6k"
-   set JOBTIME = "24:00:00"
   else if ($TOTALMPI <= 8000) then
    set CPUQUEUE = "ct8k"
-   set JOBTIME = "24:00:00"
   else if ($TOTALMPI <= 22400) then
    set CPUQUEUE = "ct22400"
-   set JOBTIME = "24:00:00"
   endif
 
 check_cpu_queue:
@@ -436,7 +428,6 @@ check_cpu_queue:
     goto sum_cpu
   else if ("null$CHECKQUEUE" == "nullctest") then
     set JOBQUEUE = ctest
-    set JOBTIME = "00:30:00"
   else
 #
     set Q_CPU_LIST = ( serial ctest cf40 cf160 ct400 ct800 cf1200 ct2k ct6k ct8k ct22400 )
@@ -456,14 +447,6 @@ check_cpu_queue:
         goto check_cpu_queue
       else
         set JOBQUEUE = "$CHECKQUEUE"
-      endif
-#
-check_cpu_time:
-      echo -n "Set wall-time [e.g. 00:30:00]: "
-      set JOBTIME = "$<"
-      if ("null$JOBTIME" == "null") then
-        echo "Error: wall-time is not set yet."
-        goto check_cpu_time
       endif
   endif
 
@@ -489,13 +472,10 @@ sub_cpu:
 gpu_queue:
   if ($TOTALGPU <= 4) then
    set GPUQUEUE = "gp4"
-   set JOBTIME = "96:00:00"
   else if ($TOTALGPU <= 16) then
    set GPUQUEUE = "gp16"
-   set JOBTIME = "96:00:00"
   else if ($TOTALGPU <= 32) then
    set GPUQUEUE = "gp32"
-   set JOBTIME = "48:00:00"
   endif
 
 #############################################
@@ -609,7 +589,6 @@ check_gpu_queue:
     endif
 # 
     set JOBQUEUE = gtest
-    set JOBTIME = "00:30:00"
     set JOBNODE = 1
     set JOBMPI = $JOBCPU
     set JOBOMP = 1
@@ -632,14 +611,6 @@ check_gpu_queue:
         goto check_gpu_queue
       else
         set JOBQUEUE = "$CHECKQUEUE"
-      endif
-#
-check_gpu_time:
-      echo -n "Set wall-time [e.g. 00:30:00]: "
-      set JOBTIME = "$<"
-      if ("null$JOBTIME" == "null") then
-        echo "Error: wall-time is not set yet."
-        goto check_gpu_time
       endif
   endif
 
@@ -829,7 +800,6 @@ job_info:
   echo ""
   echo " Job Name               = $JOBNAME"
   echo " Job Queue              = $JOBQUEUE"
-  echo " Wall-time              = $JOBTIME"
   echo " Std Error              = $FULLPATH/$JOBSTDERR"
   echo " Std Output             = $FULLPATH/$JOBSTDOUT"
   echo " Project ID             = $PROJ_ID"
@@ -865,7 +835,6 @@ set JOB_SCRIPT = `dirname $JOBOUTPUT`/submit.NWChem.`basename $JOBOUTPUT .out`.s
 cat <<EOF > $JOB_SCRIPT
 #!/bin/bash
 #PBS -l select=${JOBNODE}:ncpus=${JOBCPU}:mpiprocs=${JOBMPI}:ompthreads=${JOBOMP}$SETGPU
-#PBS -l walltime=$JOBTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
 #PBS -e $JOBSTDERR
@@ -896,9 +865,13 @@ export MPI_ROOT=\$I_MPI_ROOT/intel64
 export MPICC=\$MPI_ROOT/bin/mpiicc
 export MPICXX=\$MPI_ROOT/bin/mpiicpc
 export MPIFC=\$MPI_ROOT/bin/mpiifort
+
 export NWCHEM_EXE=$NWCHEM_EXE
+export NWCHEM_TARGET=$NWCHEM_TARGET
+export NWCHEM_RESRC=$NWCHEM_RESRC
 export NWCHEM_CASLIB=$NWCHEM_CASLIB
-if [ ! -f ~/.nwchemrc ]; then ln -s /pkg/nwchem/etc/default.nwchemrc ~/.nwchemrc; fi
+
+if [ ! -f ~/.nwchemrc ]; then ln -s \$NWCHEM_RESRC ~/.nwchemrc; fi
 
 export MACHLIST=\$PBS_O_WORKDIR/nodelist.\${PBS_JOBID/\.srvc1/}
 

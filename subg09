@@ -39,6 +39,11 @@ if (! -e $G09_DIR) then
   exit 1
 endif
 
+if (! -e $G09_EXE) then
+  echo "Error: Unable to locate g09 executable, please check again."
+  exit 1
+endif
+
 set INPUTNAME = `basename $INPUTFILE .com`
 set REALNAME = "$INPUTNAME".com
 set REALPATH = `realpath $REALNAME`
@@ -78,7 +83,6 @@ else
   echo "Warning: Processors/cores is set to 1."
   set NPROCS = 1
   set JOBQUEUE = serial
-  set WALLTIME = "96:00:00"
   goto set_node
 endif
 
@@ -98,7 +102,6 @@ endif
 
 if ( $NPROCS == 1 ) then
   set JOBQUEUE = serial
-  set WALLTIME = "96:00:00"
   goto set_node
 endif
 
@@ -106,8 +109,8 @@ check_queue:
 
 echo ""
 echo "Optimal job queues: "
-echo "  [1]  ctest (00:30:00)"
-echo "  [2]  cf40  (96:00:00)"
+echo "  [1]  ctest"
+echo "  [2]  cf40"
 echo ""
 
 echo -n "Enter job queue [2]: "
@@ -115,10 +118,8 @@ set INPQUEUE = "$<"
 
 if ( "null$INPQUEUE" == "null" || $INPQUEUE == 2 ) then
   set JOBQUEUE = cf40
-  set WALLTIME = "96:00:00"
 else if ( $INPQUEUE == 1 ) then
   set JOBQUEUE = ctest
-  set WALLTIME = "00:30:00"
 else
   echo "Error: Your choice is incorrect."
   goto check_queue
@@ -196,7 +197,6 @@ echo "    CPU cores  :  $NPROCS"
 echo "  OMP Threads  :  $THREADS"
 echo "     Job Name  :  $INPUTNAME"
 echo "    Job Queue  :  $JOBQUEUE"
-echo "    Wall-Time  :  $WALLTIME"
 echo "   Project ID  :  $PROJ_ID"
 echo ""
 
@@ -216,7 +216,6 @@ cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 
 
 #PBS -l select=${NODES}:ncpus=${NPROCS}:ompthreads=${THREADS}
-#PBS -l walltime=$WALLTIME
 #PBS -q $JOBQUEUE
 #PBS -N $JOBNAME
 #PBS -P $PROJ_ID
@@ -227,6 +226,8 @@ cat <<EOF > $PBS_SCRIPT
 
 module purge
 
+cd \$PBS_O_WORKDIR
+
 export SCRATCH_DIR=/work1/$USER/SCRATCH/g09/g09.pbs\${PBS_JOBID/\.srvc1/}
 if [ ! -d \$SCRATCH_DIR ]; then mkdir -p \$SCRATCH_DIR; fi
 
@@ -236,8 +237,6 @@ export PATH="/pkg/gaussian/nbo6/bin:\$PATH"
 export GAUSS_SCRDIR="\$SCRATCH_DIR"
 export GAUSS_EXEDIR="\$g09root/"
 export GAUSS_EXECUT="\$g09root/g09"
-
-cd \$PBS_O_WORKDIR
 
 \$GAUSS_EXECUT < \
 $INPUTFILE > \
@@ -263,7 +262,7 @@ subg09
 
 subg09 is used to submit shared-memory Gaussian 09 calculation on a single node.
 
-subg09 can recognize the number of OMP threads from the value of %nprocs line in input file.
+subg09 determines the number of OMP threads by the value of %nprocs line in input file.
 Sensible value of %nprocs are: 1, 2, 4, 8, 12, 16, 24, 32, and 36.
 
 TAIWANIA Policy: Max value of %nprocs is 40.

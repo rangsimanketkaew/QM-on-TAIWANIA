@@ -4,21 +4,23 @@
                                                  ==================                                  
 
       An Open Source Collection of Program for Interactive Submission of Computational Chemistry Calculation 
-            on TAIWANIA (PETA) Cluster, National Center for High-Performance Computing (NCHC), Taiwan.
+  on PBS Job Scheduler of TAIWANIA (PETA) Cluster, National Center for High-Performance Computing (NCHC), Taiwan.
 
 =============
 SOFTWARE INFO
 =============
 
-This is the second release of an open source collection of program for interactive submission of computational chemistry 
-calculation on TAIWANIA (PETA) cluster, National Center for High-Performance Computing (NCHC), Taiwan.
-TAIWANIA cluster is Intel Xeon Gold 6148 cluster equiped with the Intel Omni-Path high-speed interconnect.
+This is an open source collection of program for interactive submission of computational chemistry calculation 
+on TAIWANIA* (PETA) cluster, National Center for High-Performance Computing (NCHC), Taiwan.
+
+*TAIWANIA cluster is Intel Xeon Gold 6148 cluster equiped with the Intel Omni-Path high-speed interconnect.
 
 ===========
 APPLICATION
 ===========
 
-Source code customization is needed for other workload managers and HPC clusters.
+QM-on-TAIWANIA is obviously designed for PBS Professional workload manager.
+Hence, source code customization is needed for other workload managers and HPC clusters.
 
 ========
 FEATURES
@@ -43,22 +45,26 @@ COMPONENTS
 
 This software suite contains a growing variety of several quantum chemistry program.
 
-   1. subg09      Gaussian   09
-   2. subg16      Gaussian   16
-   3. subnwchem   NWChem     6.8.0        single job
-   4. subnwmult   NWChem     6.8.0        multiple jobs
-   5. subqchem    Q-Chem     4.2.2
-   6. suborca     ORCA       4.0.1.2
-   7. subgms      GAMESS     20180215 R1  OpenMP protocol
-   8. subgmsmpi   GAMESS     20180215 R1  MPI protocol
-   9. sublmp      LAMMPS     16MAR2018    CPU            
-  10. submolpro   Molpro     2015
+      Sub-program   Program     Version       Usability
+      -----------   -------     -------       ---------
+   1. subg09        Gaussian    09
+   2. subg16        Gaussian    16
+   3. subnwchem     NWChem      6.8.0         single job
+   4. subnwmult     NWChem      6.8.0         multiple jobs
+   5. subqchem      Q-Chem      4.2.2
+   6. suborca       ORCA        4.0.1.2
+   7. subgms        GAMESS      20180215 R1   OpenMP protocol
+   8. subgmsmpi     GAMESS      20180215 R1   MPI protocol
+   9. sublmp        LAMMPS      16MAR2018     CPU            
+  10. submolpro     Molpro      2015
 
-======
-MANUAL
-======
+==============
+PROGRAM MANUAL
+==============
 
-Normal usage is available at https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
+Each sub-program has built-in manual, which can be opened by using "-help" option.
+
+Normal usages of all sub-program are also available at https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ===========
 DISCLAIMERS
