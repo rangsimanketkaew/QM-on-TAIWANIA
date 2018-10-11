@@ -99,8 +99,8 @@ check_input:
 set INPUTNAME = `basename $INPUTFILE .in`
 set REALNAME = "$INPUTNAME".in
 set REALPATH = `realpath $REALNAME`
-set FULLPATH = `dirname $REALPATH`
-set INPUTFILE = "$FULLPATH/$INPUTNAME".in
+set DIR_PATH = `dirname $REALPATH`
+set INPUTFILE = "$DIR_PATH/$INPUTNAME".in
 if (! -f $INPUTFILE) then
   echo "Error: Unable to locate $INPUTFILE"
   exit 1
@@ -108,10 +108,11 @@ endif
 
 #check output
 if ("null$OUTPUTFILE" == "null0") then
-  set OUTPUTFILE = "$FULLPATH/$INPUTNAME".out
+  set OUTPUTNAME = "$INPUTNAME"
+  set OUTPUTFILE = "$DIR_PATH/$INPUTNAME".out
 else
   set OUTPUTNAME = `basename $OUTPUTFILE .out`
-  set OUTPUTFILE = "$FULLPATH/$OUTPUTNAME".out
+  set OUTPUTFILE = "$DIR_PATH/$OUTPUTNAME".out
 endif
 
 echo ""
@@ -163,7 +164,7 @@ check_resource:
 #Best threads per core with this Intel Xeon is 1.
 set THREADS = "$CPUS"
 
-set JOBNAME = "$INPUTNAME"
+set JOBNAME = "$OUTPUTNAME"
 
 set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
 
@@ -248,7 +249,7 @@ else
 endif
 
 submit:
-set PBS_SCRIPT = "$FULLPATH/submit.QC.$INPUTNAME.sh"
+set PBS_SCRIPT = "$DIR_PATH/submit.QC.$OUTPUTNAME.sh"
 
 cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 

@@ -9,6 +9,8 @@
 set G09_DIR      = "/pkg/gaussian/g09/g09"
 set G09_EXE      = "$G09_DIR/g09"
 ##############################################################
+set NBO_BIN      = "/pkg/gaussian/nbo6/bin"
+##############################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
 ##############################################################
 
@@ -45,25 +47,26 @@ if (! -e $G09_EXE) then
 endif
 
 set INPUTNAME = `basename $INPUTFILE .com`
-set REALNAME = "$INPUTNAME".com
-set REALPATH = `realpath $REALNAME`
-set FULLPATH = `dirname $REALPATH`
-set INPUTFILE = "$FULLPATH/$INPUTNAME".com
+set REALNAME_INP = "$INPUTNAME".com
+set REALPATH = `realpath $REALNAME_INP`
+set DIR_PATH = `dirname $REALPATH`
+set INPUTFILE = "$DIR_PATH/$INPUTNAME".com
 if (! -f $INPUTFILE) then
   echo "Error: Unable to locate $INPUTFILE"
   exit 1
 endif
 
-set JOBNAME = "$INPUTNAME"
-
 if ("null$2" == "null") then
-  set OUTPUTFILE = "$FULLPATH/$INPUTNAME".out 
+  set OUTPUTNAME = "$INPUTNAME"
+  set OUTPUTFILE = "$DIR_PATH/$INPUTNAME".out 
+  set REALNAME_OUT = "$INPUTNAME".out
 else
   set OUTPUTNAME = `basename $2 .out`
-  set OUTPUTFILE = "$FULLPATH/$OUTPUTNAME".out
+  set OUTPUTFILE = "$DIR_PATH/$OUTPUTNAME".out
+  set REALNAME_OUT = "$OUTPUTNAME".out
 endif 
 
-echo ""
+set JOBNAME = "$OUTPUTNAME"
 
 if ( `grep -ic '%gpucpu' $INPUTFILE` == 1 ) then
   echo "Error: GPU accelerator is not supported in Gaussian 09, please use Gaussian 16 instead."
@@ -72,7 +75,8 @@ else
 
 if ( `grep -ic '\-\-link1\-\-' $INPUTFILE` >= 1 ) then
   @ NUMJOB = ( `grep -ic '\-\-link1\-\-' $INPUTFILE` + 1 )
-  echo "Warning: $INPUTNAME.com contains $NUMJOB calculations."
+  echo ""
+  echo "Warning: $INPUTNAME.com contains $NUMJOB calculations"
 endif
 
 if ( `grep -ic '%nprocshared' $INPUTFILE` >= 1 ) then
@@ -80,7 +84,7 @@ if ( `grep -ic '%nprocshared' $INPUTFILE` >= 1 ) then
 else if ( `grep -ic '%nprocs' $INPUTFILE` >= 1 ) then
   set GREPPAT = "%nprocs"
 else
-  echo "Warning: Processors/cores is set to 1."
+  echo 'Warning: No %NProcShared specified in input file. Hence, number of CPU cores will be set to 1.'
   set NPROCS = 1
   set JOBQUEUE = serial
   goto set_node
@@ -188,16 +192,22 @@ jobinfo:
 #####################################################
 
 echo ""
-echo "      ----- Job Info -----"
+echo " =========================== $ Job Information $ =========================="
+echo " Run on `date` by `whoami`"
 echo ""
-echo "   Input file  :  $INPUTFILE"
-echo "  Output file  :  $OUTPUTFILE"
-echo " Compute node  :  $NODES"
-echo "    CPU cores  :  $NPROCS"
-echo "  OMP Threads  :  $THREADS"
-echo "     Job Name  :  $INPUTNAME"
-echo "    Job Queue  :  $JOBQUEUE"
-echo "   Project ID  :  $PROJ_ID"
+echo " Gaussian 09        = $G09_EXE"
+echo " Working directory  = $DIR_PATH"
+echo ""
+echo " Input file         = $REALNAME_INP"
+echo " Output file        = $REALNAME_OUT"
+echo ""
+echo " Compute node       = $NODES"
+echo " CPU cores          = $NPROCS"
+echo " OMP Threads        = $THREADS"
+echo " Job Name           = $OUTPUTNAME"
+echo " Job Queue          = $JOBQUEUE"
+echo " Project ID         = $PROJ_ID"
+echo " =========================== $ Job Information $ =========================="
 echo ""
 
 echo -n "Submit your job now ? [yes]: "
@@ -210,7 +220,7 @@ else
 endif
 
 submit:
-set PBS_SCRIPT = "$FULLPATH/submit.G09.$INPUTNAME.sh"
+set PBS_SCRIPT = "$DIR_PATH/submit.G09.$OUTPUTNAME.sh"
 
 cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 
@@ -233,14 +243,16 @@ if [ ! -d \$SCRATCH_DIR ]; then mkdir -p \$SCRATCH_DIR; fi
 
 export g09root="$G09_DIR"
 . \$g09root/bsd/g09.profile
-export PATH="/pkg/gaussian/nbo6/bin:\$PATH"
+export PATH="${NBO_BIN}:\$PATH"
 export GAUSS_SCRDIR="\$SCRATCH_DIR"
 export GAUSS_EXEDIR="\$g09root/"
 export GAUSS_EXECUT="\$g09root/g09"
 
+export DIR_PATH="$DIR_PATH"
+
 \$GAUSS_EXECUT < \
-$INPUTFILE > \
-$OUTPUTFILE
+\$DIR_PATH/$REALNAME_INP > \
+\$DIR_PATH/$REALNAME_OUT
 
 EOF
 

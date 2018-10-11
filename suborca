@@ -55,18 +55,19 @@ endif
 set USERINP = `basename $INPUTFILE .inp`
 set INPUTNAME = "$USERINP".inp
 set REALPATH = `realpath $INPUTNAME`
-set FULLPATH = `dirname $REALPATH`
-set INPUTFILE = "$FULLPATH/$USERINP".inp
+set DIR_PATH = `dirname $REALPATH`
+set INPUTFILE = "$DIR_PATH/$USERINP".inp
 if (! -f $INPUTFILE) then
   echo "Error: Unable to locate $INPUTFILE"
   exit 1
 endif
 
 if ("null$2" == "null") then
-  set OUTPUTFILE = "$FULLPATH/$USERINP".out
+  set OUTPUTNAME = "$USERINP"
+  set OUTPUTFILE = "$DIR_PATH/$USERINP".out
 else
   set OUTPUTNAME = `basename $2 .out`
-  set OUTPUTFILE = "$FULLPATH/$OUTPUTNAME".out
+  set OUTPUTFILE = "$DIR_PATH/$OUTPUTNAME".out
 endif
 
 if ( `grep -c '^!' $INPUTFILE` == "" ) then
@@ -108,7 +109,7 @@ jobname:
 set MPIPROCS = "$CPUS"
 set NODES = 1
 set THREADS = 1
-set JOBNAME = "$USERINP"
+set JOBNAME = "$OUTPUTNAME"
 
 set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
 
@@ -193,7 +194,7 @@ else
 endif
 
 submit:
-set PBS_SCRIPT = "$FULLPATH/submit.ORCA.$USERINP.sh"
+set PBS_SCRIPT = "$DIR_PATH/submit.ORCA.$OUTPUTNAME.sh"
 
 cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 

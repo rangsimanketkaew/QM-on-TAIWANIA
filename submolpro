@@ -83,18 +83,19 @@ check_input:
 set INPUTNAME = `basename $INPUTFILE .com`
 set REALNAME = "$INPUTNAME".com
 set REALPATH = `realpath $REALNAME`
-set FULLPATH = `dirname $REALPATH`
-set INPUTFILE = "$FULLPATH/$INPUTNAME".com
+set DIR_PATH = `dirname $REALPATH`
+set INPUTFILE = "$DIR_PATH/$INPUTNAME".com
 if (! -f $INPUTFILE) then
   echo "Error: Unable to locate $INPUTFILE"
   exit 1
 endif
 
 if ("null$OUTPUTFILE" == "null0") then
-  set OUTPUTFILE = "$FULLPATH/$INPUTNAME".out
+  set OUTPUTNAME = "$INPUTNAME"
+  set OUTPUTFILE = "$DIR_PATH/$INPUTNAME".out
 else
   set OUTPUTNAME = `basename $OUTPUTFILE .out`
-  set OUTPUTFILE = "$FULLPATH/$OUTPUTNAME".out
+  set OUTPUTFILE = "$DIR_PATH/$OUTPUTNAME".out
 endif
 
 echo ""
@@ -139,7 +140,7 @@ set NODES = 1
 set CPUS = "$PPN"
 set THREADS = 1
 
-set JOBNAME = "$INPUTNAME"
+set JOBNAME = "$OUTPUTNAME"
 
 set LISTID = ( `get_su_balance | awk -F, '{print $2}' | xargs` )
 
@@ -225,7 +226,7 @@ else
 endif
 
 submit:
-set PBS_SCRIPT = "$FULLPATH/submit.MOLPRO.$INPUTNAME.sh"
+set PBS_SCRIPT = "$DIR_PATH/submit.MOLPRO.$OUTPUTNAME.sh"
 
 cat <<EOF > $PBS_SCRIPT
 #!/bin/bash 
