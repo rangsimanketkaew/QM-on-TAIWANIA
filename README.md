@@ -54,7 +54,8 @@ Source code customization is required for use by other job scheduler and other c
 * Usage: `subg09 input[.com] [output[.out]]` <br/>
 For example,  <br/>
 `subg09 water_hf` <br/>
-`subg09 water_hf water_hf_4cores.`
+`subg09 water_hf water_hf_4cores` <br/>
+`subg09 water_hf.com water_hf_4cores.out`
 
 * If no output specified, basename of input will be used to name output file automatically.
 
@@ -145,7 +146,8 @@ Title Card Required
 * Usage: `subg16 input[.com] [output[.out]]` <br/>
 For example,  <br/>
 `subg16 water_hf` <br/>
-`subg16 water_hf water_hf_4cores.out`
+`subg16 water_hf water_hf_4cores` <br/>
+`subg16 water_hf.com water_hf_4cores.out`
 
 * If no output specified, basename of input will be used to name output file automatically.
 
@@ -246,8 +248,9 @@ Title Card Required
 
 * Usage: `subnwchem input[.nw] [output[.out]] [gpu | casper | mpipr ] [-help]` <br/>
 where **input** is NWChem input file with or without .nwchem extension. <br/>
-Explaination of each optional keyword are below. <br/> 
-Example of using subnwchem are following
+<br/>
+Explanation of command arguments is below. <br/> 
+
   - `subnwchem input`           
   Submit job on CPU node.
   - `subnwchem input mpipr`         
