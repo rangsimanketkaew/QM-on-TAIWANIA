@@ -222,9 +222,9 @@ export ORCA_SCRATCH_DIR=/work1/$USER/SCRATCH/orca/pbs.\${PBS_JOBID/\.srvc1/}
 if [ ! -d \$ORCA_SCRATCH_DIR ]; then mkdir -p \$ORCA_SCRATCH_DIR; fi
 
 cd \$ORCA_SCRATCH_DIR
-ln -s $INPUTFILE \$ORCA_SCRATCH_DIR/${USER_INP}.inp
+ln -s $INPUTFILE \$ORCA_SCRATCH_DIR/${INPUTNAME}.inp
 
-$ORCA_EXE \$ORCA_SCRATCH_DIR/${USER_INP}.inp > $OUTPUTFILE
+$ORCA_EXE \$ORCA_SCRATCH_DIR/${INPUTNAME}.inp > $OUTPUTFILE
 
 EOF
 
@@ -271,7 +271,5 @@ Faculty of Science and Technology
 Thammasat University, Thailand
 
 EOF
-
-
 
 
