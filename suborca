@@ -6,8 +6,8 @@
 # https://github.com/rangsimanketkaew/QM-on-TAIWANIA/
 
 ##############################################################
-set ORCA_VER = "4.0.1.2"
-set ORCA_TOP = "/pkg/orca/orca.4.0.1.2"
+set ORCA_VER = "4.1.1"
+set ORCA_TOP = "/pkg/orca/orca.4.1.1"
 set ORCA_EXE = "$ORCA_TOP/orca"
 ##############################################################
 set PROJ_ID_FILE = "$HOME/.proj_id"
@@ -21,7 +21,7 @@ if ($#argv == 0) then
 
 echo ""
 echo "   ORCA $ORCA_VER Interactive Job Submission on TAIWANIA, NCHC, Taiwan"
-echo "   -----------------------------------------------------------------"
+echo "   ---------------------------------------------------------------"
 echo ""
 echo "   Usage: suborca input[.inp] [output[.out]] [-help]"
 echo ""
@@ -271,5 +271,7 @@ Faculty of Science and Technology
 Thammasat University, Thailand
 
 EOF
+
+
 
 

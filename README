@@ -52,10 +52,10 @@ This software suite contains a growing variety of several quantum chemistry prog
    3. subnwchem     NWChem      6.8.0         single job
    4. subnwmult     NWChem      6.8.0         multiple jobs
    5. subqchem      Q-Chem      4.2.2
-   6. suborca       ORCA        4.0.1.2
+   6. suborca       ORCA        4.1.1         OpenMPI protocol
    7. subgms        GAMESS      20180215 R1   OpenMP protocol
    8. subgmsmpi     GAMESS      20180215 R1   MPI protocol
-   9. sublmp        LAMMPS      16MAR2018     CPU            
+   9. sublmp        LAMMPS      16MAR2018     CPU  
   10. submolpro     Molpro      2015
 
 ==============
